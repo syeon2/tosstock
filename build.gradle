@@ -5,6 +5,10 @@ plugins {
 
     // Spring Rest Docs
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
+
+    // Checkstyle
+    id 'org.ec4j.editorconfig' version '0.1.0'
+    id 'checkstyle'
 }
 
 group = 'project'
@@ -51,6 +55,25 @@ dependencies {
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 }
 
+// Checkstyle
+editorconfig {
+    excludes = ['build']
+}
+
+check.dependsOn editorconfigCheck
+
+checkstyle {
+    maxWarnings = 0
+    configFile = file("${rootDir}/config/checkstyle/naver-checkstyle-rules.xml") as Object
+    configProperties = ["suppressionFile": "${rootDir}/config/checkstyle/naver-checkstyle-suppressions.xml"]
+    toolVersion = "8.42"
+}
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+
+//----------
+
 // --- Spring Rest Doc
 ext {
     snippetsDir = file("build/generated-snippets")
@@ -80,4 +103,4 @@ bootJar {
     }
 }
 
-//------
+//----------
