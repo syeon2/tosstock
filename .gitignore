@@ -38,3 +38,6 @@ out/
 
 ### Docker
 docker/mysql/db
+
+### QueryDSL
+src/main/generated
