@@ -2,6 +2,8 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.5'
     id 'io.spring.dependency-management' version '1.1.4'
+
+    // Spring Rest Docs
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
 }
 
@@ -16,35 +18,66 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+
+    // Spring Rest Docs
+    asciidoctorExt
 }
 
 repositories {
     mavenCentral()
 }
 
-ext {
-    set('snippetsDir', file("build/generated-snippets"))
-}
-
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    // Spring
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    compileOnly 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // DB
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // SQL
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // Util
+    compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+
+    // Test & Docs
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 }
 
-tasks.named('test') {
+// --- Spring Rest Doc
+ext {
+    snippetsDir = file("build/generated-snippets")
+}
+
+test {
     outputs.dir snippetsDir
     useJUnitPlatform()
 }
 
-tasks.named('asciidoctor') {
+asciidoctor {
     inputs.dir snippetsDir
+    configurations 'asciidoctorExt'
+
+    sources {
+        include("**/index.adoc")
+    }
+
+    baseDirFollowsSourceDir()
     dependsOn test
 }
+
+bootJar {
+    dependsOn asciidoctor
+    from("${asciidoctor.outputDir}") {
+        into 'static/docs'
+    }
+}
+
+//------
