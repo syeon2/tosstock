@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import project.tosstock.member.adapter.out.entity.EncryptedPassword;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
+import project.tosstock.member.application.domain.model.EncryptedPasswordDto;
 import project.tosstock.member.application.domain.model.Member;
 
 @Component
@@ -21,10 +22,12 @@ public class MemberMapper {
 			.build();
 	}
 
-	public MemberEntity toEntity(Member domain) {
+	public MemberEntity toEntity(Member domain, EncryptedPasswordDto passwordDto) {
+		EncryptedPassword passwordEntity = toPasswordEntity(passwordDto);
+
 		return MemberEntity.builder()
 			.username(domain.getUsername())
-			.encryptedPassword(getEncryptedPassword(domain.getPassword()))
+			.encryptedPassword(passwordEntity)
 			.email(domain.getEmail())
 			.phoneNumber(domain.getPhoneNumber())
 			.introduce(domain.getIntroduce())
@@ -32,11 +35,10 @@ public class MemberMapper {
 			.build();
 	}
 
-	// TODO:: Encrypted Password and Get Salt
-	private EncryptedPassword getEncryptedPassword(String password) {
+	private EncryptedPassword toPasswordEntity(EncryptedPasswordDto passwordDto) {
 		return EncryptedPassword.builder()
-			.password(password)
-			.salt("salt")
+			.password(passwordDto.getPassword())
+			.salt(passwordDto.getSalt())
 			.build();
 	}
 }

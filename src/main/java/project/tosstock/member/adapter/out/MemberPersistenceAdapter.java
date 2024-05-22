@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import project.tosstock.common.annotation.PersistenceAdapter;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
+import project.tosstock.member.application.domain.model.EncryptedPasswordDto;
 import project.tosstock.member.application.domain.model.Member;
 import project.tosstock.member.application.port.out.SaveMemberPort;
 import project.tosstock.member.application.port.out.ValidateMemberPort;
@@ -16,8 +17,8 @@ public class MemberPersistenceAdapter implements SaveMemberPort, ValidateMemberP
 	private final MemberMapper memberMapper;
 
 	@Override
-	public Long saveMember(Member member) {
-		MemberEntity entity = memberMapper.toEntity(member);
+	public Long saveMember(Member member, EncryptedPasswordDto passwordDto) {
+		MemberEntity entity = memberMapper.toEntity(member, passwordDto);
 		memberRepository.save(entity);
 
 		return entity.getId();
