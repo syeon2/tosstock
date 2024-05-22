@@ -76,7 +76,7 @@ class MemberControllerTest extends ControllerTestSupport {
 	@DisplayName(value = "유저가 회원가입에 실패합니다. (이름 필드 null)")
 	void join_member_exception_by_username() throws Exception {
 		// given
-		JoinMemberRequest request = createJoinMemberRequest("waterkite94@gmail.com", "", "123456789",
+		JoinMemberRequest request = createJoinMemberRequest("waterkite94@gmail.com", null, "123456789",
 			"01022223333");
 
 		// when  // then
@@ -88,6 +88,176 @@ class MemberControllerTest extends ControllerTestSupport {
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.status").value("400"))
 			.andExpect(jsonPath("$.message").value("이름은 필수 값입니다."))
+			.andExpect(jsonPath("$.data").isEmpty());
+	}
+
+	@Test
+	@DisplayName(value = "유저가 회원가입에 실패합니다. (이메일 필드 패턴 X)")
+	void join_member_exception_by_email_Pattern() throws Exception {
+		// given
+		JoinMemberRequest request = createJoinMemberRequest("waterkite94", "suyeon", "123456789",
+			"01022223333");
+
+		// when  // then
+		mockMvc.perform(
+				post("/api/v1/member")
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.status").value("400"))
+			.andExpect(jsonPath("$.message").value("이메일 형식으로 가입 가능합니다. (ex. xxx@xxx.com)"))
+			.andExpect(jsonPath("$.data").isEmpty());
+	}
+
+	@Test
+	@DisplayName(value = "유저가 회원가입에 실패합니다. (이메일 필드 null)")
+	void join_member_exception_by_email_null() throws Exception {
+		// given
+		JoinMemberRequest request = createJoinMemberRequest(null, "suyeon", "123456789",
+			"01022223333");
+
+		// when  // then
+		mockMvc.perform(
+				post("/api/v1/member")
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.status").value("400"))
+			.andExpect(jsonPath("$.message").value("이메일은 필수값입니다."))
+			.andExpect(jsonPath("$.data").isEmpty());
+	}
+
+	@Test
+	@DisplayName(value = "유저가 회원가입에 실패합니다. (비밀번호 null)")
+	void join_member_exception_by_password_null() throws Exception {
+		// given
+		JoinMemberRequest request = createJoinMemberRequest("waterkite94@gmail.com", "suyeon", null,
+			"01022223333");
+
+		// when  // then
+		mockMvc.perform(
+				post("/api/v1/member")
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.status").value("400"))
+			.andExpect(jsonPath("$.message").value("비밀번호는 필수 값입니다."))
+			.andExpect(jsonPath("$.data").isEmpty());
+	}
+
+	@Test
+	@DisplayName(value = "유저가 회원가입에 실패합니다. (비밀번호 less min length)")
+	void join_member_exception_by_password_less_length() throws Exception {
+		// given
+		JoinMemberRequest request = createJoinMemberRequest("waterkite94@gmail.com", "suyeon", "1234567",
+			"01022223333");
+
+		// when  // then
+		mockMvc.perform(
+				post("/api/v1/member")
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.status").value("400"))
+			.andExpect(jsonPath("$.message").value("비밀번호는 8 ~ 20자리입니다."))
+			.andExpect(jsonPath("$.data").isEmpty());
+	}
+
+	@Test
+	@DisplayName(value = "유저가 회원가입에 실패합니다. (비밀번호 over max length)")
+	void join_member_exception_by_password_over_length() throws Exception {
+		// given
+		JoinMemberRequest request = createJoinMemberRequest("waterkite94@gmail.com", "suyeon", "012345678901234567891",
+			"01022223333");
+
+		// when  // then
+		mockMvc.perform(
+				post("/api/v1/member")
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.status").value("400"))
+			.andExpect(jsonPath("$.message").value("비밀번호는 8 ~ 20자리입니다."))
+			.andExpect(jsonPath("$.data").isEmpty());
+	}
+
+	@Test
+	@DisplayName(value = "유저가 회원가입에 실패합니다. (전화번호 패턴 문자 삽입)")
+	void join_member_exception_by_phone_number_pattern_insert_text() throws Exception {
+		// given
+		JoinMemberRequest request = createJoinMemberRequest("waterkite94@gmail.com", "suyeon", "213456781",
+			"0101111222a");
+
+		// when  // then
+		mockMvc.perform(
+				post("/api/v1/member")
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.status").value("400"))
+			.andExpect(jsonPath("$.message").value("10 ~ 11자리의 숫자만 입력 가능합니다."))
+			.andExpect(jsonPath("$.data").isEmpty());
+	}
+
+	@Test
+	@DisplayName(value = "유저가 회원가입에 실패합니다. (전화번호 패턴 less length)")
+	void join_member_exception_by_phone_number_pattern_less_length() throws Exception {
+		// given
+		JoinMemberRequest request = createJoinMemberRequest("waterkite94@gmail.com", "suyeon", "213456781",
+			"010");
+
+		// when  // then
+		mockMvc.perform(
+				post("/api/v1/member")
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.status").value("400"))
+			.andExpect(jsonPath("$.message").value("10 ~ 11자리의 숫자만 입력 가능합니다."))
+			.andExpect(jsonPath("$.data").isEmpty());
+	}
+
+	@Test
+	@DisplayName(value = "유저가 회원가입에 실패합니다. (전화번호 패턴 over length)")
+	void join_member_exception_by_phone_number_pattern_over_length() throws Exception {
+		// given
+		JoinMemberRequest request = createJoinMemberRequest("waterkite94@gmail.com", "suyeon", "213456781",
+			"010111122221");
+
+		// when  // then
+		mockMvc.perform(
+				post("/api/v1/member")
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.status").value("400"))
+			.andExpect(jsonPath("$.message").value("10 ~ 11자리의 숫자만 입력 가능합니다."))
+			.andExpect(jsonPath("$.data").isEmpty());
+	}
+
+	@Test
+	@DisplayName(value = "유저가 회원가입에 실패합니다. (전화번호 null)")
+	void join_member_exception_by_phone_number_null() throws Exception {
+		// given
+		JoinMemberRequest request = createJoinMemberRequest("waterkite94@gmail.com", "suyeon", "213456781", null);
+
+		// when  // then
+		mockMvc.perform(
+				post("/api/v1/member")
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.status").value("400"))
+			.andExpect(jsonPath("$.message").value("전화번호는 필수 값입니다."))
 			.andExpect(jsonPath("$.data").isEmpty());
 	}
 
