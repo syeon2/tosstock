@@ -18,12 +18,12 @@ public class JoinMemberRequest {
 	@NotBlank(message = "이름은 필수 값입니다.")
 	private String username;
 
-	@Email(message = "이메일 형식으로 가입 가능합니다. (ex. xxx@xxx.com")
+	@Email(message = "이메일 형식으로 가입 가능합니다. (ex. xxx@xxx.com)")
 	@NotBlank(message = "이메일은 필수값입니다.")
 	private String email;
 
 	@NotBlank(message = "비밀번호는 필수 값입니다.")
-	@Length(min = 8, max = 20, message = "비밀번호는 8~20자리입니다.")
+	@Length(min = 8, max = 20, message = "비밀번호는 8 ~ 20자리입니다.")
 	private String password;
 
 	@NotBlank(message = "전화번호는 필수 값입니다.")
