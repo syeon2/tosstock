@@ -28,7 +28,7 @@ public class MemberEntity extends BaseEntity {
 	@Column(name = "username", columnDefinition = "varchar")
 	private String username;
 
-	@Column(name = "email", columnDefinition = "varchar")
+	@Column(name = "email", unique = true, columnDefinition = "varchar")
 	private String email;
 
 	@Embedded
