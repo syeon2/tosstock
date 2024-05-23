@@ -10,6 +10,7 @@ import project.tosstock.common.error.exception.DuplicateAccountException;
 import project.tosstock.member.application.domain.model.EncryptedPasswordDto;
 import project.tosstock.member.application.domain.model.Member;
 import project.tosstock.member.application.port.in.JoinMemberUseCase;
+import project.tosstock.member.application.port.out.AuthCodeForMemberPort;
 import project.tosstock.member.application.port.out.SaveMemberPort;
 import project.tosstock.member.application.port.out.ValidateMemberPort;
 
@@ -19,17 +20,28 @@ public class MemberService implements JoinMemberUseCase {
 
 	private final SaveMemberPort saveMemberPort;
 	private final ValidateMemberPort validateMemberPort;
+	private final AuthCodeForMemberPort authCodeForMemberPort;
 
 	private static final EncryptionType ENCRYPTION_TYPE = EncryptionType.SHA_256;
 
 	@Override
 	@Transactional
-	public Long joinMember(Member member) {
+	public Long joinMember(Member member, String authCode) {
 		checkDuplicatedMember(member);
+		checkAuthCodeByEmail(member.getEmail(), authCode);
 
 		EncryptedPasswordDto passwordDto = createEncryptedPasswordDto(member.getPassword());
 
 		return saveMemberPort.saveMember(member, passwordDto);
+	}
+
+	private void checkAuthCodeByEmail(String email, String code) {
+		String storedCode = authCodeForMemberPort.findAuthCodeByEmail(email)
+			.orElseThrow(() -> new IllegalArgumentException("인증번호가 존재하지 않습니다."));
+
+		if (!storedCode.equals(code)) {
+			throw new IllegalArgumentException("인증번호가 일치하지 않습니다.");
+		}
 	}
 
 	private EncryptedPasswordDto createEncryptedPasswordDto(String password) {
