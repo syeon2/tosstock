@@ -1,0 +1,8 @@
+[[Auth-Code-By-Email-To-Join-Member]]
+=== Auth Code By Email To Join Member API
+
+include::{snippets}/member-email-auth/http-request.adoc[]
+include::{snippets}/member-email-auth/request-fields.adoc[]
+
+include::{snippets}/member-email-auth/http-response.adoc[]
+include::{snippets}/member-email-auth/response-fields.adoc[]

@@ -1,0 +1,8 @@
+[[Join-Member]]
+=== Join Member API
+
+include::{snippets}/member-join/http-request.adoc[]
+include::{snippets}/member-join/request-fields.adoc[]
+
+include::{snippets}/member-join/http-response.adoc[]
+include::{snippets}/member-join/response-fields.adoc[]
