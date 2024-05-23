@@ -37,7 +37,7 @@ out/
 .vscode/
 
 ### Docker
-docker/mysql/db
+docker/mysql
 
 ### QueryDSL
 src/main/generated
