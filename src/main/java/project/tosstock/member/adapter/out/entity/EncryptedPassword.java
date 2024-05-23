@@ -12,10 +12,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EncryptedPassword {
 
-	@Column(name = "password", columnDefinition = "char(64)")
+	@Column(name = "password", columnDefinition = "char(64)", nullable = false)
 	private String password;
 
-	@Column(name = "salt", columnDefinition = "char(40)")
+	@Column(name = "salt", columnDefinition = "char(40)", nullable = false)
 	private String salt;
 
 	@Builder

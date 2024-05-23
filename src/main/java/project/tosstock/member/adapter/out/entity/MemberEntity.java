@@ -25,23 +25,23 @@ public class MemberEntity extends BaseEntity {
 	@Column(name = "member_id", columnDefinition = "bigint")
 	private Long id;
 
-	@Column(name = "username", columnDefinition = "varchar")
+	@Column(name = "username", columnDefinition = "varchar(60)", nullable = false)
 	private String username;
 
-	@Column(name = "email", unique = true, columnDefinition = "varchar")
+	@Column(name = "email", unique = true, columnDefinition = "varchar(60)", nullable = false)
 	private String email;
 
 	@Embedded
 	private EncryptedPassword encryptedPassword;
 
-	@Column(name = "phone_number", unique = true, columnDefinition = "varchar")
+	@Column(name = "phone_number", unique = true, columnDefinition = "varchar(30)", nullable = false)
 	private String phoneNumber;
 
 	@Lob
 	@Column(name = "introduce", columnDefinition = "text")
 	private String introduce;
 
-	@Column(name = "profile_image_url", columnDefinition = "varchar")
+	@Column(name = "profile_image_url", columnDefinition = "varchar(255)")
 	private String profileImageUrl;
 
 	@Builder
