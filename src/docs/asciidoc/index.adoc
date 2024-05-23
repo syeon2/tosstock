@@ -13,3 +13,4 @@ endif::[]
 == Member API
 
 include::api/member/member-join.adoc[]
+include::api/member/member-email-auth.adoc[]
