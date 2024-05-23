@@ -1,16 +1,26 @@
 version: "3"
 services:
-  db:
+  mysql:
     image: mysql:8.0
-    platform: linux/x86_64
-    restart: always
+    container_name: mysql_dev
     ports:
       - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: 1234
-      MYSQL_DATABASE: product_db
+      MYSQL_DATABASE: prod_db
       MYSQL_USER: admin
       MYSQL_PASSWORD: 1234
       TZ: Asia/Seoul
     volumes:
-      - ./mysql/db/mysql/data:/var/lib/mysql
+      - ./mysql/db_prod/mysql/data:/var/lib/mysql
+
+  redis_mail:
+    image: redis:latest
+    container_name: redis_mail_auth_prod
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/mail_auth_prod/data:/data
+      - ./redis/mail_auth_prod/conf/redis.conf:/usr/local/conf/redis.conf
+    command:
+      - redis-server
