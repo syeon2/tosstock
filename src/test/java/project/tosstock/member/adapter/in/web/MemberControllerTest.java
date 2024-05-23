@@ -16,7 +16,9 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 
 import project.tosstock.ControllerTestSupport;
+import project.tosstock.member.adapter.in.web.request.AuthEmailRequest;
 import project.tosstock.member.adapter.in.web.request.JoinMemberRequest;
+import project.tosstock.member.application.port.in.EmailForMemberUseCase;
 import project.tosstock.member.application.port.in.JoinMemberUseCase;
 
 @WebMvcTest(controllers = MemberController.class)
@@ -24,6 +26,9 @@ class MemberControllerTest extends ControllerTestSupport {
 
 	@MockBean
 	private JoinMemberUseCase joinMemberUseCase;
+
+	@MockBean
+	private EmailForMemberUseCase emailForMemberUseCase;
 
 	@Test
 	@DisplayName(value = "유저가 회원가입에 성공합니다.")
@@ -59,7 +64,9 @@ class MemberControllerTest extends ControllerTestSupport {
 						.description("자기 소개"),
 					fieldWithPath("profileImageUrl").type(JsonFieldType.STRING)
 						.optional()
-						.description("프로필 이미지")
+						.description("프로필 이미지"),
+					fieldWithPath("authCode").type(JsonFieldType.STRING)
+						.description("인증 번호")
 				),
 				responseFields(
 					fieldWithPath("status").type(JsonFieldType.NUMBER)
@@ -261,6 +268,40 @@ class MemberControllerTest extends ControllerTestSupport {
 			.andExpect(jsonPath("$.data").isEmpty());
 	}
 
+	@Test
+	@DisplayName(value = "이메일을 통해 회원가입을 위한 인증 코드를 보냅니다.")
+	void sendAuthCodeToEmail() throws Exception {
+		// given
+		AuthEmailRequest request = new AuthEmailRequest("waterkite94@gmail.com");
+
+		// when // then
+		mockMvc.perform(
+				post("/api/v1/member/emails/verification-requests")
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.status").isNumber())
+			.andExpect(jsonPath("$.message").isEmpty())
+			.andExpect(jsonPath("$.data").isBoolean())
+			.andDo(document("member-email-auth",
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				requestFields(
+					fieldWithPath("email").type(JsonFieldType.STRING)
+						.description("인증 받을 이메일")
+				),
+				responseFields(
+					fieldWithPath("status").type(JsonFieldType.NUMBER)
+						.description("상태 코드"),
+					fieldWithPath("message").type(JsonFieldType.NULL)
+						.description("메시지"),
+					fieldWithPath("data").type(JsonFieldType.BOOLEAN)
+						.description("인증 성공시 true")
+				)
+			));
+	}
+
 	private JoinMemberRequest createJoinMemberRequest(String email, String username, String password,
 		String phoneNumber) {
 		return JoinMemberRequest.builder()
@@ -270,6 +311,7 @@ class MemberControllerTest extends ControllerTestSupport {
 			.phoneNumber(phoneNumber)
 			.introduce("hello")
 			.profileImageUrl("https://syeon2.github.io/")
+			.authCode("000000")
 			.build();
 	}
 }
