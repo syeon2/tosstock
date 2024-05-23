@@ -34,15 +34,19 @@ public class JoinMemberRequest {
 
 	private String profileImageUrl;
 
+	@NotBlank(message = "이메일 인증 번호는 필수 값입니다.")
+	private String authCode;
+
 	@Builder
 	private JoinMemberRequest(String username, String email, String password, String phoneNumber, String introduce,
-		String profileImageUrl) {
+		String profileImageUrl, String authCode) {
 		this.username = username;
 		this.email = email;
 		this.password = password;
 		this.phoneNumber = phoneNumber;
 		this.introduce = introduce;
 		this.profileImageUrl = profileImageUrl;
+		this.authCode = authCode;
 	}
 
 	public Member toDomain() {
