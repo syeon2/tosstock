@@ -39,6 +39,12 @@ spring:
     title: 회원 가입 인증번호입니다.
     code-length: 6
 
+  data:
+    redis_mail:
+      host: localhost
+      port: 6379
+      expire_minutes: 5
+
 logging:
   level:
     org.hibernate.SQL: debug
