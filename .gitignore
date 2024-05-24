@@ -38,6 +38,7 @@ out/
 
 ### Docker
 docker/mysql
+docker/redis
 
 ### QueryDSL
 src/main/generated

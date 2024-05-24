@@ -1,4 +1,4 @@
-package project.tosstock.common.config;
+package project.tosstock.common.config.util;
 
 import java.util.Properties;
 

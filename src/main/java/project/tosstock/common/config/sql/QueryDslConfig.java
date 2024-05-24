@@ -1,4 +1,4 @@
-package project.tosstock.common.config;
+package project.tosstock.common.config.sql;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -4,22 +4,22 @@ import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 import project.tosstock.common.annotation.PersistenceAdapter;
-import project.tosstock.member.adapter.out.persistence.TempAuthCodeForMemberRepository;
+import project.tosstock.member.adapter.out.persistence.RedisAuthCodeToJoinMemberRepository;
 import project.tosstock.member.application.port.out.AuthCodeForMemberPort;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
 public class AuthCodePersistenceAdapter implements AuthCodeForMemberPort {
 
-	private final TempAuthCodeForMemberRepository tempAuthCodeForMemberRepository;
+	private final RedisAuthCodeToJoinMemberRepository redisAuthCodeToJoinMemberRepository;
 
 	@Override
 	public void saveAuthCode(String email, String code) {
-		tempAuthCodeForMemberRepository.save(email, code);
+		redisAuthCodeToJoinMemberRepository.save(email, code);
 	}
 
 	@Override
 	public Optional<String> findAuthCodeByEmail(String email) {
-		return tempAuthCodeForMemberRepository.findCodeByEmail(email);
+		return redisAuthCodeToJoinMemberRepository.findCodeByEmail(email);
 	}
 }
