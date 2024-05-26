@@ -1,7 +1,6 @@
 package project.tosstock.member.adapter.out.entity;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,8 +30,8 @@ public class MemberEntity extends BaseEntity {
 	@Column(name = "email", unique = true, columnDefinition = "varchar(60)", nullable = false)
 	private String email;
 
-	@Embedded
-	private EncryptedPassword encryptedPassword;
+	@Column(name = "password", columnDefinition = "char(60)", nullable = false)
+	private String password;
 
 	@Column(name = "phone_number", unique = true, columnDefinition = "varchar(30)", nullable = false)
 	private String phoneNumber;
@@ -45,11 +44,11 @@ public class MemberEntity extends BaseEntity {
 	private String profileImageUrl;
 
 	@Builder
-	private MemberEntity(String username, String email, EncryptedPassword encryptedPassword, String phoneNumber,
+	private MemberEntity(String username, String email, String password, String phoneNumber,
 		String introduce, String profileImageUrl) {
 		this.username = username;
 		this.email = email;
-		this.encryptedPassword = encryptedPassword;
+		this.password = password;
 		this.phoneNumber = phoneNumber;
 		this.introduce = introduce;
 		this.profileImageUrl = profileImageUrl;
