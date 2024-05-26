@@ -52,7 +52,7 @@ dependencies {
     // Util
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-    
+
     implementation 'org.springframework.security:spring-security-crypto'
     implementation 'org.springframework.boot:spring-boot-starter-mail:3.2.2'
 
@@ -114,4 +114,6 @@ bootJar {
 }
 
 // QueryDSL
-clean { delete file('src/main/generated') }
+clean {
+    delete files('src/main/generated', 'docker/mysql', 'docker/redis')
+}
