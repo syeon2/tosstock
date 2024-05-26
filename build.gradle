@@ -35,6 +35,8 @@ dependencies {
     // Spring
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-mail:3.2.2'
+    implementation 'org.springframework.security:spring-security-crypto'
 
     // DB
     runtimeOnly 'com.h2database:h2'
@@ -52,9 +54,10 @@ dependencies {
     // Util
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-    
-    implementation 'org.springframework.security:spring-security-crypto'
-    implementation 'org.springframework.boot:spring-boot-starter-mail:3.2.2'
+
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.12.5'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.12.5'
 
     // Test & Docs
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -114,4 +117,6 @@ bootJar {
 }
 
 // QueryDSL
-clean { delete file('src/main/generated') }
+clean {
+    delete files('src/main/generated', 'docker/mysql', 'docker/redis')
+}
