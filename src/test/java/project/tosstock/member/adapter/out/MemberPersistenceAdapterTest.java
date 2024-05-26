@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import project.tosstock.IntegrationTestSupport;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
-import project.tosstock.member.application.domain.model.EncryptedPasswordDto;
 import project.tosstock.member.application.domain.model.Member;
 
 class MemberPersistenceAdapterTest extends IntegrationTestSupport {
@@ -33,10 +32,9 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 	void save_member() {
 		// given
 		Member member = createMember("waterkite94@gmail.com", "01000001111");
-		EncryptedPasswordDto passwordDto = EncryptedPasswordDto.builder().build();
 
 		// when
-		Long savedMemberId = memberPersistenceAdapter.saveMember(member, passwordDto);
+		Long savedMemberId = memberPersistenceAdapter.saveMember(member, member.getPassword());
 
 		// then
 		Optional<MemberEntity> findMemberOptional = memberRepository.findById(savedMemberId);
@@ -63,8 +61,7 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 		// given
 		String email = "waterkite94@gmail.com";
 		Member member = createMember(email, "01011112222");
-		EncryptedPasswordDto passwordDto = EncryptedPasswordDto.builder().build();
-		memberPersistenceAdapter.saveMember(member, passwordDto);
+		memberPersistenceAdapter.saveMember(member, member.getPassword());
 
 		// when
 		boolean isDuplicated = memberPersistenceAdapter.isDuplicatedEmail(email);
@@ -80,8 +77,7 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 		String phoneNumber = "01011112222";
 
 		Member member = createMember("waterkite94@gmail.com", phoneNumber);
-		EncryptedPasswordDto passwordDto = EncryptedPasswordDto.builder().build();
-		memberPersistenceAdapter.saveMember(member, passwordDto);
+		memberPersistenceAdapter.saveMember(member, member.getPassword());
 
 		// when
 		boolean isExist = memberPersistenceAdapter.isExistPhoneNumber(phoneNumber);

@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import project.tosstock.IntegrationTestSupport;
-import project.tosstock.member.adapter.out.entity.EncryptedPassword;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 
 class MemberRepositoryTest extends IntegrationTestSupport {
@@ -61,11 +60,7 @@ class MemberRepositoryTest extends IntegrationTestSupport {
 		return MemberEntity.builder()
 			.username("suyeon")
 			.email(email)
-			.encryptedPassword(EncryptedPassword.builder()
-				.password("123456778")
-				.salt("salt")
-				.build()
-			)
+			.password("12345678")
 			.phoneNumber("01000001111")
 			.introduce("hellO")
 			.profileImageUrl("")

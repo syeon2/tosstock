@@ -1,13 +1,11 @@
 package project.tosstock.member.application.domain.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import project.tosstock.common.encryption.Encryption;
-import project.tosstock.common.encryption.EncryptionType;
 import project.tosstock.common.error.exception.DuplicateAccountException;
-import project.tosstock.member.application.domain.model.EncryptedPasswordDto;
 import project.tosstock.member.application.domain.model.Member;
 import project.tosstock.member.application.port.in.JoinMemberUseCase;
 import project.tosstock.member.application.port.out.AuthCodeForMemberPort;
@@ -22,7 +20,7 @@ public class MemberService implements JoinMemberUseCase {
 	private final ValidateMemberPort validateMemberPort;
 	private final AuthCodeForMemberPort authCodeForMemberPort;
 
-	private static final EncryptionType ENCRYPTION_TYPE = EncryptionType.SHA_256;
+	private final PasswordEncoder passwordEncoder;
 
 	@Override
 	@Transactional
@@ -30,9 +28,9 @@ public class MemberService implements JoinMemberUseCase {
 		checkDuplicatedMember(member);
 		checkAuthCodeByEmail(member.getEmail(), authCode);
 
-		EncryptedPasswordDto passwordDto = createEncryptedPasswordDto(member.getPassword());
+		String encodedPassword = passwordEncoder.encode(member.getPassword());
 
-		return saveMemberPort.saveMember(member, passwordDto);
+		return saveMemberPort.saveMember(member, encodedPassword);
 	}
 
 	private void checkAuthCodeByEmail(String email, String code) {
@@ -42,16 +40,6 @@ public class MemberService implements JoinMemberUseCase {
 		if (!storedCode.equals(code)) {
 			throw new IllegalArgumentException("인증번호가 일치하지 않습니다.");
 		}
-	}
-
-	private EncryptedPasswordDto createEncryptedPasswordDto(String password) {
-		String salt = Encryption.generateSalt();
-		String saltedPassword = Encryption.createEncryptedSourceBySalt(password, salt, ENCRYPTION_TYPE);
-
-		return EncryptedPasswordDto.builder()
-			.password(saltedPassword)
-			.salt(salt)
-			.build();
 	}
 
 	private void checkDuplicatedMember(Member member) {
