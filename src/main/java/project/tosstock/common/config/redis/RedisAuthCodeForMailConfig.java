@@ -27,7 +27,8 @@ public class RedisAuthCodeForMailConfig {
 	@Bean
 	@Qualifier(value = "redisAuthCodeForMailTemplate")
 	public RedisTemplate<String, String> redisAuthCodeForMailTemplate(
-		@Qualifier(value = "redisAuthCodeForMailConnectionFactory") RedisConnectionFactory redisAuthCodeForMailConnectionFactory
+		@Qualifier(value = "redisAuthCodeForMailConnectionFactory")
+		RedisConnectionFactory redisAuthCodeForMailConnectionFactory
 	) {
 		RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
 

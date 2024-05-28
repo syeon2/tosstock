@@ -44,6 +44,9 @@ spring:
       host: localhost
       port: 6379
       expire_minutes: 5
+    redis_token:
+      host: localhost
+      port: 6380
 
 logging:
   level:
