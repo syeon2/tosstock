@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import project.tosstock.IntegrationTestSupport;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
@@ -21,6 +22,9 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 
 	@Autowired
 	private MemberRepository memberRepository;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@BeforeEach
 	void before() {
@@ -99,11 +103,53 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 		assertThat(isExist).isFalse();
 	}
 
+	@Test
+	@DisplayName(value = "이메일에 대한 비밀번호를 가져옵니다.")
+	void find_password_by_email() {
+		// given
+		String email = "waterkite94@gmail.com";
+		String encodedPassword = passwordEncoder.encode("12345678");
+
+		Member member = createMember(email, encodedPassword, "01011112222");
+		memberPersistenceAdapter.saveMember(member, member.getPassword());
+
+		// when
+		Optional<String> findPassword = memberPersistenceAdapter.findPasswordByEmail(email);
+
+		// then
+		assertThat(findPassword).isPresent()
+			.hasValueSatisfying(pw -> assertThat(pw).isEqualTo(encodedPassword));
+	}
+
+	@Test
+	@DisplayName(value = "이메일이 없을 경우 null을 반환합니다.")
+	void find_password_by_email_null() {
+		// given
+		String email = "waterkite94@gmail.com";
+
+		// when
+		Optional<String> findPassword = memberPersistenceAdapter.findPasswordByEmail(email);
+
+		// then
+		assertThat(findPassword).isEmpty();
+	}
+
 	private Member createMember(String email, String phoneNumber) {
 		return Member.builder()
 			.username("suyeon")
 			.email(email)
-			.password("12345678")
+			.password(passwordEncoder.encode("12345678"))
+			.phoneNumber(phoneNumber)
+			.introduce("반갑습니다.")
+			.profileImageUrl("www.naver.com")
+			.build();
+	}
+
+	private Member createMember(String email, String password, String phoneNumber) {
+		return Member.builder()
+			.username("suyeon")
+			.email(email)
+			.password(password)
 			.phoneNumber(phoneNumber)
 			.introduce("반갑습니다.")
 			.profileImageUrl("www.naver.com")

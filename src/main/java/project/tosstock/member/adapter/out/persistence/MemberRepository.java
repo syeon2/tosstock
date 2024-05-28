@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 
 @Repository
-public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
+public interface MemberRepository extends JpaRepository<MemberEntity, Long>, MemberRepositoryCustom {
 
 	Optional<MemberEntity> findByEmail(String email);
 
