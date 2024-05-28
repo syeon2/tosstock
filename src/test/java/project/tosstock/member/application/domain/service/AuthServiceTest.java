@@ -2,15 +2,21 @@ package project.tosstock.member.application.domain.service;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import project.tosstock.IntegrationTestSupport;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
+import project.tosstock.member.adapter.out.persistence.RedisAuthTokenRepository;
 import project.tosstock.member.application.domain.model.JwtTokenDto;
 
 class AuthServiceTest extends IntegrationTestSupport {
@@ -22,11 +28,19 @@ class AuthServiceTest extends IntegrationTestSupport {
 	private MemberRepository memberRepository;
 
 	@Autowired
+	private RedisAuthTokenRepository redisAuthTokenRepository;
+
+	@Autowired
+	@Qualifier(value = "redisAuthTokenTemplate")
+	private RedisTemplate<String, Object> redisAuthTokenTemplate;
+
+	@Autowired
 	private PasswordEncoder encoder;
 
 	@BeforeEach
 	void before() {
 		memberRepository.deleteAllInBatch();
+		redisAuthTokenTemplate.getConnectionFactory().getConnection().flushAll();
 	}
 
 	@Test
@@ -46,6 +60,12 @@ class AuthServiceTest extends IntegrationTestSupport {
 		assertThat(tokenDto).isNotNull();
 		assertThat(tokenDto.getAccessToken()).isInstanceOf(String.class);
 		assertThat(tokenDto.getRefreshToken()).isInstanceOf(String.class);
+
+		Optional<LocalDateTime> findTimeByEmailAndToken = redisAuthTokenRepository.findTimeByIdAndToken(email,
+			tokenDto.getRefreshToken());
+
+		assertThat(findTimeByEmailAndToken).isPresent()
+			.hasValueSatisfying(obj -> assertThat(obj).isInstanceOf(LocalDateTime.class));
 	}
 
 	@Test
