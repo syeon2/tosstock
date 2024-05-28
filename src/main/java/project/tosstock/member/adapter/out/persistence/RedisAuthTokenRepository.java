@@ -19,18 +19,18 @@ public class RedisAuthTokenRepository {
 		this.redisTemplate = redisTemplate;
 	}
 
-	public void save(Long id, String token, LocalDateTime time) {
+	public void save(String email, String token, LocalDateTime time) {
 		String format = convertDateTimeToString(time);
 
-		Boolean result = redisTemplate.opsForHash().putIfAbsent(id.toString(), token, format);
+		Boolean result = redisTemplate.opsForHash().putIfAbsent(email, token, format);
 
 		if (!result) {
-			redisTemplate.opsForHash().put(id.toString(), token, format);
+			redisTemplate.opsForHash().put(email, token, format);
 		}
 	}
 
-	public Optional<LocalDateTime> findTimeByIdAndToken(Long id, String token) {
-		String expiredTime = (String)redisTemplate.opsForHash().get(id.toString(), token);
+	public Optional<LocalDateTime> findTimeByIdAndToken(String email, String token) {
+		String expiredTime = (String)redisTemplate.opsForHash().get(email, token);
 
 		if (expiredTime == null) {
 			return Optional.empty();
@@ -40,15 +40,15 @@ public class RedisAuthTokenRepository {
 		return Optional.of(convertStringToLocalDateTime);
 	}
 
-	public void delete(Long id, String token) {
-		redisTemplate.opsForHash().delete(id.toString(), token);
+	public void delete(String email, String token) {
+		redisTemplate.opsForHash().delete(email, token);
 	}
 
-	public void deleteAll(Long id) {
-		Map<Object, Object> entries = redisTemplate.opsForHash().entries(id.toString());
+	public void deleteAll(String email) {
+		Map<Object, Object> entries = redisTemplate.opsForHash().entries(email);
 
 		for (Object hashKey : entries.keySet()) {
-			redisTemplate.opsForHash().delete(id.toString(), hashKey);
+			redisTemplate.opsForHash().delete(email, hashKey);
 		}
 	}
 
