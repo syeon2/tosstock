@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import project.tosstock.common.error.exception.ExpiredTokenException;
 import project.tosstock.common.wrapper.ApiResult;
 
 @RestControllerAdvice
@@ -16,6 +17,12 @@ public class ErrorController {
 	public ApiResult<Void> handlerValidationRequest(MethodArgumentNotValidException exception) {
 		return ApiResult.error(HttpStatus.BAD_REQUEST,
 			exception.getBindingResult().getAllErrors().get(0).getDefaultMessage());
+	}
+
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	@ExceptionHandler(ExpiredTokenException.class)
+	public ApiResult<Void> handlerExpiredJwtRequest(ExpiredTokenException exception) {
+		return ApiResult.error(HttpStatus.UNAUTHORIZED, exception.getLocalizedMessage());
 	}
 
 	@ResponseStatus(HttpStatus.BAD_REQUEST)

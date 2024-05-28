@@ -48,6 +48,14 @@ spring:
       host: localhost
       port: 6380
 
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
+  access-token:
+    expired-minutes: 5
+  refresh-token:
+    expired-minutes: 1440
+
+
 logging:
   level:
     org.hibernate.SQL: debug
