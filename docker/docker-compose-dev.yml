@@ -29,7 +29,7 @@ services:
     image: redis:latest
     container_name: redis_token
     ports:
-      - "6380:6380"
+      - "6380:6379"
     volumes:
       - ./redis/token_dev/data:/data
       - ./redis/token_dev/conf/redis.conf:/usr/local/conf/redis.conf
