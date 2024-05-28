@@ -49,6 +49,7 @@ spring:
       port: 6380
 
 jwt:
+  header: x-auth-token
   secret-key: ${JWT_SECRET_KEY}
   access-token:
     expired-minutes: 5

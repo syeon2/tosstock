@@ -11,17 +11,29 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 
 import project.tosstock.ControllerTestSupport;
+import project.tosstock.common.config.web.WebConfig;
+import project.tosstock.common.config.web.filter.JwtAuthenticationFilter;
+import project.tosstock.common.config.web.filter.JwtFilter;
 import project.tosstock.member.adapter.in.web.request.AuthEmailRequest;
 import project.tosstock.member.adapter.in.web.request.JoinMemberRequest;
 import project.tosstock.member.application.port.in.EmailForMemberUseCase;
 import project.tosstock.member.application.port.in.JoinMemberUseCase;
 
-@WebMvcTest(controllers = MemberController.class)
+@WebMvcTest(
+	controllers = MemberController.class,
+	excludeFilters = {
+		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebConfig.class),
+		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtFilter.class),
+		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtAuthenticationFilter.class)
+	}
+)
 class MemberControllerTest extends ControllerTestSupport {
 
 	@MockBean

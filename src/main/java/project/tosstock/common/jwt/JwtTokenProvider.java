@@ -16,6 +16,7 @@ import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import project.tosstock.common.error.exception.ExpiredTokenException;
+import project.tosstock.common.error.exception.UnAuthenticationTokenException;
 
 @Component
 @RequiredArgsConstructor
@@ -43,7 +44,7 @@ public class JwtTokenProvider {
 		return claim.compact();
 	}
 
-	public boolean validateToken(String email, String token) {
+	public boolean verifyToken(String token) {
 		try {
 			Claims payload = Jwts.parser()
 				.verifyWith(getSignInKey())
@@ -51,11 +52,11 @@ public class JwtTokenProvider {
 				.parseSignedClaims(token)
 				.getPayload();
 
-			String findEmail = (String)payload.get("email");
-
-			return findEmail.equalsIgnoreCase(email);
+			return true;
 		} catch (ExpiredJwtException exception) {
 			throw new ExpiredTokenException("만료된 토큰입니다.");
+		} catch (UnAuthenticationTokenException e) {
+			throw new UnAuthenticationTokenException("잘못된 토큰입니다.");
 		}
 	}
 
