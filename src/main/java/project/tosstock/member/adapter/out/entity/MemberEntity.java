@@ -53,4 +53,16 @@ public class MemberEntity extends BaseEntity {
 		this.introduce = introduce;
 		this.profileImageUrl = profileImageUrl;
 	}
+
+	public void changeUsername(String username) {
+		this.username = username;
+	}
+
+	public void changeProfileImageUrl(String profileImageUrl) {
+		this.profileImageUrl = profileImageUrl;
+	}
+
+	public void changePassword(String password) {
+		this.password = password;
+	}
 }
