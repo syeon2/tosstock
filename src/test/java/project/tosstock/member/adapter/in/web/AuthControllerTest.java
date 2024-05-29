@@ -5,6 +5,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -23,6 +24,7 @@ import project.tosstock.common.config.web.filter.JwtAuthenticationFilter;
 import project.tosstock.common.config.web.filter.JwtFilter;
 import project.tosstock.member.adapter.in.web.request.LoginRequest;
 import project.tosstock.member.application.domain.model.JwtTokenDto;
+import project.tosstock.member.application.port.in.AuthUseCase;
 import project.tosstock.member.application.port.in.LoginUseCase;
 
 @WebMvcTest(
@@ -37,6 +39,9 @@ class AuthControllerTest extends ControllerTestSupport {
 
 	@MockBean
 	private LoginUseCase loginUseCase;
+
+	@MockBean
+	private AuthUseCase authUseCase;
 
 	@Test
 	@DisplayName(value = "이메일과 비밀번호, 기기 주소를 받아 로그인에 성공합니다.")
@@ -226,5 +231,55 @@ class AuthControllerTest extends ControllerTestSupport {
 			.andExpect(jsonPath("$.status").value(400))
 			.andExpect(jsonPath("$.message").value("기기 주소는 필수 값입니다."))
 			.andExpect(jsonPath("$.data").isEmpty());
+	}
+
+	@Test
+	@DisplayName(value = "Access Token이 만료되어 Refresh Token을 받아 새로운 jwt token을 반환합니다.")
+	void authenticateRefreshToken() throws Exception {
+		// given
+		String email = "waterkite94@gmail.com";
+		String refreshToken = "1234";
+
+		given(authUseCase.renewTokens(email, refreshToken))
+			.willReturn(JwtTokenDto.builder()
+				.accessToken("access token")
+				.refreshToken("refresh token")
+				.build());
+
+		// when  // then
+		mockMvc.perform(
+				get("/api/v1/auth")
+					.param("email", email)
+					.param("refresh-token", refreshToken)
+					.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.status").isNumber())
+			.andExpect(jsonPath("$.message").isEmpty())
+			.andExpect(jsonPath("$.data").isNotEmpty())
+			.andExpect(jsonPath("$.data.accessToken").isString())
+			.andExpect(jsonPath("$.data.refreshToken").isString())
+			.andDo(
+				document("member-auth",
+					preprocessRequest(prettyPrint()),
+					preprocessResponse(prettyPrint()),
+					queryParameters(
+						parameterWithName("email").description("로그인 아이디"),
+						parameterWithName("refresh-token").description("Refresh Token")
+					),
+					responseFields(
+						fieldWithPath("status").type(JsonFieldType.NUMBER)
+							.description("상태 코드"),
+						fieldWithPath("message").type(JsonFieldType.NULL)
+							.description("메시지"),
+						fieldWithPath("data").type(JsonFieldType.OBJECT)
+							.description("응답 데이터 DTO"),
+						fieldWithPath("data.accessToken").type(JsonFieldType.STRING)
+							.description("Access token"),
+						fieldWithPath("data.refreshToken").type(JsonFieldType.STRING)
+							.description("Refresh token")
+					)
+				));
 	}
 }

@@ -11,7 +11,13 @@ public class AuthTokenPersistenceAdapter implements SaveTokenPort {
 
 	private final RedisAuthTokenRepository redisAuthTokenRepository;
 
+	@Override
 	public void save(String email, String address, String token) {
 		redisAuthTokenRepository.save(email, address, token);
+	}
+
+	@Override
+	public void mergeByEmailAndToken(String email, String prevToken, String renewToken) {
+		redisAuthTokenRepository.mergeToken(email, prevToken, renewToken);
 	}
 }

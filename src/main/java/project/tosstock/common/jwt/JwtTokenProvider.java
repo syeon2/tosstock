@@ -12,10 +12,8 @@ import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
-import project.tosstock.common.error.exception.ExpiredTokenException;
 import project.tosstock.common.error.exception.UnAuthenticationTokenException;
 
 @Component
@@ -28,35 +26,32 @@ public class JwtTokenProvider {
 	@Value("${jwt.access-token.expired-minutes}")
 	private Integer accessTokenExpiredMinutes;
 
+	@Value("${jwt.refresh-token.expired-minutes}")
+	private Integer refreshTokenExpiredMinutes;
+
 	private static final String PAYLOAD_KEY = "TOSSTOCK";
 
 	public String createToken(String email, TokenType tokenType) {
-		JwtBuilder claim = Jwts.builder()
+		return Jwts.builder()
 			.signWith(getSignInKey())
-			.expiration(getExpiredDate())
+			.expiration(getExpiredDate(tokenType))
 			.subject(PAYLOAD_KEY)
-			.claim("email", email);
-
-		if (tokenType == TokenType.ACCESS_TOKEN) {
-			claim.expiration(getExpiredDate());
-		}
-
-		return claim.compact();
+			.claim("email", email)
+			.claim("token_type", tokenType.toString())
+			.compact();
 	}
 
-	public boolean verifyToken(String token) {
+	public Claims verifyToken(String token) throws ExpiredJwtException {
 		try {
-			Claims payload = Jwts.parser()
+			return Jwts.parser()
 				.verifyWith(getSignInKey())
 				.build()
 				.parseSignedClaims(token)
 				.getPayload();
-
-			return true;
 		} catch (ExpiredJwtException exception) {
-			throw new ExpiredTokenException("만료된 토큰입니다.");
-		} catch (UnAuthenticationTokenException e) {
-			throw new UnAuthenticationTokenException("잘못된 토큰입니다.");
+			throw new UnAuthenticationTokenException("만료된 토큰입니다.");
+		} catch (RuntimeException e) {
+			throw new IllegalStateException("잘못된 토큰입니다.");
 		}
 	}
 
@@ -67,8 +62,11 @@ public class JwtTokenProvider {
 		);
 	}
 
-	private Date getExpiredDate() {
+	private Date getExpiredDate(TokenType tokenType) {
+		Integer expiredMinutes =
+			(tokenType == TokenType.ACCESS_TOKEN) ? accessTokenExpiredMinutes : refreshTokenExpiredMinutes;
+
 		Instant instant = Instant.now().truncatedTo(ChronoUnit.SECONDS);
-		return Date.from(instant.plus(accessTokenExpiredMinutes, ChronoUnit.MINUTES));
+		return Date.from(instant.plus(expiredMinutes, ChronoUnit.MINUTES));
 	}
 }

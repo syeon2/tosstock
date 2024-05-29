@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import project.tosstock.common.error.exception.ExpiredTokenException;
+import project.tosstock.common.error.exception.UnAuthenticationTokenException;
 import project.tosstock.common.wrapper.ApiResult;
 
 @RestControllerAdvice
@@ -20,8 +20,8 @@ public class ErrorController {
 	}
 
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
-	@ExceptionHandler(ExpiredTokenException.class)
-	public ApiResult<Void> handlerExpiredJwtRequest(ExpiredTokenException exception) {
+	@ExceptionHandler(UnAuthenticationTokenException.class)
+	public ApiResult<Void> handlerExpiredJwtRequest(UnAuthenticationTokenException exception) {
 		return ApiResult.error(HttpStatus.UNAUTHORIZED, exception.getLocalizedMessage());
 	}
 

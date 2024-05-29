@@ -7,16 +7,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import project.tosstock.common.error.exception.UnAuthenticationTokenException;
 import project.tosstock.common.jwt.JwtTokenProvider;
 import project.tosstock.common.jwt.TokenType;
 import project.tosstock.member.application.domain.model.JwtTokenDto;
+import project.tosstock.member.application.port.in.AuthUseCase;
 import project.tosstock.member.application.port.in.LoginUseCase;
 import project.tosstock.member.application.port.out.LoginPort;
 import project.tosstock.member.application.port.out.SaveTokenPort;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService implements LoginUseCase {
+public class AuthService implements LoginUseCase, AuthUseCase {
 
 	private final PasswordEncoder passwordEncoder;
 	private final JwtTokenProvider jwtTokenProvider;
@@ -39,9 +41,34 @@ public class AuthService implements LoginUseCase {
 		return jwtTokenDto;
 	}
 
+	@Override
+	public JwtTokenDto renewTokens(String email, String refreshToken) {
+		try {
+			jwtTokenProvider.verifyToken(refreshToken);
+			JwtTokenDto jwtTokenDto = createJwtTokenDto(email, refreshToken);
+			saveTokenPort.mergeByEmailAndToken(email, refreshToken, jwtTokenDto.getRefreshToken());
+
+			return jwtTokenDto;
+		} catch (UnAuthenticationTokenException exception) {
+			JwtTokenDto jwtTokenDto = createJwtTokenDto(email);
+			saveTokenPort.mergeByEmailAndToken(email, refreshToken, jwtTokenDto.getRefreshToken());
+
+			return jwtTokenDto;
+		}
+	}
+
 	private JwtTokenDto createJwtTokenDto(String email) {
 		String accessToken = jwtTokenProvider.createToken(email, TokenType.ACCESS_TOKEN);
 		String refreshToken = jwtTokenProvider.createToken(email, TokenType.REFRESH_TOKEN);
+
+		return JwtTokenDto.builder()
+			.accessToken(accessToken)
+			.refreshToken(refreshToken)
+			.build();
+	}
+
+	private JwtTokenDto createJwtTokenDto(String email, String refreshToken) {
+		String accessToken = jwtTokenProvider.createToken(email, TokenType.ACCESS_TOKEN);
 
 		return JwtTokenDto.builder()
 			.accessToken(accessToken)
