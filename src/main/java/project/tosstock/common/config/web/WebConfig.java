@@ -23,7 +23,7 @@ public class WebConfig {
 
 		filterFilterRegistrationBean.setFilter(jwtFilter);
 		filterFilterRegistrationBean.setOrder(2);
-		filterFilterRegistrationBean.setUrlPatterns(List.of(""));
+		filterFilterRegistrationBean.setUrlPatterns(List.of("/api/v1/logout**", "/api/v1/member/*"));
 
 		return filterFilterRegistrationBean;
 	}

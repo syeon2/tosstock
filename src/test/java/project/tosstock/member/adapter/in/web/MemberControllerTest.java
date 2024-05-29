@@ -4,6 +4,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -22,9 +23,13 @@ import project.tosstock.common.config.web.WebConfig;
 import project.tosstock.common.config.web.filter.JwtAuthenticationFilter;
 import project.tosstock.common.config.web.filter.JwtFilter;
 import project.tosstock.member.adapter.in.web.request.AuthEmailRequest;
+import project.tosstock.member.adapter.in.web.request.ChangePasswordRequest;
+import project.tosstock.member.adapter.in.web.request.ChangeProfileImageUrlRequest;
+import project.tosstock.member.adapter.in.web.request.ChangeUsernameRequest;
 import project.tosstock.member.adapter.in.web.request.JoinMemberRequest;
 import project.tosstock.member.application.port.in.EmailForMemberUseCase;
 import project.tosstock.member.application.port.in.JoinMemberUseCase;
+import project.tosstock.member.application.port.in.UpdateMemberUseCase;
 
 @WebMvcTest(
 	controllers = MemberController.class,
@@ -42,6 +47,9 @@ class MemberControllerTest extends ControllerTestSupport {
 	@MockBean
 	private EmailForMemberUseCase emailForMemberUseCase;
 
+	@MockBean
+	private UpdateMemberUseCase updateMemberUseCase;
+
 	@Test
 	@DisplayName(value = "유저가 회원가입에 성공합니다.")
 	void join_member() throws Exception {
@@ -51,7 +59,7 @@ class MemberControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				post("/api/v1/member")
+				post("/api/v1/members")
 					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
@@ -100,7 +108,7 @@ class MemberControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				post("/api/v1/member")
+				post("/api/v1/members")
 					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
@@ -119,7 +127,7 @@ class MemberControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				post("/api/v1/member")
+				post("/api/v1/members")
 					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
@@ -138,7 +146,7 @@ class MemberControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				post("/api/v1/member")
+				post("/api/v1/members")
 					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
@@ -157,7 +165,7 @@ class MemberControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				post("/api/v1/member")
+				post("/api/v1/members")
 					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
@@ -176,7 +184,7 @@ class MemberControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				post("/api/v1/member")
+				post("/api/v1/members")
 					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
@@ -195,7 +203,7 @@ class MemberControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				post("/api/v1/member")
+				post("/api/v1/members")
 					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
@@ -214,7 +222,7 @@ class MemberControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				post("/api/v1/member")
+				post("/api/v1/members")
 					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
@@ -233,7 +241,7 @@ class MemberControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				post("/api/v1/member")
+				post("/api/v1/members")
 					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
@@ -252,7 +260,7 @@ class MemberControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				post("/api/v1/member")
+				post("/api/v1/members")
 					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
@@ -270,7 +278,7 @@ class MemberControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				post("/api/v1/member")
+				post("/api/v1/members")
 					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
@@ -288,7 +296,7 @@ class MemberControllerTest extends ControllerTestSupport {
 
 		// when // then
 		mockMvc.perform(
-				post("/api/v1/member/emails/verification-requests")
+				post("/api/v1/emails/verification-requests")
 					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
@@ -312,6 +320,119 @@ class MemberControllerTest extends ControllerTestSupport {
 						.description("인증 성공시 true")
 				)
 			));
+	}
+
+	@Test
+	@DisplayName(value = "회원 이름을 업데이트합니다.")
+	void change_username() throws Exception {
+		// given
+		ChangeUsernameRequest request = new ChangeUsernameRequest("changeName");
+
+		// when  // then
+		mockMvc.perform(
+				post("/api/v1/member/{id}/username", 1)
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(print())
+			.andExpect(jsonPath("$.status").isNumber())
+			.andExpect(jsonPath("$.message").isEmpty())
+			.andExpect(jsonPath("$.data").isBoolean())
+			.andDo(document("member-update-username",
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				pathParameters(
+					parameterWithName("id").description("회원 아이디")
+				),
+				requestFields(
+					fieldWithPath("username").type(JsonFieldType.STRING)
+						.description("변경할 회원 이름")
+				),
+				responseFields(
+					fieldWithPath("status").type(JsonFieldType.NUMBER)
+						.description("상태 코드"),
+					fieldWithPath("message").type(JsonFieldType.NULL)
+						.description("메시지"),
+					fieldWithPath("data").type(JsonFieldType.BOOLEAN)
+						.description("변경 여부 값")
+				)));
+	}
+
+	@Test
+	@DisplayName(value = "회원 프로필 이미지 URL을 업데이트합니다.")
+	void change_profile_image_url() throws Exception {
+		// given
+		ChangeProfileImageUrlRequest request = new ChangeProfileImageUrlRequest("www.xxxx.xxxx");
+
+		// when  // then
+		mockMvc.perform(
+				post("/api/v1/member/{id}/profile_image_url", 1)
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(print())
+			.andExpect(jsonPath("$.status").isNumber())
+			.andExpect(jsonPath("$.message").isEmpty())
+			.andExpect(jsonPath("$.data").isBoolean())
+			.andDo(document("member-update-profile_image_url",
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				pathParameters(
+					parameterWithName("id").description("회원 아이디")
+				),
+				requestFields(
+					fieldWithPath("profileImageUrl").type(JsonFieldType.STRING)
+						.description("변경할 프로필 이미지 URL")
+				),
+				responseFields(
+					fieldWithPath("status").type(JsonFieldType.NUMBER)
+						.description("상태 코드"),
+					fieldWithPath("message").type(JsonFieldType.NULL)
+						.description("메시지"),
+					fieldWithPath("data").type(JsonFieldType.BOOLEAN)
+						.description("변경 여부 값")
+				)));
+	}
+
+	@Test
+	@DisplayName(value = "회원 비밀번호를 업데이트합니다.")
+	void change_password() throws Exception {
+		ChangePasswordRequest request = ChangePasswordRequest.builder()
+			.email("waterkite94@gmail.com")
+			.password("12345678")
+			.build();
+
+		// when  // then
+		mockMvc.perform(
+				post("/api/v1/member/{id}/password", 1)
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.status").isNumber())
+			.andExpect(jsonPath("$.message").isEmpty())
+			.andExpect(jsonPath("$.data").isBoolean())
+			.andDo(document("member-update-password",
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				pathParameters(
+					parameterWithName("id").description("회원 아이디")
+				),
+				requestFields(
+					fieldWithPath("email").type(JsonFieldType.STRING)
+						.description("변경할 비밀번호의 이메일"),
+					fieldWithPath("password").type(JsonFieldType.STRING)
+						.description("변경할 비밀번호")
+				),
+				responseFields(
+					fieldWithPath("status").type(JsonFieldType.NUMBER)
+						.description("상태 코드"),
+					fieldWithPath("message").type(JsonFieldType.NULL)
+						.description("메시지"),
+					fieldWithPath("data").type(JsonFieldType.BOOLEAN)
+						.description("변경 여부 값")
+				)));
 	}
 
 	private JoinMemberRequest createJoinMemberRequest(String email, String username, String password,

@@ -1,6 +1,7 @@
 package project.tosstock.member.application.domain.service;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.BDDMockito.*;
 
 import java.util.Optional;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import project.tosstock.IntegrationTestSupport;
 import project.tosstock.common.error.exception.DuplicateAccountException;
@@ -25,6 +27,9 @@ class MemberServiceTest extends IntegrationTestSupport {
 
 	@Autowired
 	private MemberRepository memberRepository;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@MockBean
 	private AuthCodeForMemberPort authCodeForMemberPort;
@@ -96,6 +101,85 @@ class MemberServiceTest extends IntegrationTestSupport {
 		assertThatThrownBy(() -> memberService.joinMember(member2, authCode))
 			.isInstanceOf(DuplicateAccountException.class)
 			.hasMessage("이미 가입된 전화번호입니다.");
+	}
+
+	@Test
+	@DisplayName(value = "회원 이름을 변경합니다.")
+	void update_username() {
+		// given
+		String password = "12345678";
+		MemberEntity entity = MemberEntity.builder()
+			.email("waterkite94@gmail.com")
+			.username("suyeon")
+			.password(passwordEncoder.encode(password))
+			.phoneNumber("00011112222")
+			.build();
+
+		memberRepository.save(entity);
+
+		// when
+		String changedUsername = "kimsuyeon";
+		memberService.updateUsername(entity.getId(), changedUsername);
+
+		// then
+		Optional<MemberEntity> findMemberOptional = memberRepository.findById(entity.getId());
+
+		assertThat(findMemberOptional).isPresent()
+			.hasValueSatisfying(s -> assertThat(s.getUsername()).isEqualTo(changedUsername));
+	}
+
+	@Test
+	@DisplayName(value = "회원 프로필 이미지 URL을 변경합니다.")
+	void update_url() {
+		// given
+		String password = "12345678";
+		MemberEntity entity = MemberEntity.builder()
+			.email("waterkite94@gmail.com")
+			.username("suyeon")
+			.password(passwordEncoder.encode(password))
+			.phoneNumber("00011112222")
+			.build();
+
+		memberRepository.save(entity);
+
+		// when
+		String changedUrl = "https://github.com/syeon2";
+		memberService.updateProfileImageUrl(entity.getId(), changedUrl);
+
+		// then
+		Optional<MemberEntity> findMemberOptional = memberRepository.findById(entity.getId());
+
+		assertThat(findMemberOptional).isPresent()
+			.hasValueSatisfying(s -> assertThat(s.getProfileImageUrl()).isEqualTo(changedUrl));
+	}
+
+	@Test
+	@DisplayName(value = "회원 비밀번호를 변경합니다.")
+	void update_password() {
+		// given
+		String password = "12345678";
+		String email = "waterkite94@gmail.com";
+		MemberEntity entity = MemberEntity.builder()
+			.email(email)
+			.username("suyeon")
+			.password(passwordEncoder.encode(password))
+			.phoneNumber("00011112222")
+			.build();
+
+		memberRepository.save(entity);
+
+		// when
+		String changedPassword = "987654321";
+		memberService.updatePassword(entity.getId(), email, changedPassword);
+
+		// then
+		Optional<MemberEntity> findMemberOptional = memberRepository.findById(entity.getId());
+
+		assertThat(findMemberOptional).isPresent()
+			.hasValueSatisfying(s -> assertThat(passwordEncoder.matches(changedPassword, s.getPassword())).isTrue());
+
+		assertThat(findMemberOptional).isPresent()
+			.hasValueSatisfying(s -> assertThat(passwordEncoder.matches(password, s.getPassword())).isFalse());
 	}
 
 	private Member createMember(String email, String phoneNumber) {

@@ -134,6 +134,68 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 		assertThat(findPassword).isEmpty();
 	}
 
+	@Test
+	@DisplayName(value = "회원 이름을 변경합니다.")
+	void update_username() {
+		// given
+		String password = "12345678";
+		Member member =
+			createMember("waterkite94@gmail.com", "suyeon", password, "https://syeon2.github.io/");
+		Long saveMemberId = memberPersistenceAdapter.saveMember(member, password);
+
+		// when
+		String changedUsername = "kimsuyeon";
+		memberPersistenceAdapter.updateUsername(saveMemberId, changedUsername);
+
+		// then
+		Optional<MemberEntity> findMemberOptional = memberRepository.findById(saveMemberId);
+
+		assertThat(findMemberOptional).isPresent()
+			.hasValueSatisfying(s -> assertThat(s.getUsername()).isEqualTo(changedUsername));
+	}
+
+	@Test
+	@DisplayName(value = "회원 프로필 이미지 URL을 변경합니다.")
+	void update_url() {
+		// given
+		String password = "12345678";
+		String url = "https://syeon2.github.io/";
+		Member member =
+			createMember("waterkite94@gmail.com", "suyeon", password, url);
+		Long saveMemberId = memberPersistenceAdapter.saveMember(member, password);
+
+		// when
+		String changedUrl = "https://github.com/syeon2";
+		memberPersistenceAdapter.updateProfileImageUrl(saveMemberId, changedUrl);
+
+		// then
+		Optional<MemberEntity> findMemberOptional = memberRepository.findById(saveMemberId);
+
+		assertThat(findMemberOptional).isPresent()
+			.hasValueSatisfying(s -> assertThat(s.getProfileImageUrl()).isEqualTo(changedUrl));
+	}
+
+	@Test
+	@DisplayName(value = "회원 비밀번호를 변경합니다.")
+	void update_password() {
+		// given
+		String password = "12345678";
+		Member member =
+			createMember("waterkite94@gmail.com", "suyeon", password, "https://syeon2.github.io/");
+		Long saveMemberId = memberPersistenceAdapter.saveMember(member, password);
+
+		// when
+		String changedPassword = "987654321";
+		String encodedPassword = passwordEncoder.encode(changedPassword);
+		memberPersistenceAdapter.updatePassword(saveMemberId, encodedPassword);
+
+		// then
+		Optional<MemberEntity> findMemberOptional = memberRepository.findById(saveMemberId);
+
+		assertThat(findMemberOptional).isPresent()
+			.hasValueSatisfying(s -> assertThat(s.getPassword()).isEqualTo(encodedPassword));
+	}
+
 	private Member createMember(String email, String phoneNumber) {
 		return Member.builder()
 			.username("suyeon")
@@ -142,6 +204,18 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 			.phoneNumber(phoneNumber)
 			.introduce("반갑습니다.")
 			.profileImageUrl("www.naver.com")
+			.build();
+	}
+
+	private Member createMember(String email, String username, String password,
+		String profileImageUrl) {
+		return Member.builder()
+			.username(username)
+			.email(email)
+			.password(passwordEncoder.encode(password))
+			.phoneNumber("01000001111")
+			.introduce("반갑습니다.")
+			.profileImageUrl(profileImageUrl)
 			.build();
 	}
 

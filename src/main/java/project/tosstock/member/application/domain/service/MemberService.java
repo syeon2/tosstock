@@ -8,17 +8,22 @@ import lombok.RequiredArgsConstructor;
 import project.tosstock.common.error.exception.DuplicateAccountException;
 import project.tosstock.member.application.domain.model.Member;
 import project.tosstock.member.application.port.in.JoinMemberUseCase;
+import project.tosstock.member.application.port.in.UpdateMemberUseCase;
 import project.tosstock.member.application.port.out.AuthCodeForMemberPort;
+import project.tosstock.member.application.port.out.DeleteTokenPort;
 import project.tosstock.member.application.port.out.SaveMemberPort;
+import project.tosstock.member.application.port.out.UpdateMemberPort;
 import project.tosstock.member.application.port.out.ValidateMemberPort;
 
 @Service
 @RequiredArgsConstructor
-public class MemberService implements JoinMemberUseCase {
+public class MemberService implements JoinMemberUseCase, UpdateMemberUseCase {
 
 	private final SaveMemberPort saveMemberPort;
 	private final ValidateMemberPort validateMemberPort;
 	private final AuthCodeForMemberPort authCodeForMemberPort;
+	private final UpdateMemberPort updateMemberPort;
+	private final DeleteTokenPort deleteTokenPort;
 
 	private final PasswordEncoder passwordEncoder;
 
@@ -31,6 +36,27 @@ public class MemberService implements JoinMemberUseCase {
 		String encodedPassword = passwordEncoder.encode(member.getPassword());
 
 		return saveMemberPort.saveMember(member, encodedPassword);
+	}
+
+	@Override
+	@Transactional
+	public void updateUsername(Long id, String username) {
+		updateMemberPort.updateUsername(id, username);
+	}
+
+	@Override
+	@Transactional
+	public void updateProfileImageUrl(Long id, String profileImageUrl) {
+		updateMemberPort.updateProfileImageUrl(id, profileImageUrl);
+	}
+
+	@Override
+	@Transactional
+	public void updatePassword(Long id, String email, String password) {
+		String encodedPassword = passwordEncoder.encode(password);
+
+		deleteTokenPort.deleteAll(email);
+		updateMemberPort.updatePassword(id, encodedPassword);
 	}
 
 	private void checkAuthCodeByEmail(String email, String code) {
@@ -51,5 +77,4 @@ public class MemberService implements JoinMemberUseCase {
 			throw new DuplicateAccountException("이미 가입된 전화번호입니다.");
 		}
 	}
-
 }
