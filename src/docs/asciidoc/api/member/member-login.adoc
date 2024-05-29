@@ -1,0 +1,8 @@
+[[Login-Member]]
+=== Login Member API
+
+include::{snippets}/member-login/http-request.adoc[]
+include::{snippets}/member-login/response-fields.adoc[]
+
+include::{snippets}/member-login/http-response.adoc[]
+include::{snippets}/member-login/response-fields.adoc[]

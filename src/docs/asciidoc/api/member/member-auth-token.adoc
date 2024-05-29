@@ -1,0 +1,8 @@
+[[Auth-Token-API]]
+=== Auth Token API
+
+include::{snippets}/member-auth/http-request.adoc[]
+include::{snippets}/member-auth/request-body.adoc[]
+
+include::{snippets}/member-auth/http-response.adoc[]
+include::{snippets}/member-auth/response-fields.adoc[]

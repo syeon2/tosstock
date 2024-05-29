@@ -1,0 +1,17 @@
+[[Logout-Member]]
+=== Logout Member API
+
+include::{snippets}/member-logout/http-request.adoc[]
+include::{snippets}/member-logout/response-fields.adoc[]
+
+include::{snippets}/member-logout/http-response.adoc[]
+include::{snippets}/member-logout/response-fields.adoc[]
+
+[[Logout-All-Member]]
+=== Logout All Member API
+
+include::{snippets}/member-logout-all/http-request.adoc[]
+include::{snippets}/member-logout-all/request-fields.adoc[]
+
+include::{snippets}/member-logout-all/http-response.adoc[]
+include::{snippets}/member-logout-all/response-fields.adoc[]
