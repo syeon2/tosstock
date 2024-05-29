@@ -98,6 +98,69 @@ class AuthServiceTest extends IntegrationTestSupport {
 			.hasMessage("잘못된 비밀번호입니다.");
 	}
 
+	@Test
+	@DisplayName(value = "로그아웃을 하면 Redis에 저장되어 있는 Refresh Token이 삭제됩니다.")
+	void logout() {
+		// given
+		String email = "waterkite94@gmail.com";
+		String password = "12345678";
+		String address = "1";
+
+		MemberEntity member = createMember(email, password);
+		memberRepository.save(member);
+		JwtTokenDto tokenDto = authService.login(email, password, address);
+
+		// when
+		Optional<String> findTokenByEmailAndAddress
+			= redisAuthTokenRepository.findTokenByEmailAndAddress(email, address);
+
+		assertThat(findTokenByEmailAndAddress).isPresent()
+			.hasValueSatisfying(s -> assertThat(s).isEqualTo(tokenDto.getRefreshToken()));
+
+		// then
+		authService.logout(email, address);
+
+		Optional<String> findTokenByEmailAndAddress1
+			= redisAuthTokenRepository.findTokenByEmailAndAddress(email, address);
+
+		assertThat(findTokenByEmailAndAddress1).isEmpty();
+	}
+
+	@Test
+	@DisplayName(value = "모든 기기 로그아웃을 하면 Redis에 저장되어 있는 모든 Refresh Token이 삭제됩니다.")
+	void logout_all() {
+		// given
+		String email = "waterkite94@gmail.com";
+		String password = "12345678";
+		String address1 = "1";
+		String address2 = "2";
+
+		MemberEntity member = createMember(email, password);
+		memberRepository.save(member);
+		JwtTokenDto tokenDto1 = authService.login(email, password, address1);
+		JwtTokenDto tokenDto2 = authService.login(email, password, address2);
+
+		// when
+		assertThat(redisAuthTokenRepository.findTokenByEmailAndAddress(email, address1)).isPresent()
+			.hasValueSatisfying(s -> assertThat(s).isEqualTo(tokenDto1.getRefreshToken()));
+
+		assertThat(redisAuthTokenRepository.findTokenByEmailAndAddress(email, address2)).isPresent()
+			.hasValueSatisfying(s -> assertThat(s).isEqualTo(tokenDto2.getRefreshToken()));
+
+		// then
+		authService.logoutAll(email);
+
+		Optional<String> findTokenByEmailAndAddress2
+			= redisAuthTokenRepository.findTokenByEmailAndAddress(email, address1);
+
+		assertThat(findTokenByEmailAndAddress2).isEmpty();
+
+		Optional<String> findTokenByEmailAndAddress3
+			= redisAuthTokenRepository.findTokenByEmailAndAddress(email, address2);
+
+		assertThat(findTokenByEmailAndAddress3).isEmpty();
+	}
+
 	private MemberEntity createMember(String email, String password) {
 		return MemberEntity.builder()
 			.username("suyeon")

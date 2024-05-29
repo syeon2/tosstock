@@ -23,6 +23,8 @@ import project.tosstock.common.config.web.WebConfig;
 import project.tosstock.common.config.web.filter.JwtAuthenticationFilter;
 import project.tosstock.common.config.web.filter.JwtFilter;
 import project.tosstock.member.adapter.in.web.request.LoginRequest;
+import project.tosstock.member.adapter.in.web.request.LogoutAllRequest;
+import project.tosstock.member.adapter.in.web.request.LogoutRequest;
 import project.tosstock.member.application.domain.model.JwtTokenDto;
 import project.tosstock.member.application.port.in.AuthUseCase;
 import project.tosstock.member.application.port.in.LoginUseCase;
@@ -281,5 +283,76 @@ class AuthControllerTest extends ControllerTestSupport {
 							.description("Refresh token")
 					)
 				));
+	}
+
+	@Test
+	@DisplayName(value = "이메일과 기기 주소를 받아 로그아웃합니다.")
+	void logout() throws Exception {
+		// given
+		LogoutRequest request = LogoutRequest.builder()
+			.address("1")
+			.email("waterkite94@gmail.com")
+			.build();
+
+		// when  // then
+		mockMvc.perform(
+				post("/api/v1/logout")
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(print())
+			.andExpect(jsonPath("$.status").isNumber())
+			.andExpect(jsonPath("$.message").isEmpty())
+			.andExpect(jsonPath("$.data").isBoolean())
+			.andDo(document("member-logout",
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				requestFields(
+					fieldWithPath("email").type(JsonFieldType.STRING)
+						.description("이메일"),
+					fieldWithPath("address").type(JsonFieldType.STRING)
+						.description("기기 주소")
+				),
+				responseFields(
+					fieldWithPath("status").type(JsonFieldType.NUMBER)
+						.description("상태 코드"),
+					fieldWithPath("message").type(JsonFieldType.NULL)
+						.description("메시지"),
+					fieldWithPath("data").type(JsonFieldType.BOOLEAN)
+						.description("로그아웃 성공 값")
+				)));
+	}
+
+	@Test
+	@DisplayName(value = "이메일을 통해 모든 기기에서 로그아웃합니다.")
+	void logoutAll() throws Exception {
+		// given
+		LogoutAllRequest request = new LogoutAllRequest("waterkite94@gmail.com");
+
+		// when  // then
+		mockMvc.perform(
+				post("/api/v1/logout-all")
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(print())
+			.andExpect(jsonPath("$.status").isNumber())
+			.andExpect(jsonPath("$.message").isEmpty())
+			.andExpect(jsonPath("$.data").isBoolean())
+			.andDo(document("member-logout-all",
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				requestFields(
+					fieldWithPath("email").type(JsonFieldType.STRING)
+						.description("이메일")
+				),
+				responseFields(
+					fieldWithPath("status").type(JsonFieldType.NUMBER)
+						.description("상태 코드"),
+					fieldWithPath("message").type(JsonFieldType.NULL)
+						.description("메시지"),
+					fieldWithPath("data").type(JsonFieldType.BOOLEAN)
+						.description("로그아웃 성공 값")
+				)));
 	}
 }

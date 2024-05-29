@@ -13,6 +13,7 @@ import project.tosstock.common.jwt.TokenType;
 import project.tosstock.member.application.domain.model.JwtTokenDto;
 import project.tosstock.member.application.port.in.AuthUseCase;
 import project.tosstock.member.application.port.in.LoginUseCase;
+import project.tosstock.member.application.port.out.DeleteTokenPort;
 import project.tosstock.member.application.port.out.LoginPort;
 import project.tosstock.member.application.port.out.SaveTokenPort;
 
@@ -25,6 +26,7 @@ public class AuthService implements LoginUseCase, AuthUseCase {
 
 	private final LoginPort loginPort;
 	private final SaveTokenPort saveTokenPort;
+	private final DeleteTokenPort deleteTokenPort;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -39,6 +41,16 @@ public class AuthService implements LoginUseCase, AuthUseCase {
 		saveTokenPort.save(email, address, jwtTokenDto.getRefreshToken());
 
 		return jwtTokenDto;
+	}
+
+	@Override
+	public void logout(String email, String address) {
+		deleteTokenPort.deleteOne(email, address);
+	}
+
+	@Override
+	public void logoutAll(String email) {
+		deleteTokenPort.deleteAll(email);
 	}
 
 	@Override
