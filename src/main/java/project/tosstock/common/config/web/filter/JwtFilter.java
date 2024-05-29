@@ -1,7 +1,6 @@
 package project.tosstock.common.config.web.filter;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -29,13 +28,5 @@ public class JwtFilter extends OncePerRequestFilter {
 
 		jwtTokenProvider.verifyToken(request.getHeader(header));
 		filterChain.doFilter(request, response);
-	}
-
-	@Override
-	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-		String[] excludePath = {"/api/v1/member/*", "/api/v1/login", "/api/v1/auth/*"};
-		String path = request.getRequestURI();
-
-		return Arrays.stream(excludePath).anyMatch(path::startsWith);
 	}
 }
