@@ -2,8 +2,6 @@ package project.tosstock.member.adapter.out.persistence;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
@@ -18,49 +16,51 @@ class RedisAuthTokenRepositoryTest extends IntegrationTestSupport {
 	private RedisAuthTokenRepository redisAuthTokenRepository;
 
 	@Test
-	@DisplayName(value = "Id와 token, expired time을 redis hash 구조로 저장합니다.")
+	@DisplayName(value = "Email(key), Address(hashKey), Token(value) 을 가진 Map 자료구조로 저장합니다.")
 	void save() {
 		// given
 		String email = "waterkite94@gmail.com";
 		String token = "token";
-		LocalDateTime time = LocalDateTime.now();
-		String convertTime = convertDateTimeToString(time);
+		String address = "1";
 
 		// when
-		redisAuthTokenRepository.save(email, token, time);
+		redisAuthTokenRepository.save(email, address, token);
 
 		// then
-		Optional<LocalDateTime> findTimeByIdAndTokenOptional
-			= redisAuthTokenRepository.findTimeByIdAndToken(email, token);
+		Optional<String> findTokenByEmailAndAddress
+			= redisAuthTokenRepository.findTokenByEmailAndAddress(email, address);
 
-		assertThat(findTimeByIdAndTokenOptional).isPresent()
-			.hasValueSatisfying(s -> assertThat(convertDateTimeToString(s)).isEqualTo(convertTime));
+		assertThat(findTokenByEmailAndAddress).isPresent()
+			.hasValueSatisfying(s -> assertThat(s).isEqualTo(token));
 	}
 
 	@Test
-	@DisplayName(value = "한개의 key값에 저장된 토큰 값 여러개 중 지정된 토큰 한개만 삭제합니다.")
+	@DisplayName(value = "한개의 key값에 저장된 주소 값 여러개 중 하나의 주소 값에 대한 토큰을 삭제합니다.")
 	void delete_token_one() {
 		// given
 		String email = "waterkite94@gmail.com";
-		String token1 = "token1";
-		String token2 = "token2";
+		String address1 = "1";
+		String address2 = "2";
 
-		LocalDateTime time = LocalDateTime.now();
+		String token1 = "1234";
+		String token2 = "5678";
 
-		redisAuthTokenRepository.save(email, token1, time);
-		redisAuthTokenRepository.save(email, token2, time);
+		redisAuthTokenRepository.save(email, address1, token1);
+		redisAuthTokenRepository.save(email, address2, token2);
 
 		// when
-		redisAuthTokenRepository.delete(email, token1);
+		redisAuthTokenRepository.delete(email, address1);
 
 		// then
-		Optional<LocalDateTime> findTimeByIdAndToken = redisAuthTokenRepository.findTimeByIdAndToken(email, token1);
+		Optional<String> findTokenByEmailAndAddress
+			= redisAuthTokenRepository.findTokenByEmailAndAddress(email, address1);
 
-		assertThat(findTimeByIdAndToken).isEmpty();
+		assertThat(findTokenByEmailAndAddress).isEmpty();
 
-		Optional<LocalDateTime> findTimeByIdAndToken2 = redisAuthTokenRepository.findTimeByIdAndToken(email, token2);
-		assertThat(findTimeByIdAndToken2).isPresent()
-			.hasValueSatisfying(s -> assertThat(convertDateTimeToString(s)).isEqualTo(convertDateTimeToString(time)));
+		Optional<String> findTokenByEmailAndAddress2
+			= redisAuthTokenRepository.findTokenByEmailAndAddress(email, address2);
+		assertThat(findTokenByEmailAndAddress2).isPresent()
+			.hasValueSatisfying(s -> assertThat(s).isEqualTo(token2));
 	}
 
 	@Test
@@ -68,27 +68,25 @@ class RedisAuthTokenRepositoryTest extends IntegrationTestSupport {
 	void delete_token_all() {
 		// given
 		String email = "waterkite94@gmail.com";
-		String token1 = "token1";
-		String token2 = "token2";
+		String address1 = "1234";
+		String address2 = "5678";
 
-		LocalDateTime time = LocalDateTime.now();
+		String token1 = "1234";
+		String token2 = "5678";
 
-		redisAuthTokenRepository.save(email, token1, time);
-		redisAuthTokenRepository.save(email, token2, time);
+		redisAuthTokenRepository.save(email, address1, token1);
+		redisAuthTokenRepository.save(email, address2, token2);
 
 		// when
 		redisAuthTokenRepository.deleteAll(email);
 
 		// then
-		Optional<LocalDateTime> findTimeByIdAndToken1 = redisAuthTokenRepository.findTimeByIdAndToken(email, token1);
-		assertThat(findTimeByIdAndToken1).isEmpty();
+		Optional<String> findTokenByEmailAndAddress = redisAuthTokenRepository.findTokenByEmailAndAddress(email,
+			token1);
+		assertThat(findTokenByEmailAndAddress).isEmpty();
 
-		Optional<LocalDateTime> findTimeByIdAndToken2 = redisAuthTokenRepository.findTimeByIdAndToken(email, token2);
-		assertThat(findTimeByIdAndToken2).isEmpty();
-	}
-
-	private String convertDateTimeToString(LocalDateTime time) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		return time.format(formatter);
+		Optional<String> findTokenByEmailAndAddress2 = redisAuthTokenRepository.findTokenByEmailAndAddress(email,
+			token2);
+		assertThat(findTokenByEmailAndAddress2).isEmpty();
 	}
 }

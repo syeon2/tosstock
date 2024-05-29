@@ -2,7 +2,6 @@ package project.tosstock.member.application.domain.service;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -49,23 +48,24 @@ class AuthServiceTest extends IntegrationTestSupport {
 		// given
 		String email = "waterkite94@gmail.com";
 		String password = "12345678";
+		String address = "1";
 
 		MemberEntity member = createMember(email, password);
 		memberRepository.save(member);
 
 		// when
-		JwtTokenDto tokenDto = authService.login(email, password);
+		JwtTokenDto tokenDto = authService.login(email, password, address);
 
 		// then
 		assertThat(tokenDto).isNotNull();
 		assertThat(tokenDto.getAccessToken()).isInstanceOf(String.class);
 		assertThat(tokenDto.getRefreshToken()).isInstanceOf(String.class);
 
-		Optional<LocalDateTime> findTimeByEmailAndToken = redisAuthTokenRepository.findTimeByIdAndToken(email,
-			tokenDto.getRefreshToken());
+		Optional<String> findTokenByEmailAndAddress = redisAuthTokenRepository.findTokenByEmailAndAddress(email,
+			address);
 
-		assertThat(findTimeByEmailAndToken).isPresent()
-			.hasValueSatisfying(obj -> assertThat(obj).isInstanceOf(LocalDateTime.class));
+		assertThat(findTokenByEmailAndAddress).isPresent()
+			.hasValueSatisfying(s -> assertThat(s).isEqualTo(tokenDto.getRefreshToken()));
 	}
 
 	@Test
@@ -74,14 +74,16 @@ class AuthServiceTest extends IntegrationTestSupport {
 		// given
 		String email = "waterkite94@gmail.com";
 		String password = "12345678";
+		String address = "1";
 
 		// when  // then
-		assertThatThrownBy(() -> authService.login(email, password))
+		assertThatThrownBy(() -> authService.login(email, password, address))
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessage("존재하지 않는 이메일입니다.");
 	}
 
 	@Test
+	@DisplayName(value = "비밀번호가 일치하지 않으면 예외를 반환합니다.")
 	void login_exception_wrong_password() {
 		// given
 		String email = "waterkite94@gmail.com";
@@ -91,7 +93,7 @@ class AuthServiceTest extends IntegrationTestSupport {
 		memberRepository.save(member);
 
 		// when  // then
-		assertThatThrownBy(() -> authService.login(email, "11111111"))
+		assertThatThrownBy(() -> authService.login(email, "11111111", "1"))
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessage("잘못된 비밀번호입니다.");
 	}

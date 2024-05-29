@@ -39,18 +39,20 @@ class AuthControllerTest extends ControllerTestSupport {
 	private LoginUseCase loginUseCase;
 
 	@Test
-	@DisplayName(value = "이메일과 비밀번호를 받아 로그인에 성공합니다.")
+	@DisplayName(value = "이메일과 비밀번호, 기기 주소를 받아 로그인에 성공합니다.")
 	void login() throws Exception {
 		// given
 		String email = "waterkite94@gmail.com";
 		String password = "12345678";
+		String address = "1";
 
 		LoginRequest request = LoginRequest.builder()
 			.email(email)
 			.password(password)
+			.address(address)
 			.build();
 
-		given(loginUseCase.login(email, password))
+		given(loginUseCase.login(email, password, address))
 			.willReturn(JwtTokenDto.builder()
 				.accessToken("accessToken")
 				.refreshToken("refreshToken")
@@ -77,7 +79,9 @@ class AuthControllerTest extends ControllerTestSupport {
 					fieldWithPath("email").type(JsonFieldType.STRING)
 						.description("이메일"),
 					fieldWithPath("password").type(JsonFieldType.STRING)
-						.description("비밀번호")
+						.description("비밀번호"),
+					fieldWithPath("address").type(JsonFieldType.STRING)
+						.description("기기 주소")
 				),
 				responseFields(
 					fieldWithPath("status").type(JsonFieldType.NUMBER)
@@ -101,6 +105,7 @@ class AuthControllerTest extends ControllerTestSupport {
 		LoginRequest request = LoginRequest.builder()
 			.email("waterkite")
 			.password("12345678")
+			.address("1")
 			.build();
 
 		// when  // then
@@ -122,6 +127,7 @@ class AuthControllerTest extends ControllerTestSupport {
 		LoginRequest request = LoginRequest.builder()
 			.email("")
 			.password("12345678")
+			.address("1")
 			.build();
 
 		// when  // then
@@ -142,6 +148,7 @@ class AuthControllerTest extends ControllerTestSupport {
 		// given
 		LoginRequest request = LoginRequest.builder()
 			.email("waterkite04@gmail.com")
+			.address("1")
 			.build();
 
 		// when  // then
@@ -163,6 +170,7 @@ class AuthControllerTest extends ControllerTestSupport {
 		LoginRequest request = LoginRequest.builder()
 			.email("waterkite04@gmail.com")
 			.password("1234567")
+			.address("1")
 			.build();
 
 		// when  // then
@@ -184,6 +192,7 @@ class AuthControllerTest extends ControllerTestSupport {
 		LoginRequest request = LoginRequest.builder()
 			.email("waterkite04@gmail.com")
 			.password("123456789012345678901")
+			.address("1")
 			.build();
 
 		// when  // then
@@ -195,6 +204,27 @@ class AuthControllerTest extends ControllerTestSupport {
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.status").value(400))
 			.andExpect(jsonPath("$.message").value("비밀번호는 8 ~ 20 자리입니다."))
+			.andExpect(jsonPath("$.data").isEmpty());
+	}
+
+	@Test
+	@DisplayName(value = "기기 주소는 필수 값입니다.")
+	void login_exception_null_address() throws Exception {
+		// given
+		LoginRequest request = LoginRequest.builder()
+			.email("waterkite04@gmail.com")
+			.password("12345678")
+			.build();
+
+		// when  // then
+		mockMvc.perform(
+				get("/api/v1/login")
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.status").value(400))
+			.andExpect(jsonPath("$.message").value("기기 주소는 필수 값입니다."))
 			.andExpect(jsonPath("$.data").isEmpty());
 	}
 }

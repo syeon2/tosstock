@@ -21,9 +21,13 @@ public class LoginRequest {
 	@NotBlank(message = "비밀번호는 필수 값입니다.")
 	private String password;
 
+	@NotBlank(message = "기기 주소는 필수 값입니다.")
+	private String address;
+
 	@Builder
-	private LoginRequest(String email, String password) {
+	private LoginRequest(String email, String password, String address) {
 		this.email = email;
 		this.password = password;
+		this.address = address;
 	}
 }

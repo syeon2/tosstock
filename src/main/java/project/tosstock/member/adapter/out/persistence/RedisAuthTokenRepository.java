@@ -1,7 +1,5 @@
 package project.tosstock.member.adapter.out.persistence;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Optional;
 
@@ -19,46 +17,29 @@ public class RedisAuthTokenRepository {
 		this.redisTemplate = redisTemplate;
 	}
 
-	public void save(String email, String token, LocalDateTime time) {
-		String format = convertDateTimeToString(time);
-
-		Boolean result = redisTemplate.opsForHash().putIfAbsent(email, token, format);
+	public void save(String email, String address, String token) {
+		Boolean result = redisTemplate.opsForHash().putIfAbsent(email, address, token);
 
 		if (!result) {
-			redisTemplate.opsForHash().put(email, token, format);
+			redisTemplate.opsForHash().put(email, address, token);
 		}
 	}
 
-	public Optional<LocalDateTime> findTimeByIdAndToken(String email, String token) {
-		String expiredTime = (String)redisTemplate.opsForHash().get(email, token);
+	public Optional<String> findTokenByEmailAndAddress(String email, String address) {
+		String token = (String)redisTemplate.opsForHash().get(email, address);
 
-		if (expiredTime == null) {
-			return Optional.empty();
-		}
-
-		LocalDateTime convertStringToLocalDateTime = convertStringToLocalDateTime(expiredTime);
-		return Optional.of(convertStringToLocalDateTime);
+		return Optional.ofNullable(token);
 	}
 
-	public void delete(String email, String token) {
-		redisTemplate.opsForHash().delete(email, token);
+	public void delete(String email, String address) {
+		redisTemplate.opsForHash().delete(email, address);
 	}
 
 	public void deleteAll(String email) {
 		Map<Object, Object> entries = redisTemplate.opsForHash().entries(email);
 
-		for (Object hashKey : entries.keySet()) {
-			redisTemplate.opsForHash().delete(email, hashKey);
+		for (Object address : entries.keySet()) {
+			redisTemplate.opsForHash().delete(email, address);
 		}
-	}
-
-	private LocalDateTime convertStringToLocalDateTime(String time) {
-		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		return LocalDateTime.parse(time, dateFormat);
-	}
-
-	private String convertDateTimeToString(LocalDateTime time) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		return time.format(formatter);
 	}
 }

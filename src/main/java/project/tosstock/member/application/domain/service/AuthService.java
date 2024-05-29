@@ -1,6 +1,5 @@
 package project.tosstock.member.application.domain.service;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,21 +26,22 @@ public class AuthService implements LoginUseCase {
 
 	@Override
 	@Transactional(readOnly = true)
-	public JwtTokenDto login(String email, String password) {
+	public JwtTokenDto login(String email, String password, String address) {
 		boolean result = passwordEncoder.matches(password, findPasswordByEmail(email));
 
-		if (result) {
-			return createJwtTokenDto(email);
+		if (!result) {
+			throw new IllegalArgumentException("잘못된 비밀번호입니다.");
 		}
 
-		throw new IllegalArgumentException("잘못된 비밀번호입니다.");
+		JwtTokenDto jwtTokenDto = createJwtTokenDto(email);
+		saveTokenPort.save(email, address, jwtTokenDto.getRefreshToken());
+
+		return jwtTokenDto;
 	}
 
 	private JwtTokenDto createJwtTokenDto(String email) {
 		String accessToken = jwtTokenProvider.createToken(email, TokenType.ACCESS_TOKEN);
 		String refreshToken = jwtTokenProvider.createToken(email, TokenType.REFRESH_TOKEN);
-
-		saveTokenPort.save(email, refreshToken, LocalDateTime.now().plusDays(1));
 
 		return JwtTokenDto.builder()
 			.accessToken(accessToken)

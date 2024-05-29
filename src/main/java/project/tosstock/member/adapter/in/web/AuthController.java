@@ -22,7 +22,7 @@ public class AuthController {
 
 	@GetMapping("/api/v1/login")
 	public ApiResult<JwtTokenResponse> login(@Valid @RequestBody LoginRequest request) {
-		JwtTokenDto tokenDto = loginUseCase.login(request.getEmail(), request.getPassword());
+		JwtTokenDto tokenDto = loginUseCase.login(request.getEmail(), request.getPassword(), request.getAddress());
 
 		return ApiResult.ok(JwtTokenResponse.toRequest(tokenDto));
 	}
