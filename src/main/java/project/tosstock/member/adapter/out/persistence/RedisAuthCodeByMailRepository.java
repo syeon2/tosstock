@@ -6,23 +6,23 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
-@Component
-public class RedisAuthCodeToJoinMemberRepository {
+@Repository
+public class RedisAuthCodeByMailRepository {
 
-	@Value("${spring.data.redis_mail.expire_minutes}")
-	private Integer expireMinutes;
+	@Value("${spring.data.redis-mail.expiration-minutes}")
+	private Integer expirationMinutes;
 
 	private final RedisTemplate<String, String> redisTemplate;
 
-	public RedisAuthCodeToJoinMemberRepository(
-		@Qualifier(value = "redisAuthCodeForMailTemplate") RedisTemplate<String, String> redisTemplate) {
+	public RedisAuthCodeByMailRepository(
+		@Qualifier(value = "redisAuthCodeByMailTemplate") RedisTemplate<String, String> redisTemplate) {
 		this.redisTemplate = redisTemplate;
 	}
 
 	public void save(String email, String code) {
-		redisTemplate.opsForValue().set(email, code, expireMinutes, TimeUnit.MINUTES);
+		redisTemplate.opsForValue().set(email, code, expirationMinutes, TimeUnit.MINUTES);
 	}
 
 	public Optional<String> findCodeByEmail(String email) {

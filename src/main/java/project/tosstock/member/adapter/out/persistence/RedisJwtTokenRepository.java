@@ -8,12 +8,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class RedisAuthTokenRepository {
+public class RedisJwtTokenRepository {
 
 	private final RedisTemplate<String, Object> redisTemplate;
 
-	public RedisAuthTokenRepository(
-		@Qualifier(value = "redisAuthTokenTemplate") RedisTemplate<String, Object> redisTemplate) {
+	public RedisJwtTokenRepository(
+		@Qualifier(value = "redisJwtTokenTemplate") RedisTemplate<String, Object> redisTemplate) {
 		this.redisTemplate = redisTemplate;
 	}
 

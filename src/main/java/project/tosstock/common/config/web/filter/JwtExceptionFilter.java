@@ -20,7 +20,7 @@ import project.tosstock.common.wrapper.ApiResult;
 
 @Component
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class JwtExceptionFilter extends OncePerRequestFilter {
 
 	private final ObjectMapper objectMapper;
 

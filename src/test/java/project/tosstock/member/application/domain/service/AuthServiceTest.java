@@ -15,7 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import project.tosstock.IntegrationTestSupport;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
-import project.tosstock.member.adapter.out.persistence.RedisAuthTokenRepository;
+import project.tosstock.member.adapter.out.persistence.RedisJwtTokenRepository;
 import project.tosstock.member.application.domain.model.JwtTokenDto;
 
 class AuthServiceTest extends IntegrationTestSupport {
@@ -27,10 +27,10 @@ class AuthServiceTest extends IntegrationTestSupport {
 	private MemberRepository memberRepository;
 
 	@Autowired
-	private RedisAuthTokenRepository redisAuthTokenRepository;
+	private RedisJwtTokenRepository redisJwtTokenRepository;
 
 	@Autowired
-	@Qualifier(value = "redisAuthTokenTemplate")
+	@Qualifier(value = "redisJwtTokenTemplate")
 	private RedisTemplate<String, Object> redisAuthTokenTemplate;
 
 	@Autowired
@@ -61,7 +61,7 @@ class AuthServiceTest extends IntegrationTestSupport {
 		assertThat(tokenDto.getAccessToken()).isInstanceOf(String.class);
 		assertThat(tokenDto.getRefreshToken()).isInstanceOf(String.class);
 
-		Optional<String> findTokenByEmailAndAddress = redisAuthTokenRepository.findTokenByEmailAndAddress(email,
+		Optional<String> findTokenByEmailAndAddress = redisJwtTokenRepository.findTokenByEmailAndAddress(email,
 			address);
 
 		assertThat(findTokenByEmailAndAddress).isPresent()
@@ -112,7 +112,7 @@ class AuthServiceTest extends IntegrationTestSupport {
 
 		// when
 		Optional<String> findTokenByEmailAndAddress
-			= redisAuthTokenRepository.findTokenByEmailAndAddress(email, address);
+			= redisJwtTokenRepository.findTokenByEmailAndAddress(email, address);
 
 		assertThat(findTokenByEmailAndAddress).isPresent()
 			.hasValueSatisfying(s -> assertThat(s).isEqualTo(tokenDto.getRefreshToken()));
@@ -121,7 +121,7 @@ class AuthServiceTest extends IntegrationTestSupport {
 		authService.logout(email, address);
 
 		Optional<String> findTokenByEmailAndAddress1
-			= redisAuthTokenRepository.findTokenByEmailAndAddress(email, address);
+			= redisJwtTokenRepository.findTokenByEmailAndAddress(email, address);
 
 		assertThat(findTokenByEmailAndAddress1).isEmpty();
 	}
@@ -141,22 +141,22 @@ class AuthServiceTest extends IntegrationTestSupport {
 		JwtTokenDto tokenDto2 = authService.login(email, password, address2);
 
 		// when
-		assertThat(redisAuthTokenRepository.findTokenByEmailAndAddress(email, address1)).isPresent()
+		assertThat(redisJwtTokenRepository.findTokenByEmailAndAddress(email, address1)).isPresent()
 			.hasValueSatisfying(s -> assertThat(s).isEqualTo(tokenDto1.getRefreshToken()));
 
-		assertThat(redisAuthTokenRepository.findTokenByEmailAndAddress(email, address2)).isPresent()
+		assertThat(redisJwtTokenRepository.findTokenByEmailAndAddress(email, address2)).isPresent()
 			.hasValueSatisfying(s -> assertThat(s).isEqualTo(tokenDto2.getRefreshToken()));
 
 		// then
 		authService.logoutAll(email);
 
 		Optional<String> findTokenByEmailAndAddress2
-			= redisAuthTokenRepository.findTokenByEmailAndAddress(email, address1);
+			= redisJwtTokenRepository.findTokenByEmailAndAddress(email, address1);
 
 		assertThat(findTokenByEmailAndAddress2).isEmpty();
 
 		Optional<String> findTokenByEmailAndAddress3
-			= redisAuthTokenRepository.findTokenByEmailAndAddress(email, address2);
+			= redisJwtTokenRepository.findTokenByEmailAndAddress(email, address2);
 
 		assertThat(findTokenByEmailAndAddress3).isEmpty();
 	}

@@ -10,32 +10,28 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
-public class RedisAuthTokenConfig {
+public class RedisAuthCodeByMailConfig {
 
-	@Value(value = "${spring.data.redis_token.host}")
+	@Value("${spring.data.redis-mail.host}")
 	private String host;
 
-	@Value(value = "${spring.data.redis_token.port}")
+	@Value("${spring.data.redis-mail.port}")
 	private Integer port;
 
 	@Bean
-	@Qualifier(value = "redisAuthTokenConnectionFactory")
-	public RedisConnectionFactory redisAuthTokenConnectionFactory() {
+	@Qualifier(value = "redisAuthCodeByMailConnectionFactory")
+	public RedisConnectionFactory redisAuthCodeByMailConnectionFactory() {
 		return new LettuceConnectionFactory(host, port);
 	}
 
 	@Bean
-	@Qualifier(value = "redisAuthTokenTemplate")
-	public RedisTemplate<String, Object> redisTemplate(
-		@Qualifier(value = "redisAuthTokenConnectionFactory") RedisConnectionFactory redisAuthTokenConnectionFactory
-	) {
-		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+	@Qualifier(value = "redisAuthCodeByMailTemplate")
+	public RedisTemplate<String, String> redisAuthCodeByMailTemplate() {
+		RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
 
-		redisTemplate.setConnectionFactory(redisAuthTokenConnectionFactory);
+		redisTemplate.setConnectionFactory(redisAuthCodeByMailConnectionFactory());
 		redisTemplate.setKeySerializer(new StringRedisSerializer());
 		redisTemplate.setValueSerializer(new StringRedisSerializer());
-		redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-		redisTemplate.setHashValueSerializer(new StringRedisSerializer());
 
 		return redisTemplate;
 	}

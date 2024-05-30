@@ -15,7 +15,7 @@ import project.tosstock.common.jwt.JwtTokenProvider;
 
 @Component
 @RequiredArgsConstructor
-public class JwtFilter extends OncePerRequestFilter {
+public class JwtVerificationFilter extends OncePerRequestFilter {
 
 	@Value("${jwt.header}")
 	private String header;

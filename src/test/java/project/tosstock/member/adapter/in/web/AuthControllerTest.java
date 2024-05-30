@@ -20,8 +20,8 @@ import org.springframework.restdocs.payload.JsonFieldType;
 
 import project.tosstock.ControllerTestSupport;
 import project.tosstock.common.config.web.WebConfig;
-import project.tosstock.common.config.web.filter.JwtAuthenticationFilter;
-import project.tosstock.common.config.web.filter.JwtFilter;
+import project.tosstock.common.config.web.filter.JwtExceptionFilter;
+import project.tosstock.common.config.web.filter.JwtVerificationFilter;
 import project.tosstock.member.adapter.in.web.request.LoginRequest;
 import project.tosstock.member.adapter.in.web.request.LogoutAllRequest;
 import project.tosstock.member.adapter.in.web.request.LogoutRequest;
@@ -33,8 +33,8 @@ import project.tosstock.member.application.port.in.LoginUseCase;
 	controllers = AuthController.class,
 	excludeFilters = {
 		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebConfig.class),
-		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtFilter.class),
-		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtAuthenticationFilter.class)
+		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtVerificationFilter.class),
+		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtExceptionFilter.class)
 	}
 )
 class AuthControllerTest extends ControllerTestSupport {

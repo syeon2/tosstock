@@ -14,11 +14,11 @@ spring:
         show_sql: true
 
   data:
-    redis_mail:
+    redis-mail:
       host: localhost
       port: 6379
-      expire_minutes: 5
-    redis_token:
+      expiration-minutes: 5
+    redis-token:
       host: localhost
       port: 6380
 
@@ -31,6 +31,6 @@ jwt:
   header: x-auth-token
   secret-key: ${JWT_SECRET_KEY}
   access-token:
-    expired-minutes: 5
+    expiration-minutes: 5
   refresh-token:
-    expired-minutes: 43200 # 30 days
+    expiration-minutes: 43200 # 30 days

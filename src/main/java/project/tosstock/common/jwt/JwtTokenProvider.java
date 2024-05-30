@@ -23,10 +23,10 @@ public class JwtTokenProvider {
 	@Value("${jwt.secret-key}")
 	private String secretKey;
 
-	@Value("${jwt.access-token.expired-minutes}")
+	@Value("${jwt.access-token.expiration-minutes}")
 	private Integer accessTokenExpiredMinutes;
 
-	@Value("${jwt.refresh-token.expired-minutes}")
+	@Value("${jwt.refresh-token.expiration-minutes}")
 	private Integer refreshTokenExpiredMinutes;
 
 	private static final String PAYLOAD_KEY = "TOSSTOCK";
