@@ -27,8 +27,8 @@ import project.tosstock.member.adapter.in.web.request.ChangePasswordRequest;
 import project.tosstock.member.adapter.in.web.request.ChangeProfileImageUrlRequest;
 import project.tosstock.member.adapter.in.web.request.ChangeUsernameRequest;
 import project.tosstock.member.adapter.in.web.request.JoinMemberRequest;
-import project.tosstock.member.application.port.in.EmailForMemberUseCase;
 import project.tosstock.member.application.port.in.JoinMemberUseCase;
+import project.tosstock.member.application.port.in.SendAuthCodeByMailUseCase;
 import project.tosstock.member.application.port.in.UpdateMemberUseCase;
 
 @WebMvcTest(
@@ -45,7 +45,7 @@ class MemberControllerTest extends ControllerTestSupport {
 	private JoinMemberUseCase joinMemberUseCase;
 
 	@MockBean
-	private EmailForMemberUseCase emailForMemberUseCase;
+	private SendAuthCodeByMailUseCase sendAuthCodeByMailUseCase;
 
 	@MockBean
 	private UpdateMemberUseCase updateMemberUseCase;
@@ -296,7 +296,7 @@ class MemberControllerTest extends ControllerTestSupport {
 
 		// when // then
 		mockMvc.perform(
-				post("/api/v1/emails/verification-requests")
+				post("/api/v1/members/emails/verification-requests")
 					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
@@ -366,7 +366,7 @@ class MemberControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				post("/api/v1/member/{id}/profile_image_url", 1)
+				post("/api/v1/member/{id}/profile-image-url", 1)
 					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON)
 			)
@@ -374,7 +374,7 @@ class MemberControllerTest extends ControllerTestSupport {
 			.andExpect(jsonPath("$.status").isNumber())
 			.andExpect(jsonPath("$.message").isEmpty())
 			.andExpect(jsonPath("$.data").isBoolean())
-			.andDo(document("member-update-profile_image_url",
+			.andDo(document("member-update-profile-image-url",
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				pathParameters(

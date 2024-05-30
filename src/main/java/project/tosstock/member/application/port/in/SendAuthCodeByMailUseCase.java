@@ -1,6 +1,6 @@
 package project.tosstock.member.application.port.in;
 
-public interface EmailForMemberUseCase {
+public interface SendAuthCodeByMailUseCase {
 
 	boolean sendEmail(String toEmail);
 }

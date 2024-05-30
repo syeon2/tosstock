@@ -1,7 +1,5 @@
 package project.tosstock.member.application.domain.service;
 
-import java.util.Optional;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +11,7 @@ import project.tosstock.common.jwt.TokenType;
 import project.tosstock.member.application.domain.model.JwtTokenDto;
 import project.tosstock.member.application.port.in.AuthUseCase;
 import project.tosstock.member.application.port.in.LoginUseCase;
-import project.tosstock.member.application.port.out.DeleteTokenPort;
+import project.tosstock.member.application.port.out.DeleteJwtTokenPort;
 import project.tosstock.member.application.port.out.LoginPort;
 import project.tosstock.member.application.port.out.SaveTokenPort;
 
@@ -26,7 +24,7 @@ public class AuthService implements LoginUseCase, AuthUseCase {
 
 	private final LoginPort loginPort;
 	private final SaveTokenPort saveTokenPort;
-	private final DeleteTokenPort deleteTokenPort;
+	private final DeleteJwtTokenPort deleteJwtTokenPort;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -45,12 +43,12 @@ public class AuthService implements LoginUseCase, AuthUseCase {
 
 	@Override
 	public void logout(String email, String address) {
-		deleteTokenPort.deleteOne(email, address);
+		deleteJwtTokenPort.deleteOne(email, address);
 	}
 
 	@Override
 	public void logoutAll(String email) {
-		deleteTokenPort.deleteAll(email);
+		deleteJwtTokenPort.deleteAll(email);
 	}
 
 	@Override
@@ -91,11 +89,6 @@ public class AuthService implements LoginUseCase, AuthUseCase {
 	}
 
 	private String findPasswordByEmail(String email) {
-		Optional<String> findPasswordOptional = loginPort.findPasswordByEmail(email);
-
-		if (findPasswordOptional.isEmpty()) {
-			throw new IllegalArgumentException("존재하지 않는 이메일입니다.");
-		}
-		return findPasswordOptional.get();
+		return loginPort.findPasswordByEmail(email);
 	}
 }

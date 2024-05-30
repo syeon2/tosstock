@@ -1,6 +1,6 @@
 package project.tosstock.member.application.port.out;
 
-public interface DeleteTokenPort {
+public interface DeleteJwtTokenPort {
 
 	void deleteOne(String email, String address);
 

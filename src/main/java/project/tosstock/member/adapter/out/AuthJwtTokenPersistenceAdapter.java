@@ -3,12 +3,12 @@ package project.tosstock.member.adapter.out;
 import lombok.RequiredArgsConstructor;
 import project.tosstock.common.annotation.PersistenceAdapter;
 import project.tosstock.member.adapter.out.persistence.RedisJwtTokenRepository;
-import project.tosstock.member.application.port.out.DeleteTokenPort;
+import project.tosstock.member.application.port.out.DeleteJwtTokenPort;
 import project.tosstock.member.application.port.out.SaveTokenPort;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
-public class AuthTokenPersistenceAdapter implements SaveTokenPort, DeleteTokenPort {
+public class AuthJwtTokenPersistenceAdapter implements SaveTokenPort, DeleteJwtTokenPort {
 
 	private final RedisJwtTokenRepository redisJwtTokenRepository;
 

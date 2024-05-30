@@ -11,7 +11,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import project.tosstock.IntegrationTestSupport;
-import project.tosstock.member.application.port.out.AuthCodeForMemberPort;
+import project.tosstock.member.application.port.out.AuthCodeByMailPort;
 
 class MailServiceTest extends IntegrationTestSupport {
 
@@ -22,7 +22,7 @@ class MailServiceTest extends IntegrationTestSupport {
 	private JavaMailSender javaMailSender;
 
 	@MockBean
-	private AuthCodeForMemberPort authCodeForMemberPort;
+	private AuthCodeByMailPort authCodeByMailPort;
 
 	@Test
 	@DisplayName(value = "이메일 주소를 받아 인증번호를 보냅니다.")
@@ -30,7 +30,7 @@ class MailServiceTest extends IntegrationTestSupport {
 		// given
 		String email = "waterkite94@gmail.com";
 		doNothing().when(javaMailSender).send(any(SimpleMailMessage.class));
-		doNothing().when(authCodeForMemberPort).saveAuthCode(anyString(), anyString());
+		doNothing().when(authCodeByMailPort).saveAuthCode(anyString(), anyString());
 
 		// when
 		boolean result = mailService.sendEmail(email);

@@ -2,9 +2,9 @@ package project.tosstock.member.application.port.out;
 
 import java.util.Optional;
 
-public interface AuthCodeForMemberPort {
+public interface AuthCodeByMailPort {
 
 	void saveAuthCode(String email, String code);
 
-	Optional<String> findAuthCodeByEmail(String email);
+	Optional<String> findAuthCodeByMail(String email);
 }

@@ -14,11 +14,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import project.tosstock.IntegrationTestSupport;
-import project.tosstock.common.error.exception.DuplicateAccountException;
+import project.tosstock.common.error.exception.DuplicatedAccountException;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
 import project.tosstock.member.application.domain.model.Member;
-import project.tosstock.member.application.port.out.AuthCodeForMemberPort;
+import project.tosstock.member.application.port.out.AuthCodeByMailPort;
 
 class MemberServiceTest extends IntegrationTestSupport {
 
@@ -32,7 +32,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 	private PasswordEncoder passwordEncoder;
 
 	@MockBean
-	private AuthCodeForMemberPort authCodeForMemberPort;
+	private AuthCodeByMailPort authCodeByMailPort;
 
 	@BeforeEach
 	void before() {
@@ -46,7 +46,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 		Member member = createMember("waterkite94@gmail.com", "01011112222");
 		String authCode = "000000";
 
-		given(authCodeForMemberPort.findAuthCodeByEmail(anyString()))
+		given(authCodeByMailPort.findAuthCodeByMail(anyString()))
 			.willReturn(Optional.of(authCode));
 
 		// when
@@ -66,7 +66,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 		Member member1 = createMember(email, "01011112222");
 		String authCode = "000000";
 
-		given(authCodeForMemberPort.findAuthCodeByEmail(anyString()))
+		given(authCodeByMailPort.findAuthCodeByMail(anyString()))
 			.willReturn(Optional.of(authCode));
 
 		memberService.joinMember(member1, authCode);
@@ -76,7 +76,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
 		// then
 		assertThatThrownBy(() -> memberService.joinMember(member2, authCode))
-			.isInstanceOf(DuplicateAccountException.class)
+			.isInstanceOf(DuplicatedAccountException.class)
 			.hasMessage("이미 존재하는 이메일입니다.");
 	}
 
@@ -89,7 +89,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 		Member member1 = createMember(email, phoneNumber);
 
 		String authCode = "000000";
-		given(authCodeForMemberPort.findAuthCodeByEmail(anyString()))
+		given(authCodeByMailPort.findAuthCodeByMail(anyString()))
 			.willReturn(Optional.of(authCode));
 
 		memberService.joinMember(member1, authCode);
@@ -99,7 +99,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
 		// then
 		assertThatThrownBy(() -> memberService.joinMember(member2, authCode))
-			.isInstanceOf(DuplicateAccountException.class)
+			.isInstanceOf(DuplicatedAccountException.class)
 			.hasMessage("이미 가입된 전화번호입니다.");
 	}
 
@@ -119,7 +119,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
 		// when
 		String changedUsername = "kimsuyeon";
-		memberService.updateUsername(entity.getId(), changedUsername);
+		memberService.changeUsername(entity.getId(), changedUsername);
 
 		// then
 		Optional<MemberEntity> findMemberOptional = memberRepository.findById(entity.getId());
@@ -144,7 +144,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
 		// when
 		String changedUrl = "https://github.com/syeon2";
-		memberService.updateProfileImageUrl(entity.getId(), changedUrl);
+		memberService.changeProfileImageUrl(entity.getId(), changedUrl);
 
 		// then
 		Optional<MemberEntity> findMemberOptional = memberRepository.findById(entity.getId());
@@ -170,7 +170,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
 		// when
 		String changedPassword = "987654321";
-		memberService.updatePassword(entity.getId(), email, changedPassword);
+		memberService.changePassword(entity.getId(), email, changedPassword);
 
 		// then
 		Optional<MemberEntity> findMemberOptional = memberRepository.findById(entity.getId());
