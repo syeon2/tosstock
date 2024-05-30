@@ -11,10 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
-import project.tosstock.common.error.exception.UnAuthenticationTokenException;
 
 @Component
 @RequiredArgsConstructor
@@ -41,18 +39,12 @@ public class JwtTokenProvider {
 			.compact();
 	}
 
-	public Claims verifyToken(String token) throws ExpiredJwtException {
-		try {
-			return Jwts.parser()
-				.verifyWith(getSignInKey())
-				.build()
-				.parseSignedClaims(token)
-				.getPayload();
-		} catch (ExpiredJwtException exception) {
-			throw new UnAuthenticationTokenException("만료된 토큰입니다.");
-		} catch (RuntimeException e) {
-			throw new IllegalStateException("잘못된 토큰입니다.");
-		}
+	public Claims verifyToken(String token) throws RuntimeException {
+		return Jwts.parser()
+			.verifyWith(getSignInKey())
+			.build()
+			.parseSignedClaims(token)
+			.getPayload();
 	}
 
 	private SecretKeySpec getSignInKey() {

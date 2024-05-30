@@ -6,8 +6,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
-import project.tosstock.common.error.exception.UnAuthenticationTokenException;
 import project.tosstock.common.jwt.JwtTokenProvider;
 import project.tosstock.common.jwt.TokenType;
 import project.tosstock.member.application.domain.model.JwtTokenDto;
@@ -61,11 +61,13 @@ public class AuthService implements LoginUseCase, AuthUseCase {
 			saveTokenPort.mergeByEmailAndToken(email, refreshToken, jwtTokenDto.getRefreshToken());
 
 			return jwtTokenDto;
-		} catch (UnAuthenticationTokenException exception) {
+		} catch (ExpiredJwtException exception) {
 			JwtTokenDto jwtTokenDto = createJwtTokenDto(email);
 			saveTokenPort.mergeByEmailAndToken(email, refreshToken, jwtTokenDto.getRefreshToken());
 
 			return jwtTokenDto;
+		} catch (RuntimeException exception) {
+			throw new IllegalArgumentException("잘못된 토큰입니다.");
 		}
 	}
 

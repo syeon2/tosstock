@@ -33,4 +33,4 @@ jwt:
   access-token:
     expiration-minutes: 5
   refresh-token:
-    expiration-minutes: 43200 # 30 days
+    expiration-minutes: 1440 # 30 days
