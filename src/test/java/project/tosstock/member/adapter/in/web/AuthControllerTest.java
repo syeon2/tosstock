@@ -246,7 +246,7 @@ class AuthControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				get("/api/v1/auth/refresh-token")
+				post("/api/v1/auth/refresh-token")
 					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON)
 			)
@@ -289,7 +289,7 @@ class AuthControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				get("/api/v1/auth/refresh-token")
+				post("/api/v1/auth/refresh-token")
 					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON)
 			)
@@ -311,11 +311,12 @@ class AuthControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				post("/api/v1/auth/logout")
+				delete("/api/v1/auth/logout")
 					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON)
 			)
 			.andDo(print())
+			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.status").isNumber())
 			.andExpect(jsonPath("$.message").isEmpty())
 			.andExpect(jsonPath("$.data").isBoolean())
@@ -346,7 +347,7 @@ class AuthControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				post("/api/v1/auth/logout-all")
+				delete("/api/v1/auth/logout-all")
 					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON)
 			)
