@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 
@@ -29,22 +30,43 @@ public class JwtTokenProvider {
 
 	private static final String PAYLOAD_KEY = "TOSSTOCK";
 
-	public String createToken(String email, TokenType tokenType) {
+	public JwtPayloadDto getJwtPayload(String token) {
+		Claims payload;
+
+		try {
+			payload = Jwts.parser()
+				.verifyWith(getSignInKey())
+				.build()
+				.parseSignedClaims(token)
+				.getPayload();
+		} catch (ExpiredJwtException exception) {
+			payload = exception.getClaims();
+		}
+
+		return JwtPayloadDto.builder()
+			.email((String)payload.get("email"))
+			.address((String)payload.get("address"))
+			.build();
+	}
+
+	public String createToken(String email, String address, TokenType tokenType) {
 		return Jwts.builder()
 			.signWith(getSignInKey())
 			.expiration(getExpiredDate(tokenType))
 			.subject(PAYLOAD_KEY)
 			.claim("email", email)
+			.claim("address", address)
 			.claim("token_type", tokenType.toString())
 			.compact();
 	}
 
-	public Claims verifyToken(String token) throws RuntimeException {
-		return Jwts.parser()
+	public boolean verifyToken(String token) throws RuntimeException {
+		Jwts.parser()
 			.verifyWith(getSignInKey())
 			.build()
-			.parseSignedClaims(token)
-			.getPayload();
+			.parseSignedClaims(token);
+
+		return true;
 	}
 
 	private SecretKeySpec getSignInKey() {

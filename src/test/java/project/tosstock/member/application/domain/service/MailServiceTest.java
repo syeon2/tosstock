@@ -30,7 +30,7 @@ class MailServiceTest extends IntegrationTestSupport {
 		// given
 		String email = "waterkite94@gmail.com";
 		doNothing().when(javaMailSender).send(any(SimpleMailMessage.class));
-		doNothing().when(authCodeByMailPort).saveAuthCode(anyString(), anyString());
+		doNothing().when(authCodeByMailPort).save(anyString(), anyString());
 
 		// when
 		boolean result = mailService.sendEmail(email);

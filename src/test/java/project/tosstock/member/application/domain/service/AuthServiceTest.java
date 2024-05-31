@@ -15,7 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import project.tosstock.IntegrationTestSupport;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
-import project.tosstock.member.adapter.out.persistence.RedisJwtTokenRepository;
+import project.tosstock.member.adapter.out.persistence.RedisRefreshTokenRepository;
 import project.tosstock.member.application.domain.model.JwtTokenDto;
 
 class AuthServiceTest extends IntegrationTestSupport {
@@ -27,7 +27,7 @@ class AuthServiceTest extends IntegrationTestSupport {
 	private MemberRepository memberRepository;
 
 	@Autowired
-	private RedisJwtTokenRepository redisJwtTokenRepository;
+	private RedisRefreshTokenRepository redisRefreshTokenRepository;
 
 	@Autowired
 	@Qualifier(value = "redisJwtTokenTemplate")
@@ -61,7 +61,7 @@ class AuthServiceTest extends IntegrationTestSupport {
 		assertThat(tokenDto.getAccessToken()).isInstanceOf(String.class);
 		assertThat(tokenDto.getRefreshToken()).isInstanceOf(String.class);
 
-		Optional<String> findTokenByEmailAndAddress = redisJwtTokenRepository.findTokenByEmailAndAddress(email,
+		Optional<String> findTokenByEmailAndAddress = redisRefreshTokenRepository.findTokenByEmailAndAddress(email,
 			address);
 
 		assertThat(findTokenByEmailAndAddress).isPresent()
@@ -109,21 +109,19 @@ class AuthServiceTest extends IntegrationTestSupport {
 		MemberEntity member = createMember(email, password);
 		memberRepository.save(member);
 		JwtTokenDto tokenDto = authService.login(email, password, address);
+		;
 
-		// when
-		Optional<String> findTokenByEmailAndAddress
-			= redisJwtTokenRepository.findTokenByEmailAndAddress(email, address);
-
-		assertThat(findTokenByEmailAndAddress).isPresent()
+		assertThat(redisRefreshTokenRepository.findTokenByEmailAndAddress(email, address)).isPresent()
 			.hasValueSatisfying(s -> assertThat(s).isEqualTo(tokenDto.getRefreshToken()));
 
-		// then
+		// when
 		authService.logout(email, address);
 
-		Optional<String> findTokenByEmailAndAddress1
-			= redisJwtTokenRepository.findTokenByEmailAndAddress(email, address);
+		// then
+		Optional<String> findTokenByEmailAndAddress
+			= redisRefreshTokenRepository.findTokenByEmailAndAddress(email, address);
 
-		assertThat(findTokenByEmailAndAddress1).isEmpty();
+		assertThat(findTokenByEmailAndAddress).isEmpty();
 	}
 
 	@Test
@@ -140,25 +138,59 @@ class AuthServiceTest extends IntegrationTestSupport {
 		JwtTokenDto tokenDto1 = authService.login(email, password, address1);
 		JwtTokenDto tokenDto2 = authService.login(email, password, address2);
 
-		// when
-		assertThat(redisJwtTokenRepository.findTokenByEmailAndAddress(email, address1)).isPresent()
+		assertThat(redisRefreshTokenRepository.findTokenByEmailAndAddress(email, address1)).isPresent()
 			.hasValueSatisfying(s -> assertThat(s).isEqualTo(tokenDto1.getRefreshToken()));
 
-		assertThat(redisJwtTokenRepository.findTokenByEmailAndAddress(email, address2)).isPresent()
+		assertThat(redisRefreshTokenRepository.findTokenByEmailAndAddress(email, address2)).isPresent()
 			.hasValueSatisfying(s -> assertThat(s).isEqualTo(tokenDto2.getRefreshToken()));
 
-		// then
+		// when
 		authService.logoutAll(email);
 
+		// then
+		Optional<String> findTokenByEmailAndAddress1
+			= redisRefreshTokenRepository.findTokenByEmailAndAddress(email, address1);
+
 		Optional<String> findTokenByEmailAndAddress2
-			= redisJwtTokenRepository.findTokenByEmailAndAddress(email, address1);
+			= redisRefreshTokenRepository.findTokenByEmailAndAddress(email, address2);
 
+		assertThat(findTokenByEmailAndAddress1).isEmpty();
 		assertThat(findTokenByEmailAndAddress2).isEmpty();
+	}
 
-		Optional<String> findTokenByEmailAndAddress3
-			= redisJwtTokenRepository.findTokenByEmailAndAddress(email, address2);
+	@Test
+	@DisplayName(value = "Refresh Token을 받으면 새로운 JWT 토큰으로 갱신되고 Repository에 저장됩니다.")
+	void update_jwt_token() {
+		// given
+		String email = "waterkite94@gmail.com";
+		String password = "12345678";
+		String address = "1";
 
-		assertThat(findTokenByEmailAndAddress3).isEmpty();
+		MemberEntity member = createMember(email, password);
+		memberRepository.save(member);
+		JwtTokenDto tokenDto = authService.login(email, password, address);
+
+		assertThat(redisRefreshTokenRepository.findTokenByEmailAndAddress(email, address)).isPresent()
+			.hasValueSatisfying(s -> assertThat(s).isEqualTo(tokenDto.getRefreshToken()));
+
+		// when
+		JwtTokenDto updatedJwtToken = authService.updateJwtToken(tokenDto.getRefreshToken());
+
+		// then
+		assertThat(redisRefreshTokenRepository.findTokenByEmailAndAddress(email, address)).isPresent()
+			.hasValueSatisfying(s -> assertThat(s).isEqualTo(updatedJwtToken.getRefreshToken()));
+	}
+
+	@Test
+	@DisplayName(value = "잘못된 Refresh Token을 받으면 예외를 반환합니다.")
+	void update_jwt_token_wrong_token() {
+		// given
+		String refreshToken = "refresh_token";
+
+		// when  // then
+		assertThatThrownBy(() -> authService.updateJwtToken(refreshToken))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessage("잘못된 토큰입니다.");
 	}
 
 	private MemberEntity createMember(String email, String password) {

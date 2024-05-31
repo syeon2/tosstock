@@ -65,8 +65,7 @@ public class MemberService implements JoinMemberUseCase, UpdateMemberUseCase {
 	}
 
 	private void checkAuthCodeByMail(String email, String code) {
-		String storedCode = authCodeByMailPort.findAuthCodeByMail(email)
-			.orElseThrow(() -> new IllegalArgumentException("인증번호가 존재하지 않습니다."));
+		String storedCode = authCodeByMailPort.findAuthCodeByMail(email);
 
 		if (!storedCode.equals(code)) {
 			throw new IllegalArgumentException("인증번호가 일치하지 않습니다.");

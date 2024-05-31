@@ -47,7 +47,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 		String authCode = "000000";
 
 		given(authCodeByMailPort.findAuthCodeByMail(anyString()))
-			.willReturn(Optional.of(authCode));
+			.willReturn(authCode);
 
 		// when
 		Long savedMemberId = memberService.joinMember(member, authCode);
@@ -67,7 +67,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 		String authCode = "000000";
 
 		given(authCodeByMailPort.findAuthCodeByMail(anyString()))
-			.willReturn(Optional.of(authCode));
+			.willReturn(authCode);
 
 		memberService.joinMember(member1, authCode);
 
@@ -90,7 +90,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
 		String authCode = "000000";
 		given(authCodeByMailPort.findAuthCodeByMail(anyString()))
-			.willReturn(Optional.of(authCode));
+			.willReturn(authCode);
 
 		memberService.joinMember(member1, authCode);
 

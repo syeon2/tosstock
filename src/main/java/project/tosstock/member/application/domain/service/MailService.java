@@ -32,7 +32,7 @@ public class MailService implements SendAuthCodeByMailUseCase {
 		SimpleMailMessage emailForm = createEmailForm(toEmail, mailTitle, code);
 
 		javaMailSender.send(emailForm);
-		authCodeByMailPort.saveAuthCode(toEmail, code);
+		authCodeByMailPort.save(toEmail, code);
 
 		return true;
 	}
