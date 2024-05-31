@@ -5,7 +5,6 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -20,30 +19,27 @@ import org.springframework.restdocs.payload.JsonFieldType;
 
 import project.tosstock.ControllerTestSupport;
 import project.tosstock.common.config.web.WebConfig;
-import project.tosstock.common.config.web.filter.JwtAuthenticationFilter;
-import project.tosstock.common.config.web.filter.JwtFilter;
+import project.tosstock.common.config.web.filter.JwtExceptionFilter;
+import project.tosstock.common.config.web.filter.JwtVerificationFilter;
 import project.tosstock.member.adapter.in.web.request.LoginRequest;
 import project.tosstock.member.adapter.in.web.request.LogoutAllRequest;
 import project.tosstock.member.adapter.in.web.request.LogoutRequest;
+import project.tosstock.member.adapter.in.web.request.RefreshTokenRequest;
 import project.tosstock.member.application.domain.model.JwtTokenDto;
-import project.tosstock.member.application.port.in.AuthUseCase;
-import project.tosstock.member.application.port.in.LoginUseCase;
+import project.tosstock.member.application.port.in.AuthMemberUseCase;
 
 @WebMvcTest(
 	controllers = AuthController.class,
 	excludeFilters = {
 		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebConfig.class),
-		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtFilter.class),
-		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtAuthenticationFilter.class)
+		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtVerificationFilter.class),
+		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtExceptionFilter.class)
 	}
 )
 class AuthControllerTest extends ControllerTestSupport {
 
 	@MockBean
-	private LoginUseCase loginUseCase;
-
-	@MockBean
-	private AuthUseCase authUseCase;
+	private AuthMemberUseCase authMemberUseCase;
 
 	@Test
 	@DisplayName(value = "이메일과 비밀번호, 기기 주소를 받아 로그인에 성공합니다.")
@@ -59,7 +55,7 @@ class AuthControllerTest extends ControllerTestSupport {
 			.address(address)
 			.build();
 
-		given(loginUseCase.login(email, password, address))
+		given(authMemberUseCase.login(email, password, address))
 			.willReturn(JwtTokenDto.builder()
 				.accessToken("accessToken")
 				.refreshToken("refreshToken")
@@ -68,7 +64,7 @@ class AuthControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				get("/api/v1/login")
+				get("/api/v1/auth/login")
 					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON)
 			)
@@ -117,7 +113,7 @@ class AuthControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				get("/api/v1/login")
+				get("/api/v1/auth/login")
 					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
@@ -139,7 +135,7 @@ class AuthControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				get("/api/v1/login")
+				get("/api/v1/auth/login")
 					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
@@ -160,7 +156,7 @@ class AuthControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				get("/api/v1/login")
+				get("/api/v1/auth/login")
 					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
@@ -182,7 +178,7 @@ class AuthControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				get("/api/v1/login")
+				get("/api/v1/auth/login")
 					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
@@ -204,7 +200,7 @@ class AuthControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				get("/api/v1/login")
+				get("/api/v1/auth/login")
 					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
@@ -225,7 +221,7 @@ class AuthControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				get("/api/v1/login")
+				get("/api/v1/auth/login")
 					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
@@ -239,10 +235,10 @@ class AuthControllerTest extends ControllerTestSupport {
 	@DisplayName(value = "Access Token이 만료되어 Refresh Token을 받아 새로운 jwt token을 반환합니다.")
 	void authenticateRefreshToken() throws Exception {
 		// given
-		String email = "waterkite94@gmail.com";
 		String refreshToken = "1234";
+		RefreshTokenRequest request = new RefreshTokenRequest(refreshToken);
 
-		given(authUseCase.renewTokens(email, refreshToken))
+		given(authMemberUseCase.updateJwtToken(refreshToken))
 			.willReturn(JwtTokenDto.builder()
 				.accessToken("access token")
 				.refreshToken("refresh token")
@@ -250,9 +246,8 @@ class AuthControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				get("/api/v1/auth")
-					.param("email", email)
-					.param("refresh-token", refreshToken)
+				get("/api/v1/auth/refresh-token")
+					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON)
 			)
 			.andDo(print())
@@ -263,12 +258,12 @@ class AuthControllerTest extends ControllerTestSupport {
 			.andExpect(jsonPath("$.data.accessToken").isString())
 			.andExpect(jsonPath("$.data.refreshToken").isString())
 			.andDo(
-				document("member-auth",
+				document("member-auth-refresh-token",
 					preprocessRequest(prettyPrint()),
 					preprocessResponse(prettyPrint()),
-					queryParameters(
-						parameterWithName("email").description("로그인 아이디"),
-						parameterWithName("refresh-token").description("Refresh Token")
+					requestFields(
+						fieldWithPath("refreshToken").type(JsonFieldType.STRING)
+							.description("Refresh Token")
 					),
 					responseFields(
 						fieldWithPath("status").type(JsonFieldType.NUMBER)
@@ -286,6 +281,26 @@ class AuthControllerTest extends ControllerTestSupport {
 	}
 
 	@Test
+	@DisplayName(value = "Access Token이 만료되어 새로운 토큰을 요청할 때 Refresh Token은 필수 값입니다.")
+	void authenticateRefreshToken_null() throws Exception {
+		// given
+		String refreshToken = "";
+		RefreshTokenRequest request = new RefreshTokenRequest(refreshToken);
+
+		// when  // then
+		mockMvc.perform(
+				get("/api/v1/auth/refresh-token")
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(print())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.status").isNumber())
+			.andExpect(jsonPath("$.message").value("Refresh Token은 필수 값입니다."))
+			.andExpect(jsonPath("$.data").isEmpty());
+	}
+
+	@Test
 	@DisplayName(value = "이메일과 기기 주소를 받아 로그아웃합니다.")
 	void logout() throws Exception {
 		// given
@@ -296,7 +311,7 @@ class AuthControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				post("/api/v1/logout")
+				post("/api/v1/auth/logout")
 					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON)
 			)
@@ -331,7 +346,7 @@ class AuthControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				post("/api/v1/logout-all")
+				post("/api/v1/auth/logout-all")
 					.content(objectMapper.writeValueAsString(request))
 					.contentType(MediaType.APPLICATION_JSON)
 			)

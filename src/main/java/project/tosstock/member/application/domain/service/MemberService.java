@@ -5,63 +5,67 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import project.tosstock.common.error.exception.DuplicateAccountException;
+import project.tosstock.common.error.exception.DuplicatedAccountException;
 import project.tosstock.member.application.domain.model.Member;
 import project.tosstock.member.application.port.in.JoinMemberUseCase;
 import project.tosstock.member.application.port.in.UpdateMemberUseCase;
-import project.tosstock.member.application.port.out.AuthCodeForMemberPort;
-import project.tosstock.member.application.port.out.DeleteTokenPort;
+import project.tosstock.member.application.port.out.AuthCodeByMailPort;
+import project.tosstock.member.application.port.out.DeleteJwtTokenPort;
 import project.tosstock.member.application.port.out.SaveMemberPort;
 import project.tosstock.member.application.port.out.UpdateMemberPort;
-import project.tosstock.member.application.port.out.ValidateMemberPort;
+import project.tosstock.member.application.port.out.VerifyMemberPort;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService implements JoinMemberUseCase, UpdateMemberUseCase {
 
 	private final SaveMemberPort saveMemberPort;
-	private final ValidateMemberPort validateMemberPort;
-	private final AuthCodeForMemberPort authCodeForMemberPort;
+	private final VerifyMemberPort verifyMemberPort;
 	private final UpdateMemberPort updateMemberPort;
-	private final DeleteTokenPort deleteTokenPort;
+
+	private final AuthCodeByMailPort authCodeByMailPort;
+	private final DeleteJwtTokenPort deleteJwtTokenPort;
 
 	private final PasswordEncoder passwordEncoder;
 
 	@Override
 	@Transactional
 	public Long joinMember(Member member, String authCode) {
+		checkAuthCodeByMail(member.getEmail(), authCode);
 		checkDuplicatedMember(member);
-		checkAuthCodeByEmail(member.getEmail(), authCode);
 
-		String encodedPassword = passwordEncoder.encode(member.getPassword());
-
-		return saveMemberPort.saveMember(member, encodedPassword);
+		return saveMemberPort.save(member, passwordEncoder.encode(member.getPassword()));
 	}
 
 	@Override
 	@Transactional
-	public void updateUsername(Long id, String username) {
+	public boolean changeUsername(Long id, String username) {
 		updateMemberPort.updateUsername(id, username);
+
+		return true;
 	}
 
 	@Override
 	@Transactional
-	public void updateProfileImageUrl(Long id, String profileImageUrl) {
+	public boolean changeProfileImageUrl(Long id, String profileImageUrl) {
 		updateMemberPort.updateProfileImageUrl(id, profileImageUrl);
+
+		return true;
 	}
 
 	@Override
 	@Transactional
-	public void updatePassword(Long id, String email, String password) {
+	public boolean changePassword(Long id, String email, String password) {
 		String encodedPassword = passwordEncoder.encode(password);
 
-		deleteTokenPort.deleteAll(email);
+		deleteJwtTokenPort.deleteAll(email);
 		updateMemberPort.updatePassword(id, encodedPassword);
+
+		return true;
 	}
 
-	private void checkAuthCodeByEmail(String email, String code) {
-		String storedCode = authCodeForMemberPort.findAuthCodeByEmail(email)
-			.orElseThrow(() -> new IllegalArgumentException("인증번호가 존재하지 않습니다."));
+	private void checkAuthCodeByMail(String email, String code) {
+		String storedCode = authCodeByMailPort.findAuthCodeByMail(email);
 
 		if (!storedCode.equals(code)) {
 			throw new IllegalArgumentException("인증번호가 일치하지 않습니다.");
@@ -69,12 +73,12 @@ public class MemberService implements JoinMemberUseCase, UpdateMemberUseCase {
 	}
 
 	private void checkDuplicatedMember(Member member) {
-		if (validateMemberPort.isDuplicatedEmail(member.getEmail())) {
-			throw new DuplicateAccountException("이미 존재하는 이메일입니다.");
+		if (verifyMemberPort.isDuplicatedEmail(member.getEmail())) {
+			throw new DuplicatedAccountException("이미 존재하는 이메일입니다.");
 		}
 
-		if (validateMemberPort.isExistPhoneNumber(member.getPhoneNumber())) {
-			throw new DuplicateAccountException("이미 가입된 전화번호입니다.");
+		if (verifyMemberPort.isExistPhoneNumber(member.getPhoneNumber())) {
+			throw new DuplicatedAccountException("이미 가입된 전화번호입니다.");
 		}
 	}
 }

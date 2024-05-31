@@ -38,7 +38,7 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 		Member member = createMember("waterkite94@gmail.com", "01000001111");
 
 		// when
-		Long savedMemberId = memberPersistenceAdapter.saveMember(member, member.getPassword());
+		Long savedMemberId = memberPersistenceAdapter.save(member, member.getPassword());
 
 		// then
 		Optional<MemberEntity> findMemberOptional = memberRepository.findById(savedMemberId);
@@ -65,7 +65,7 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 		// given
 		String email = "waterkite94@gmail.com";
 		Member member = createMember(email, "01011112222");
-		memberPersistenceAdapter.saveMember(member, member.getPassword());
+		memberPersistenceAdapter.save(member, member.getPassword());
 
 		// when
 		boolean isDuplicated = memberPersistenceAdapter.isDuplicatedEmail(email);
@@ -81,7 +81,7 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 		String phoneNumber = "01011112222";
 
 		Member member = createMember("waterkite94@gmail.com", phoneNumber);
-		memberPersistenceAdapter.saveMember(member, member.getPassword());
+		memberPersistenceAdapter.save(member, member.getPassword());
 
 		// when
 		boolean isExist = memberPersistenceAdapter.isExistPhoneNumber(phoneNumber);
@@ -111,14 +111,13 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 		String encodedPassword = passwordEncoder.encode("12345678");
 
 		Member member = createMember(email, encodedPassword, "01011112222");
-		memberPersistenceAdapter.saveMember(member, member.getPassword());
+		memberPersistenceAdapter.save(member, member.getPassword());
 
 		// when
-		Optional<String> findPassword = memberPersistenceAdapter.findPasswordByEmail(email);
+		String findPassword = memberPersistenceAdapter.findPasswordByEmail(email);
 
 		// then
-		assertThat(findPassword).isPresent()
-			.hasValueSatisfying(pw -> assertThat(pw).isEqualTo(encodedPassword));
+		assertThat(findPassword).isEqualTo(encodedPassword);
 	}
 
 	@Test
@@ -127,11 +126,10 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 		// given
 		String email = "waterkite94@gmail.com";
 
-		// when
-		Optional<String> findPassword = memberPersistenceAdapter.findPasswordByEmail(email);
-
-		// then
-		assertThat(findPassword).isEmpty();
+		// when  // then
+		assertThatThrownBy(() -> memberPersistenceAdapter.findPasswordByEmail(email))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessage("존재하지 않는 이메일입니다.");
 	}
 
 	@Test
@@ -141,7 +139,7 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 		String password = "12345678";
 		Member member =
 			createMember("waterkite94@gmail.com", "suyeon", password, "https://syeon2.github.io/");
-		Long saveMemberId = memberPersistenceAdapter.saveMember(member, password);
+		Long saveMemberId = memberPersistenceAdapter.save(member, password);
 
 		// when
 		String changedUsername = "kimsuyeon";
@@ -162,7 +160,7 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 		String url = "https://syeon2.github.io/";
 		Member member =
 			createMember("waterkite94@gmail.com", "suyeon", password, url);
-		Long saveMemberId = memberPersistenceAdapter.saveMember(member, password);
+		Long saveMemberId = memberPersistenceAdapter.save(member, password);
 
 		// when
 		String changedUrl = "https://github.com/syeon2";
@@ -182,7 +180,7 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 		String password = "12345678";
 		Member member =
 			createMember("waterkite94@gmail.com", "suyeon", password, "https://syeon2.github.io/");
-		Long saveMemberId = memberPersistenceAdapter.saveMember(member, password);
+		Long saveMemberId = memberPersistenceAdapter.save(member, password);
 
 		// when
 		String changedPassword = "987654321";

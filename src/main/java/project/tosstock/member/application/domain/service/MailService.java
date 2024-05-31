@@ -10,12 +10,12 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import project.tosstock.member.application.port.in.EmailForMemberUseCase;
-import project.tosstock.member.application.port.out.AuthCodeForMemberPort;
+import project.tosstock.member.application.port.in.SendAuthCodeByMailUseCase;
+import project.tosstock.member.application.port.out.AuthCodeByMailPort;
 
 @Service
 @RequiredArgsConstructor
-public class MailService implements EmailForMemberUseCase {
+public class MailService implements SendAuthCodeByMailUseCase {
 
 	@Value("${spring.mail.title}")
 	private String mailTitle;
@@ -24,7 +24,7 @@ public class MailService implements EmailForMemberUseCase {
 	private Integer codeLength;
 
 	private final JavaMailSender javaMailSender;
-	private final AuthCodeForMemberPort authCodeForMemberPort;
+	private final AuthCodeByMailPort authCodeByMailPort;
 
 	@Override
 	public boolean sendEmail(String toEmail) {
@@ -32,7 +32,7 @@ public class MailService implements EmailForMemberUseCase {
 		SimpleMailMessage emailForm = createEmailForm(toEmail, mailTitle, code);
 
 		javaMailSender.send(emailForm);
-		authCodeForMemberPort.saveAuthCode(toEmail, code);
+		authCodeByMailPort.save(toEmail, code);
 
 		return true;
 	}

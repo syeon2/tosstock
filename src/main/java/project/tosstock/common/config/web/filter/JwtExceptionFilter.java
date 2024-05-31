@@ -10,17 +10,17 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import project.tosstock.common.error.exception.UnAuthenticationTokenException;
 import project.tosstock.common.wrapper.ApiResult;
 
 @Component
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class JwtExceptionFilter extends OncePerRequestFilter {
 
 	private final ObjectMapper objectMapper;
 
@@ -30,26 +30,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		try {
 			chain.doFilter(request, response);
-		} catch (UnAuthenticationTokenException exception) {
-			unAuthenticationException(response, exception.getMessage());
+		} catch (ExpiredJwtException exception) {
+			expirationJwtException(response);
 		} catch (RuntimeException exception) {
-			wrongJwtTokenException(response, exception.getMessage());
+			wrongJwtTokenException(response);
 		}
 	}
 
-	private void wrongJwtTokenException(HttpServletResponse response, String message) throws IOException {
+	private void wrongJwtTokenException(HttpServletResponse response) throws IOException {
 		response.setStatus(HttpStatus.BAD_REQUEST.value());
 		response.setContentType(MediaType.APPLICATION_JSON.toString());
 		response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
 		response.getWriter()
-			.write(objectMapper.writeValueAsString(ApiResult.error(HttpStatus.BAD_REQUEST, message)));
+			.write(objectMapper.writeValueAsString(ApiResult.error(HttpStatus.BAD_REQUEST, "잘못된 토큰입니다.")));
 	}
 
-	private void unAuthenticationException(HttpServletResponse response, String message) throws IOException {
+	private void expirationJwtException(HttpServletResponse response) throws IOException {
 		response.setStatus(HttpStatus.UNAUTHORIZED.value());
 		response.setContentType(MediaType.APPLICATION_JSON.toString());
 		response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
 		response.getWriter()
-			.write(objectMapper.writeValueAsString(ApiResult.error(HttpStatus.UNAUTHORIZED, message)));
+			.write(objectMapper.writeValueAsString(ApiResult.error(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다.")));
 	}
 }

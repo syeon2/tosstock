@@ -1,6 +1,6 @@
 package project.tosstock.member.application.port.out;
 
-public interface ValidateMemberPort {
+public interface VerifyMemberPort {
 
 	boolean isDuplicatedEmail(String email);
 

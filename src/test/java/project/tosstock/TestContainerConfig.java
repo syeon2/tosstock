@@ -23,8 +23,8 @@ public class TestContainerConfig implements BeforeAllCallback {
 			.withExposedPorts(REDIS_AUTH_CODE_PORT);
 		redisForAuthCode.start();
 
-		System.setProperty("spring.data.redis_mail.host", redisForAuthCode.getHost());
-		System.setProperty("spring.data.redis_mail.port",
+		System.setProperty("spring.data.redis-mail.host", redisForAuthCode.getHost());
+		System.setProperty("spring.data.redis-mail.port",
 			String.valueOf(redisForAuthCode.getMappedPort(REDIS_AUTH_CODE_PORT
 			)));
 
@@ -35,8 +35,8 @@ public class TestContainerConfig implements BeforeAllCallback {
 			.withExposedPorts(REDIS_AUTH_TOKEN_PORT);
 		redisAuthToken.start();
 
-		System.setProperty("spring.data.redis_token.host", redisAuthToken.getHost());
-		System.setProperty("spring.data.redis_token.port",
+		System.setProperty("spring.data.redis-token.host", redisAuthToken.getHost());
+		System.setProperty("spring.data.redis-token.port",
 			String.valueOf(redisAuthToken.getMappedPort(REDIS_AUTH_TOKEN_PORT
 			)));
 	}

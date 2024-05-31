@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import project.tosstock.IntegrationTestSupport;
 
-class RedisAuthTokenRepositoryTest extends IntegrationTestSupport {
+class RedisRefreshTokenRepositoryTest extends IntegrationTestSupport {
 
 	@Autowired
-	private RedisAuthTokenRepository redisAuthTokenRepository;
+	private RedisRefreshTokenRepository redisRefreshTokenRepository;
 
 	@Test
 	@DisplayName(value = "Email(key), Address(hashKey), Token(value) 을 가진 Map 자료구조로 저장합니다.")
@@ -24,11 +24,11 @@ class RedisAuthTokenRepositoryTest extends IntegrationTestSupport {
 		String address = "1";
 
 		// when
-		redisAuthTokenRepository.save(email, address, token);
+		redisRefreshTokenRepository.save(email, address, token);
 
 		// then
 		Optional<String> findTokenByEmailAndAddress
-			= redisAuthTokenRepository.findTokenByEmailAndAddress(email, address);
+			= redisRefreshTokenRepository.findTokenByEmailAndAddress(email, address);
 
 		assertThat(findTokenByEmailAndAddress).isPresent()
 			.hasValueSatisfying(s -> assertThat(s).isEqualTo(token));
@@ -45,20 +45,20 @@ class RedisAuthTokenRepositoryTest extends IntegrationTestSupport {
 		String token1 = "1234";
 		String token2 = "5678";
 
-		redisAuthTokenRepository.save(email, address1, token1);
-		redisAuthTokenRepository.save(email, address2, token2);
+		redisRefreshTokenRepository.save(email, address1, token1);
+		redisRefreshTokenRepository.save(email, address2, token2);
 
 		// when
-		redisAuthTokenRepository.delete(email, address1);
+		redisRefreshTokenRepository.delete(email, address1);
 
 		// then
 		Optional<String> findTokenByEmailAndAddress
-			= redisAuthTokenRepository.findTokenByEmailAndAddress(email, address1);
+			= redisRefreshTokenRepository.findTokenByEmailAndAddress(email, address1);
 
 		assertThat(findTokenByEmailAndAddress).isEmpty();
 
 		Optional<String> findTokenByEmailAndAddress2
-			= redisAuthTokenRepository.findTokenByEmailAndAddress(email, address2);
+			= redisRefreshTokenRepository.findTokenByEmailAndAddress(email, address2);
 		assertThat(findTokenByEmailAndAddress2).isPresent()
 			.hasValueSatisfying(s -> assertThat(s).isEqualTo(token2));
 	}
@@ -74,18 +74,18 @@ class RedisAuthTokenRepositoryTest extends IntegrationTestSupport {
 		String token1 = "1234";
 		String token2 = "5678";
 
-		redisAuthTokenRepository.save(email, address1, token1);
-		redisAuthTokenRepository.save(email, address2, token2);
+		redisRefreshTokenRepository.save(email, address1, token1);
+		redisRefreshTokenRepository.save(email, address2, token2);
 
 		// when
-		redisAuthTokenRepository.deleteAll(email);
+		redisRefreshTokenRepository.deleteAll(email);
 
 		// then
-		Optional<String> findTokenByEmailAndAddress = redisAuthTokenRepository.findTokenByEmailAndAddress(email,
+		Optional<String> findTokenByEmailAndAddress = redisRefreshTokenRepository.findTokenByEmailAndAddress(email,
 			token1);
 		assertThat(findTokenByEmailAndAddress).isEmpty();
 
-		Optional<String> findTokenByEmailAndAddress2 = redisAuthTokenRepository.findTokenByEmailAndAddress(email,
+		Optional<String> findTokenByEmailAndAddress2 = redisRefreshTokenRepository.findTokenByEmailAndAddress(email,
 			token2);
 		assertThat(findTokenByEmailAndAddress2).isEmpty();
 	}
