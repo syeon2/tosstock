@@ -9,11 +9,11 @@ include::{snippets}/member-update-username/http-response.adoc[]
 include::{snippets}/member-update-username/response-fields.adoc[]
 
 ==== Change Profile Image URL API
-include::{snippets}/member-update-profile_image_url/http-request.adoc[]
-include::{snippets}/member-update-profile_image_url/request-body.adoc[]
+include::{snippets}/member-update-profile-image-url/http-request.adoc[]
+include::{snippets}/member-update-profile-image-url/request-body.adoc[]
 
-include::{snippets}/member-update-profile_image_url/http-response.adoc[]
-include::{snippets}/member-update-profile_image_url/response-fields.adoc[]
+include::{snippets}/member-update-profile-image-url/http-response.adoc[]
+include::{snippets}/member-update-profile-image-url/response-fields.adoc[]
 
 ==== Change Password API
 include::{snippets}/member-update-password/http-request.adoc[]
