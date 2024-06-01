@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import project.tosstock.IntegrationTestSupport;
 import project.tosstock.activity.adapter.out.entity.FollowEntity;
 import project.tosstock.activity.adapter.out.persistence.FollowRepository;
-import project.tosstock.activity.application.domain.model.Follow;
 
 class FollowPersistenceAdapterTest extends IntegrationTestSupport {
 
@@ -34,13 +33,8 @@ class FollowPersistenceAdapterTest extends IntegrationTestSupport {
 		Long followerId = 1L;
 		Long followeeId = 2L;
 
-		Follow follow = Follow.builder()
-			.followerId(followerId)
-			.followeeId(followeeId)
-			.build();
-
 		// when
-		followPersistenceAdapter.save(follow);
+		followPersistenceAdapter.save(followerId, followeeId);
 
 		// then
 		Optional<FollowEntity> findFollowOptional = followRepository.findById(

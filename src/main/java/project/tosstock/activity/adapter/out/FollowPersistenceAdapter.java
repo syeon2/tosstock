@@ -2,7 +2,6 @@ package project.tosstock.activity.adapter.out;
 
 import lombok.RequiredArgsConstructor;
 import project.tosstock.activity.adapter.out.persistence.FollowRepository;
-import project.tosstock.activity.application.domain.model.Follow;
 import project.tosstock.activity.application.port.out.SaveFollowPort;
 import project.tosstock.common.annotation.PersistenceAdapter;
 
@@ -14,7 +13,7 @@ public class FollowPersistenceAdapter implements SaveFollowPort {
 	private final FollowMapper followMapper;
 
 	@Override
-	public void save(Follow follow) {
-		followRepository.save(followMapper.toEntity(follow));
+	public void save(Long followerId, Long followeeId) {
+		followRepository.save(followMapper.toEntity(followerId, followeeId));
 	}
 }
