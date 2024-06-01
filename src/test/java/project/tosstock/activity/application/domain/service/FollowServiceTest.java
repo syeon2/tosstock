@@ -42,4 +42,24 @@ class FollowServiceTest extends IntegrationTestSupport {
 			.hasValueSatisfying(f -> assertThat(f.getFollowerId()).isEqualTo(followerId))
 			.hasValueSatisfying(f -> assertThat(f.getFolloweeId()).isEqualTo(followeeId));
 	}
+
+	@Test
+	void unfollowMember() {
+		// given
+		Long followerId = 1L;
+		Long followeeId = 2L;
+
+		followService.followMember(followerId, followeeId);
+
+		// when
+		boolean result = followService.unfollowMember(followerId, followeeId);
+
+		// then
+		assertThat(result).isTrue();
+
+		Optional<FollowEntity> findFollowOptional = followRepository.findById(
+			FollowEntity.PK.builder().followerId(followerId).followeeId(followeeId).build());
+
+		assertThat(findFollowOptional).isEmpty();
+	}
 }

@@ -1,5 +1,6 @@
 package project.tosstock.activity.adapter.in.web;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +23,16 @@ public class FollowController {
 		@PathVariable("followeeId") Long followeeId
 	) {
 		boolean result = followMemberUseCase.followMember(followerId, followeeId);
+
+		return ApiResult.ok(result);
+	}
+
+	@DeleteMapping("/api/v1/member/follower/{followerId}/followee/{followeeId}")
+	private ApiResult<Boolean> unfollowMember(
+		@PathVariable("followerId") Long followerId,
+		@PathVariable("followeeId") Long followeeId
+	) {
+		boolean result = followMemberUseCase.unfollowMember(followerId, followeeId);
 
 		return ApiResult.ok(result);
 	}

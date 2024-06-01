@@ -68,4 +68,37 @@ class FollowControllerTest extends ControllerTestSupport {
 						.description("요청 결과 여부")
 				)));
 	}
+
+	@Test
+	@DisplayName(value = "follower id인 팔로워가 다른 회원(followee id)을 언팔로우합니다.")
+	void unfollow_member() throws Exception {
+		// given
+		Long followerId = 1L;
+		Long followeeId = 2L;
+
+		// when  // then
+		mockMvc.perform(
+				delete("/api/v1/member/follower/{followerId}/followee/{followeeId}", followerId, followeeId)
+					.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.status").isNumber())
+			.andExpect(jsonPath("$.message").isEmpty())
+			.andExpect(jsonPath("$.data").isBoolean())
+			.andDo(document("member-unfollow",
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				pathParameters(
+					parameterWithName("followerId").description("팔로우 주체 아이디"),
+					parameterWithName("followeeId").description("팔로우 된 아이디")
+				),
+				responseFields(
+					fieldWithPath("status").type(JsonFieldType.NUMBER)
+						.description("상태 코드"),
+					fieldWithPath("message").type(JsonFieldType.NULL)
+						.description("메시지"),
+					fieldWithPath("data").type(JsonFieldType.BOOLEAN)
+						.description("요청 결과 여부")
+				)));
+	}
 }
