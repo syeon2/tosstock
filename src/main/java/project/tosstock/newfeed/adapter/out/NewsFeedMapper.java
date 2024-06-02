@@ -14,6 +14,7 @@ public class NewsFeedMapper {
 		return NewsFeedEntity.builder()
 			.feedId(newsFeed.getFeedId())
 			.feedType(feedType)
+			.article(newsFeed.getArticle())
 			.member(member)
 			.build();
 	}

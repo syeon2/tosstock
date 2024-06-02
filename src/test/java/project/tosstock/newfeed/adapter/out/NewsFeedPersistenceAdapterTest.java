@@ -84,6 +84,7 @@ class NewsFeedPersistenceAdapterTest extends IntegrationTestSupport {
 			.feedId(feedId)
 			.feedType(feedType)
 			.memberId(memberId)
+			.article("텍스트 기반 뉴스피드")
 			.build();
 	}
 

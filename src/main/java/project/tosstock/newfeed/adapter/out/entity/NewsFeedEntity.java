@@ -38,15 +38,19 @@ public class NewsFeedEntity extends BaseEntity {
 	@Column(name = "feedType", columnDefinition = "varchar(60)")
 	private FeedType feedType;
 
+	@Column(name = "article", columnDefinition = "varchar(255)")
+	private String article;
+
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "member_id")
 	private MemberEntity member;
 
 	@Builder
-	private NewsFeedEntity(Long id, Long feedId, FeedType feedType, MemberEntity member) {
+	private NewsFeedEntity(Long id, Long feedId, FeedType feedType, String article, MemberEntity member) {
 		this.id = id;
 		this.feedId = feedId;
 		this.feedType = feedType;
+		this.article = article;
 		this.member = member;
 	}
 }
