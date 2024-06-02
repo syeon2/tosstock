@@ -24,3 +24,4 @@ include::api/member/member-change-info.adoc[]
 
 include::api/activity/member-follow.adoc[]
 include::api/activity/post-store.adoc[]
+include::api/activity/post-comment.adoc[]

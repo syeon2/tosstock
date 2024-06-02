@@ -1,5 +1,8 @@
 package project.tosstock.activity.adapter.out.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -38,6 +42,13 @@ public class PostEntity extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "member_id")
 	private MemberEntity member;
+
+	@OneToMany(
+		mappedBy = "post",
+		cascade = CascadeType.ALL,
+		orphanRemoval = true,
+		fetch = FetchType.LAZY)
+	private List<CommentEntity> comments = new ArrayList<>();
 
 	@Builder
 	private PostEntity(Long id, String article, MemberEntity member) {
