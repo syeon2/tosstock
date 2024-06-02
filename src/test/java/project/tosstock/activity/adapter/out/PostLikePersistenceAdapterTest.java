@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import project.tosstock.IntegrationTestSupport;
 import project.tosstock.activity.adapter.out.entity.PostEntity;
 import project.tosstock.activity.adapter.out.entity.PostLikeEntity;
+import project.tosstock.activity.adapter.out.persistence.CommentRepository;
 import project.tosstock.activity.adapter.out.persistence.PostLikeRepository;
 import project.tosstock.activity.adapter.out.persistence.PostRepository;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
@@ -32,9 +33,13 @@ class PostLikePersistenceAdapterTest extends IntegrationTestSupport {
 	@Autowired
 	private PostLikeRepository postLikeRepository;
 
+	@Autowired
+	private CommentRepository commentRepository;
+
 	@BeforeEach
 	void before() {
 		postLikeRepository.deleteAllInBatch();
+		commentRepository.deleteAllInBatch();
 		postRepository.deleteAllInBatch();
 		memberRepository.deleteAllInBatch();
 	}

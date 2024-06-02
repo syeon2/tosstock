@@ -8,9 +8,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import project.tosstock.IntegrationTestSupport;
 import project.tosstock.activity.adapter.out.entity.PostEntity;
+import project.tosstock.activity.adapter.out.persistence.CommentRepository;
 import project.tosstock.activity.adapter.out.persistence.PostRepository;
 import project.tosstock.activity.application.domain.model.Post;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
@@ -22,13 +24,17 @@ class PostPersistenceAdapterTest extends IntegrationTestSupport {
 	private PostPersistenceAdapter postPersistenceAdapter;
 
 	@Autowired
+	private PostRepository postRepository;
+
+	@Autowired
 	private MemberRepository memberRepository;
 
 	@Autowired
-	private PostRepository postRepository;
+	private CommentRepository commentRepository;
 
 	@BeforeEach
 	void before() {
+		commentRepository.deleteAllInBatch();
 		postRepository.deleteAllInBatch();
 		memberRepository.deleteAllInBatch();
 	}
@@ -54,6 +60,7 @@ class PostPersistenceAdapterTest extends IntegrationTestSupport {
 	}
 
 	@Test
+	@Transactional
 	@DisplayName(value = "회원과 포스트 간 연관관계 설정을 확인합니다.")
 	void check_related_connect_pos_and_member() {
 		// given
