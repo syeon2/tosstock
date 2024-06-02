@@ -12,14 +12,14 @@ import project.tosstock.common.jwt.TokenType;
 import project.tosstock.member.application.domain.model.JwtTokenDto;
 import project.tosstock.member.application.port.in.AuthMemberUseCase;
 import project.tosstock.member.application.port.out.DeleteJwtTokenPort;
-import project.tosstock.member.application.port.out.LoginPort;
+import project.tosstock.member.application.port.out.FindMemberPort;
 import project.tosstock.member.application.port.out.SaveJwtTokenPort;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService implements AuthMemberUseCase {
 
-	private final LoginPort loginPort;
+	private final FindMemberPort findMemberPort;
 	private final SaveJwtTokenPort saveJwtTokenPort;
 	private final DeleteJwtTokenPort deleteJwtTokenPort;
 
@@ -94,6 +94,6 @@ public class AuthService implements AuthMemberUseCase {
 	}
 
 	private String findPasswordByEmail(String email) {
-		return loginPort.findPasswordByEmail(email);
+		return findMemberPort.findPasswordByEmail(email);
 	}
 }

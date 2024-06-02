@@ -18,3 +18,9 @@ include::api/member/member-login.adoc[]
 include::api/member/member-logout.adoc[]
 include::api/member/member-auth-token.adoc[]
 include::api/member/member-change-info.adoc[]
+
+[[Activity-API]]
+== Activity API
+
+include::api/activity/member-follow.adoc[]
+include::api/activity/post-store.adoc[]

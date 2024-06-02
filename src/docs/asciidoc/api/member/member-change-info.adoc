@@ -3,21 +3,24 @@
 
 ==== Change Username API
 include::{snippets}/member-update-username/http-request.adoc[]
-include::{snippets}/member-update-username/request-body.adoc[]
+include::{snippets}/member-update-username/path-parameters.adoc[]
+include::{snippets}/member-update-username/request-fields.adoc[]
 
 include::{snippets}/member-update-username/http-response.adoc[]
 include::{snippets}/member-update-username/response-fields.adoc[]
 
 ==== Change Profile Image URL API
 include::{snippets}/member-update-profile-image-url/http-request.adoc[]
-include::{snippets}/member-update-profile-image-url/request-body.adoc[]
+include::{snippets}/member-update-profile-image-url/path-parameters.adoc[]
+include::{snippets}/member-update-profile-image-url/request-fields.adoc[]
 
 include::{snippets}/member-update-profile-image-url/http-response.adoc[]
 include::{snippets}/member-update-profile-image-url/response-fields.adoc[]
 
 ==== Change Password API
 include::{snippets}/member-update-password/http-request.adoc[]
-include::{snippets}/member-update-password/request-body.adoc[]
+include::{snippets}/member-update-password/path-parameters.adoc[]
+include::{snippets}/member-update-password/request-fields.adoc[]
 
 include::{snippets}/member-update-password/http-response.adoc[]
 include::{snippets}/member-update-password/response-fields.adoc[]
