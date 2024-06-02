@@ -2,7 +2,7 @@
 === Auth Token API
 
 include::{snippets}/member-auth-refresh-token/http-request.adoc[]
-include::{snippets}/member-auth-refresh-token/request-body.adoc[]
+include::{snippets}/member-auth-refresh-token/request-fields.adoc[]
 
 include::{snippets}/member-auth-refresh-token/http-response.adoc[]
 include::{snippets}/member-auth-refresh-token/response-fields.adoc[]
