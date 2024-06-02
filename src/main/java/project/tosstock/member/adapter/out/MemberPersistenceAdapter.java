@@ -7,14 +7,14 @@ import project.tosstock.common.annotation.PersistenceAdapter;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
 import project.tosstock.member.application.domain.model.Member;
-import project.tosstock.member.application.port.out.LoginPort;
+import project.tosstock.member.application.port.out.FindMemberPort;
 import project.tosstock.member.application.port.out.SaveMemberPort;
 import project.tosstock.member.application.port.out.UpdateMemberPort;
 import project.tosstock.member.application.port.out.VerifyMemberPort;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
-public class MemberPersistenceAdapter implements SaveMemberPort, VerifyMemberPort, UpdateMemberPort, LoginPort {
+public class MemberPersistenceAdapter implements SaveMemberPort, VerifyMemberPort, UpdateMemberPort, FindMemberPort {
 
 	private final MemberRepository memberRepository;
 	private final MemberMapper memberMapper;
@@ -35,6 +35,12 @@ public class MemberPersistenceAdapter implements SaveMemberPort, VerifyMemberPor
 	@Override
 	public boolean isExistPhoneNumber(String phoneNumber) {
 		return memberRepository.findByPhoneNumber(phoneNumber).isPresent();
+	}
+
+	@Override
+	public MemberEntity findMemberById(Long memberId) {
+		return memberRepository.findById(memberId)
+			.orElseThrow(() -> new IllegalArgumentException("존재히지 않는 회원입니다."));
 	}
 
 	@Override

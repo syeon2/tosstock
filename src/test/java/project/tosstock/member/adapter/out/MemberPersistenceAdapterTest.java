@@ -194,6 +194,32 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 			.hasValueSatisfying(s -> assertThat(s.getPassword()).isEqualTo(encodedPassword));
 	}
 
+	@Test
+	@DisplayName(value = "회원 아이디로 회원을 조회합니다.")
+	void find_member_by_Id() {
+		// given
+		Member member = createMember("waterkite94@gmail.com", "01000001111");
+		Long savedMemberId = memberPersistenceAdapter.save(member, "123411231");
+
+		// when
+		MemberEntity findMember = memberPersistenceAdapter.findMemberById(savedMemberId);
+
+		// then
+		assertThat(findMember.getId()).isEqualTo(savedMemberId);
+	}
+
+	@Test
+	@DisplayName(value = "존재하지 않은 회원을 조회했을 경우 예외를 반환합니다.")
+	void find_member_by_id_exception_null() {
+		// given
+		Long memberId = 1L;
+
+		// when  // then
+		assertThatThrownBy(() -> memberPersistenceAdapter.findMemberById(memberId))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessage("존재히지 않는 회원입니다.");
+	}
+
 	private Member createMember(String email, String phoneNumber) {
 		return Member.builder()
 			.username("suyeon")
