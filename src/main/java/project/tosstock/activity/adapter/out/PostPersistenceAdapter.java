@@ -3,7 +3,6 @@ package project.tosstock.activity.adapter.out;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import project.tosstock.activity.adapter.PostMapper;
 import project.tosstock.activity.adapter.out.entity.PostEntity;
 import project.tosstock.activity.adapter.out.persistence.PostRepository;
 import project.tosstock.activity.application.domain.model.Post;

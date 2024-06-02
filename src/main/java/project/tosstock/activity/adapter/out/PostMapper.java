@@ -1,4 +1,4 @@
-package project.tosstock.activity.adapter;
+package project.tosstock.activity.adapter.out;
 
 import org.springframework.stereotype.Component;
 
