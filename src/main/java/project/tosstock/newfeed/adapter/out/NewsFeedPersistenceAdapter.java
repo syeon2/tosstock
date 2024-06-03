@@ -1,5 +1,8 @@
 package project.tosstock.newfeed.adapter.out;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
@@ -11,11 +14,12 @@ import project.tosstock.newfeed.adapter.out.persistence.NewsFeedRepository;
 import project.tosstock.newfeed.application.domain.model.FeedType;
 import project.tosstock.newfeed.application.domain.model.NewsFeed;
 import project.tosstock.newfeed.application.port.out.DeleteNewsFeedPort;
+import project.tosstock.newfeed.application.port.out.FindNewsFeedPort;
 import project.tosstock.newfeed.application.port.out.SaveNewsFeedPort;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
-public class NewsFeedPersistenceAdapter implements SaveNewsFeedPort, DeleteNewsFeedPort {
+public class NewsFeedPersistenceAdapter implements SaveNewsFeedPort, DeleteNewsFeedPort, FindNewsFeedPort {
 
 	private final NewsFeedRepository newsFeedRepository;
 	private final MemberRepository memberRepository;
@@ -37,5 +41,13 @@ public class NewsFeedPersistenceAdapter implements SaveNewsFeedPort, DeleteNewsF
 	@Transactional
 	public void delete(Long feedId, FeedType feedType) {
 		newsFeedRepository.deleteByFeedIdAndFeedType(feedId, feedType);
+	}
+
+	@Override
+	@Transactional
+	public List<NewsFeed> findNewsFeed(Long memberId) {
+		return newsFeedRepository.findNewsFeedsJoinFolloweeId(memberId).stream()
+			.map(newsFeedMapper::toDomain)
+			.collect(Collectors.toList());
 	}
 }

@@ -7,7 +7,7 @@ import project.tosstock.newfeed.adapter.out.entity.NewsFeedEntity;
 import project.tosstock.newfeed.application.domain.model.FeedType;
 
 @Repository
-public interface NewsFeedRepository extends JpaRepository<NewsFeedEntity, Long> {
+public interface NewsFeedRepository extends JpaRepository<NewsFeedEntity, Long>, NewsFeedRepositoryCustom {
 
 	void deleteByFeedIdAndFeedType(Long feedId, FeedType feedType);
 }

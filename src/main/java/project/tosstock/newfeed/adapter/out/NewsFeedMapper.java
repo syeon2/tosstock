@@ -18,4 +18,14 @@ public class NewsFeedMapper {
 			.member(member)
 			.build();
 	}
+
+	public NewsFeed toDomain(NewsFeedEntity newsFeed) {
+		return NewsFeed.builder()
+			.id(newsFeed.getId())
+			.feedId(newsFeed.getFeedId())
+			.feedType(newsFeed.getFeedType())
+			.memberId(newsFeed.getMember().getId())
+			.article(newsFeed.getArticle())
+			.build();
+	}
 }
