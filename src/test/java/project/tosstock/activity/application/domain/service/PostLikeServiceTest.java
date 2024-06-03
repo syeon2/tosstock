@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import project.tosstock.IntegrationTestSupport;
@@ -14,6 +15,8 @@ import project.tosstock.activity.adapter.out.persistence.PostLikeRepository;
 import project.tosstock.activity.adapter.out.persistence.PostRepository;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
+import project.tosstock.newfeed.application.port.out.DeleteNewsFeedPort;
+import project.tosstock.newfeed.application.port.out.SaveNewsFeedPort;
 
 class PostLikeServiceTest extends IntegrationTestSupport {
 
@@ -28,6 +31,12 @@ class PostLikeServiceTest extends IntegrationTestSupport {
 
 	@Autowired
 	private PostLikeRepository postLikeRepository;
+
+	@MockBean
+	private SaveNewsFeedPort saveNewsFeedPort;
+
+	@MockBean
+	private DeleteNewsFeedPort deleteNewsFeedPort;
 
 	@BeforeEach
 	void before() {

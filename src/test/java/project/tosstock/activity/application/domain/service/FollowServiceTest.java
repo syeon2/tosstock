@@ -7,10 +7,13 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import project.tosstock.IntegrationTestSupport;
 import project.tosstock.activity.adapter.out.entity.FollowEntity;
 import project.tosstock.activity.adapter.out.persistence.FollowRepository;
+import project.tosstock.newfeed.application.port.out.DeleteNewsFeedPort;
+import project.tosstock.newfeed.application.port.out.SaveNewsFeedPort;
 
 class FollowServiceTest extends IntegrationTestSupport {
 
@@ -19,6 +22,12 @@ class FollowServiceTest extends IntegrationTestSupport {
 
 	@Autowired
 	private FollowRepository followRepository;
+
+	@MockBean
+	private SaveNewsFeedPort saveNewsFeedPort;
+
+	@MockBean
+	private DeleteNewsFeedPort deleteNewsFeedPort;
 
 	@BeforeEach
 	void before() {

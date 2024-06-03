@@ -17,6 +17,7 @@ import project.tosstock.activity.adapter.out.persistence.PostRepository;
 import project.tosstock.activity.application.domain.model.Comment;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
+import project.tosstock.newfeed.adapter.out.persistence.NewsFeedRepository;
 
 class CommentServiceTest extends IntegrationTestSupport {
 
@@ -32,8 +33,12 @@ class CommentServiceTest extends IntegrationTestSupport {
 	@Autowired
 	private MemberRepository memberRepository;
 
+	@Autowired
+	private NewsFeedRepository newsFeedRepository;
+
 	@BeforeEach
 	void before() {
+		newsFeedRepository.deleteAllInBatch();
 		commentRepository.deleteAllInBatch();
 		postRepository.deleteAllInBatch();
 		memberRepository.deleteAllInBatch();
