@@ -15,6 +15,7 @@ import project.tosstock.activity.adapter.out.persistence.PostLikeRepository;
 import project.tosstock.activity.adapter.out.persistence.PostRepository;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
+import project.tosstock.newfeed.application.port.in.NewsFeedFilterUseCase;
 import project.tosstock.newfeed.application.port.out.DeleteNewsFeedPort;
 import project.tosstock.newfeed.application.port.out.SaveNewsFeedPort;
 
@@ -31,6 +32,9 @@ class PostLikeServiceTest extends IntegrationTestSupport {
 
 	@Autowired
 	private PostLikeRepository postLikeRepository;
+
+	@MockBean
+	private NewsFeedFilterUseCase newsFeedFilterUseCase;
 
 	@MockBean
 	private SaveNewsFeedPort saveNewsFeedPort;
