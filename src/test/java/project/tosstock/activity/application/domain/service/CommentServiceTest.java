@@ -15,6 +15,8 @@ import project.tosstock.activity.adapter.out.entity.PostEntity;
 import project.tosstock.activity.adapter.out.persistence.CommentRepository;
 import project.tosstock.activity.adapter.out.persistence.PostRepository;
 import project.tosstock.activity.application.domain.model.Comment;
+import project.tosstock.member.adapter.out.entity.MemberEntity;
+import project.tosstock.member.adapter.out.persistence.MemberRepository;
 
 class CommentServiceTest extends IntegrationTestSupport {
 
@@ -27,20 +29,26 @@ class CommentServiceTest extends IntegrationTestSupport {
 	@Autowired
 	private PostRepository postRepository;
 
+	@Autowired
+	private MemberRepository memberRepository;
+
 	@BeforeEach
 	void before() {
 		commentRepository.deleteAllInBatch();
 		postRepository.deleteAllInBatch();
+		memberRepository.deleteAllInBatch();
 	}
 
 	@Test
 	@DisplayName(value = "댓글을 생성합니다.")
 	void create_comment() {
 		// given
+		MemberEntity member = createMemberEntity("www@www");
+		memberRepository.save(member);
 		PostEntity post = createPost();
 		postRepository.save(post);
 
-		Comment comment = createComment(post);
+		Comment comment = createComment(member, post);
 
 		// when
 		Long saveCommentId = commentService.createComment(comment);
@@ -56,10 +64,13 @@ class CommentServiceTest extends IntegrationTestSupport {
 	@DisplayName(value = "댓글을 삭제합니다.")
 	void remove_comment() {
 		// given
+		MemberEntity member = createMemberEntity("www@www");
+		memberRepository.save(member);
 		PostEntity post = createPost();
 		postRepository.save(post);
 
-		Comment comment = createComment(post);
+		Comment comment = createComment(member, post);
+
 		Long saveCommentId = commentService.createComment(comment);
 
 		// when
@@ -69,9 +80,21 @@ class CommentServiceTest extends IntegrationTestSupport {
 		assertThat(commentRepository.findById(removedCommentId)).isEmpty();
 	}
 
-	private static Comment createComment(PostEntity post) {
+	private MemberEntity createMemberEntity(String email) {
+		return MemberEntity.builder()
+			.username("suyeon")
+			.email(email)
+			.password("12345678")
+			.phoneNumber("01000001111")
+			.introduce("hellO")
+			.profileImageUrl("")
+			.build();
+	}
+
+	private static Comment createComment(MemberEntity member, PostEntity post) {
 		return Comment.builder()
 			.article("댓글")
+			.memberId(member.getId())
 			.postId(post.getId())
 			.build();
 	}

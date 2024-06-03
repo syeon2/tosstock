@@ -59,6 +59,8 @@ class CommentControllerTest extends ControllerTestSupport {
 				requestFields(
 					fieldWithPath("article").type(JsonFieldType.STRING)
 						.description("댓글 내용"),
+					fieldWithPath("memberId").type(JsonFieldType.NUMBER)
+						.description("회원 아이디"),
 					fieldWithPath("postId").type(JsonFieldType.NUMBER)
 						.description("댓글 단 포스트 아이디")
 				),
@@ -107,6 +109,7 @@ class CommentControllerTest extends ControllerTestSupport {
 		return CreateCommentRequest.builder()
 			.article("댓글")
 			.postId(1L)
+			.memberId(1L)
 			.build();
 	}
 }

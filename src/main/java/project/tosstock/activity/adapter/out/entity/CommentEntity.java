@@ -14,6 +14,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.tosstock.common.wrapper.BaseEntity;
+import project.tosstock.member.adapter.out.entity.MemberEntity;
 
 @Getter
 @Entity
@@ -33,11 +34,16 @@ public class CommentEntity extends BaseEntity {
 	@JoinColumn(name = "post_id")
 	private PostEntity post;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "member_id")
+	private MemberEntity member;
+
 	@Builder
-	private CommentEntity(Long id, String article, PostEntity post) {
+	private CommentEntity(Long id, String article, PostEntity post, MemberEntity member) {
 		this.id = id;
 		this.article = article;
 		this.post = post;
+		this.member = member;
 	}
 
 	public void setPost(PostEntity post) {
