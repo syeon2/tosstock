@@ -2,9 +2,9 @@ package project.tosstock.newfeed.application.port.in;
 
 import java.util.List;
 
-import project.tosstock.newfeed.application.domain.model.NewsFeed;
+import project.tosstock.newfeed.application.domain.model.TestNewsFeed;
 
 public interface NewsFeedFilterUseCase {
 
-	List<NewsFeed> showNewsFeedBasic(Long memberId);
+	List<TestNewsFeed> showNewsFeedBasic(Long memberId);
 }
