@@ -18,22 +18,18 @@ public class FollowController {
 	private final FollowMemberUseCase followMemberUseCase;
 
 	@PostMapping("/api/v1/member/follower/{followerId}/followee/{followeeId}")
-	private ApiResult<Boolean> followMember(
+	private ApiResult<Long> followMember(
 		@PathVariable("followerId") Long followerId,
 		@PathVariable("followeeId") Long followeeId
 	) {
-		boolean result = followMemberUseCase.followMember(followerId, followeeId);
-
-		return ApiResult.ok(result);
+		return ApiResult.ok(followMemberUseCase.followMember(followerId, followeeId));
 	}
 
 	@DeleteMapping("/api/v1/member/follower/{followerId}/followee/{followeeId}")
-	private ApiResult<Boolean> unfollowMember(
+	private ApiResult<Long> unfollowMember(
 		@PathVariable("followerId") Long followerId,
 		@PathVariable("followeeId") Long followeeId
 	) {
-		boolean result = followMemberUseCase.unfollowMember(followerId, followeeId);
-
-		return ApiResult.ok(result);
+		return ApiResult.ok(followMemberUseCase.unfollowMember(followerId, followeeId));
 	}
 }

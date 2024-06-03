@@ -13,11 +13,4 @@ public class FollowMapper {
 			.followeeId(followeeId)
 			.build();
 	}
-
-	public FollowEntity.PK createFollowCompositeKey(Long followerId, Long followeeId) {
-		return FollowEntity.PK.builder()
-			.followerId(followerId)
-			.followeeId(followeeId)
-			.build();
-	}
 }

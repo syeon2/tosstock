@@ -18,15 +18,20 @@ public class CreateCommentRequest {
 	@NotNull(message = "포스트 아이디는 필수 값입니다.")
 	private Long postId;
 
+	@NotNull(message = "회원 아이디는 필수 값입니다.")
+	private Long memberId;
+
 	@Builder
-	private CreateCommentRequest(String article, Long postId) {
+	private CreateCommentRequest(String article, Long postId, Long memberId) {
 		this.article = article;
 		this.postId = postId;
+		this.memberId = memberId;
 	}
 
 	public Comment toDomain() {
 		return Comment.builder()
 			.article(this.article)
+			.memberId(this.memberId)
 			.postId(this.postId)
 			.build();
 	}

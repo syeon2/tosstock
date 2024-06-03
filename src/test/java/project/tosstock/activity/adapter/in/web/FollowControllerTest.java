@@ -51,7 +51,7 @@ class FollowControllerTest extends ControllerTestSupport {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.status").isNumber())
 			.andExpect(jsonPath("$.message").isEmpty())
-			.andExpect(jsonPath("$.data").isBoolean())
+			.andExpect(jsonPath("$.data").isNumber())
 			.andDo(document("member-follow",
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
@@ -64,8 +64,8 @@ class FollowControllerTest extends ControllerTestSupport {
 						.description("상태 코드"),
 					fieldWithPath("message").type(JsonFieldType.NULL)
 						.description("메시지"),
-					fieldWithPath("data").type(JsonFieldType.BOOLEAN)
-						.description("요청 결과 여부")
+					fieldWithPath("data").type(JsonFieldType.NUMBER)
+						.description("팔로우 고유 아이디")
 				)));
 	}
 
@@ -84,7 +84,7 @@ class FollowControllerTest extends ControllerTestSupport {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.status").isNumber())
 			.andExpect(jsonPath("$.message").isEmpty())
-			.andExpect(jsonPath("$.data").isBoolean())
+			.andExpect(jsonPath("$.data").isNumber())
 			.andDo(document("member-unfollow",
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
@@ -97,8 +97,8 @@ class FollowControllerTest extends ControllerTestSupport {
 						.description("상태 코드"),
 					fieldWithPath("message").type(JsonFieldType.NULL)
 						.description("메시지"),
-					fieldWithPath("data").type(JsonFieldType.BOOLEAN)
-						.description("요청 결과 여부")
+					fieldWithPath("data").type(JsonFieldType.NUMBER)
+						.description("언팔로우 고유 아이디")
 				)));
 	}
 }

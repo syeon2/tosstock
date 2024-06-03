@@ -5,14 +5,16 @@ import org.springframework.stereotype.Component;
 import project.tosstock.activity.adapter.out.entity.CommentEntity;
 import project.tosstock.activity.adapter.out.entity.PostEntity;
 import project.tosstock.activity.application.domain.model.Comment;
+import project.tosstock.member.adapter.out.entity.MemberEntity;
 
 @Component
 public class CommentMapper {
 
-	public CommentEntity toEntity(Comment comment, PostEntity post) {
+	public CommentEntity toEntity(Comment comment, MemberEntity member, PostEntity post) {
 		return CommentEntity.builder()
 			.article(comment.getArticle())
 			.post(post)
+			.member(member)
 			.build();
 	}
 }

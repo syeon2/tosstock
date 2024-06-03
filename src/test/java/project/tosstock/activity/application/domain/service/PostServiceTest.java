@@ -15,6 +15,7 @@ import project.tosstock.activity.adapter.out.persistence.PostRepository;
 import project.tosstock.activity.application.domain.model.Post;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
+import project.tosstock.newfeed.adapter.out.persistence.NewsFeedRepository;
 
 class PostServiceTest extends IntegrationTestSupport {
 
@@ -27,8 +28,12 @@ class PostServiceTest extends IntegrationTestSupport {
 	@Autowired
 	private MemberRepository memberRepository;
 
+	@Autowired
+	private NewsFeedRepository newsFeedRepository;
+
 	@BeforeEach
 	void before() {
+		newsFeedRepository.deleteAllInBatch();
 		postRepository.deleteAllInBatch();
 		memberRepository.deleteAllInBatch();
 	}

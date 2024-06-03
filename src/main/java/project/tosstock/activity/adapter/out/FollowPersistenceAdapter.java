@@ -1,6 +1,7 @@
 package project.tosstock.activity.adapter.out;
 
 import lombok.RequiredArgsConstructor;
+import project.tosstock.activity.adapter.out.entity.FollowEntity;
 import project.tosstock.activity.adapter.out.persistence.FollowRepository;
 import project.tosstock.activity.application.port.out.DeleteFollowPort;
 import project.tosstock.activity.application.port.out.SaveFollowPort;
@@ -14,12 +15,14 @@ public class FollowPersistenceAdapter implements SaveFollowPort, DeleteFollowPor
 	private final FollowMapper followMapper;
 
 	@Override
-	public void save(Long followerId, Long followeeId) {
-		followRepository.save(followMapper.toEntity(followerId, followeeId));
+	public Long save(Long followerId, Long followeeId) {
+		FollowEntity savedFollow = followRepository.save(followMapper.toEntity(followerId, followeeId));
+
+		return savedFollow.getId();
 	}
 
 	@Override
 	public void delete(Long followerId, Long followeeId) {
-		followRepository.deleteById(followMapper.createFollowCompositeKey(followerId, followeeId));
+		followRepository.deleteByFollowerIdAndFolloweeId(followerId, followeeId);
 	}
 }

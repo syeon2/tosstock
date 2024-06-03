@@ -7,6 +7,7 @@ import project.tosstock.activity.adapter.out.entity.PostEntity;
 import project.tosstock.activity.adapter.out.persistence.PostRepository;
 import project.tosstock.activity.application.domain.model.Post;
 import project.tosstock.activity.application.port.out.DeletePostPort;
+import project.tosstock.activity.application.port.out.FindPostPort;
 import project.tosstock.activity.application.port.out.SavePostPort;
 import project.tosstock.common.annotation.PersistenceAdapter;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
@@ -14,7 +15,7 @@ import project.tosstock.member.adapter.out.persistence.MemberRepository;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
-public class PostPersistenceAdapter implements SavePostPort, DeletePostPort {
+public class PostPersistenceAdapter implements SavePostPort, DeletePostPort, FindPostPort {
 
 	private final PostRepository postRepository;
 	private final MemberRepository memberRepository;
@@ -37,5 +38,11 @@ public class PostPersistenceAdapter implements SavePostPort, DeletePostPort {
 		postRepository.deleteById(postId);
 
 		return postId;
+	}
+
+	@Override
+	public PostEntity findPostById(Long postId) {
+		return postRepository.findById(postId)
+			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 포스트입니다."));
 	}
 }

@@ -1,7 +1,10 @@
-package project.tosstock.activity.adapter.out.entity;
+package project.tosstock.newfeed.adapter.out.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,39 +18,39 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.tosstock.common.wrapper.BaseEntity;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
+import project.tosstock.newfeed.application.domain.model.FeedType;
 
 @Getter
 @Entity
-@Table(name = "comment")
+@Table(name = "newfeed")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CommentEntity extends BaseEntity {
+public class NewsFeedEntity extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "comment_id", columnDefinition = "bigint")
+	@Column(name = "newfeed_id", columnDefinition = "bigint")
 	private Long id;
+
+	@Column(name = "feed_id", columnDefinition = "bigint")
+	private Long feedId;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "feedType", columnDefinition = "varchar(60)")
+	private FeedType feedType;
 
 	@Column(name = "article", columnDefinition = "varchar(255)")
 	private String article;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "post_id")
-	private PostEntity post;
-
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "member_id")
 	private MemberEntity member;
 
 	@Builder
-	private CommentEntity(Long id, String article, PostEntity post, MemberEntity member) {
+	private NewsFeedEntity(Long id, Long feedId, FeedType feedType, String article, MemberEntity member) {
 		this.id = id;
+		this.feedId = feedId;
+		this.feedType = feedType;
 		this.article = article;
-		this.post = post;
 		this.member = member;
-	}
-
-	public void setPost(PostEntity post) {
-		this.post = post;
-		post.getComments().add(this);
 	}
 }
