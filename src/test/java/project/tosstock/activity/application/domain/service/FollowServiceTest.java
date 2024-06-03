@@ -32,11 +32,10 @@ class FollowServiceTest extends IntegrationTestSupport {
 		Long followeeId = 2L;
 
 		// when
-		followService.followMember(followerId, followeeId);
+		Long savedFollowId = followService.followMember(followerId, followeeId);
 
 		// then
-		Optional<FollowEntity> findFollowOptional = followRepository.findById(
-			FollowEntity.PK.builder().followerId(followerId).followeeId(followeeId).build());
+		Optional<FollowEntity> findFollowOptional = followRepository.findById(savedFollowId);
 
 		assertThat(findFollowOptional).isPresent()
 			.hasValueSatisfying(f -> assertThat(f.getFollowerId()).isEqualTo(followerId))
@@ -52,13 +51,10 @@ class FollowServiceTest extends IntegrationTestSupport {
 		followService.followMember(followerId, followeeId);
 
 		// when
-		boolean result = followService.unfollowMember(followerId, followeeId);
+		Long deleteFollowId = followService.unfollowMember(followerId, followeeId);
 
 		// then
-		assertThat(result).isTrue();
-
-		Optional<FollowEntity> findFollowOptional = followRepository.findById(
-			FollowEntity.PK.builder().followerId(followerId).followeeId(followeeId).build());
+		Optional<FollowEntity> findFollowOptional = followRepository.findById(deleteFollowId);
 
 		assertThat(findFollowOptional).isEmpty();
 	}

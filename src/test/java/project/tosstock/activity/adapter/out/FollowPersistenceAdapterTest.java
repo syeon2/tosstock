@@ -34,11 +34,10 @@ class FollowPersistenceAdapterTest extends IntegrationTestSupport {
 		Long followeeId = 2L;
 
 		// when
-		followPersistenceAdapter.save(followerId, followeeId);
+		Long savedFollowId = followPersistenceAdapter.save(followerId, followeeId);
 
 		// then
-		Optional<FollowEntity> findFollowOptional = followRepository.findById(
-			FollowEntity.PK.builder().followerId(followerId).followeeId(followeeId).build());
+		Optional<FollowEntity> findFollowOptional = followRepository.findById(savedFollowId);
 
 		assertThat(findFollowOptional).isPresent()
 			.hasValueSatisfying(f -> assertThat(f.getFollowerId()).isEqualTo(followerId))
@@ -52,14 +51,13 @@ class FollowPersistenceAdapterTest extends IntegrationTestSupport {
 		Long followerId = 1L;
 		Long followeeId = 2L;
 
-		followPersistenceAdapter.save(followerId, followeeId);
+		Long savedFollowId = followPersistenceAdapter.save(followerId, followeeId);
 
 		// when
 		followPersistenceAdapter.delete(followerId, followeeId);
 
 		// then
-		Optional<FollowEntity> findFollowOptional = followRepository.findById(
-			FollowEntity.PK.builder().followerId(followerId).followeeId(followeeId).build());
+		Optional<FollowEntity> findFollowOptional = followRepository.findById(savedFollowId);
 
 		assertThat(findFollowOptional).isEmpty();
 	}

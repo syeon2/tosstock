@@ -15,17 +15,17 @@ public class FollowService implements FollowMemberUseCase {
 	private final DeleteFollowPort deleteFollowPort;
 
 	@Override
-	public boolean followMember(Long followerId, Long followeeId) {
-		saveFollowPort.save(followerId, followeeId);
+	public Long followMember(Long followerId, Long followeeId) {
+		Long savedFollowId = saveFollowPort.save(followerId, followeeId);
 
-		return true;
+		return savedFollowId;
 	}
 
 	@Override
-	public boolean unfollowMember(Long followerId, Long followeeId) {
+	public Long unfollowMember(Long followerId, Long followeeId) {
 		deleteFollowPort.delete(followerId, followeeId);
 
-		return true;
+		return followerId;
 	}
-
+	
 }
