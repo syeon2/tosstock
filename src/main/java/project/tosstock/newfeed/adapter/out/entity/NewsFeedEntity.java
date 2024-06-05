@@ -28,7 +28,7 @@ public class NewsFeedEntity extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "newfeed_id", columnDefinition = "bigint")
+	@Column(name = "newsfeed_id", columnDefinition = "bigint")
 	private Long id;
 
 	@Column(name = "feed_id", columnDefinition = "bigint")
