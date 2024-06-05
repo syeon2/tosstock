@@ -272,15 +272,16 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 	@DisplayName(value = "비밀번호를 받아 변경합니다.")
 	void updatePassword() {
 		// given
+		String email = "waterkite94@gmail.com";
 		String password = "123456789012345678901234567890123456789012345678901234567890";
-		Member member = createMember("waterkite94@gmail.com", password, "00011112222");
+		Member member = createMember(email, password, "00011112222");
 
 		Long savedMemberId = memberPersistenceAdapter.save(member);
 
 		String changePassword = "123456789012345678901234567890123456789012345678901234511111";
 
 		// when
-		memberPersistenceAdapter.updatePassword(savedMemberId, changePassword);
+		memberPersistenceAdapter.updatePassword(email, changePassword);
 
 		// then
 		Optional<MemberEntity> findMemberOptional = memberRepository.findById(savedMemberId);

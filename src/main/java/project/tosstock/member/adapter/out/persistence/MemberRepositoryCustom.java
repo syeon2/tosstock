@@ -10,5 +10,5 @@ public interface MemberRepositoryCustom {
 
 	void updateInfo(Long memberId, UpdateMemberDto updateMemberDto);
 
-	void updatePassword(Long memberId, String password);
+	void updatePassword(String email, String password);
 }

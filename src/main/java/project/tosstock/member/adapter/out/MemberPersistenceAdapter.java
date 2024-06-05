@@ -49,7 +49,7 @@ public class MemberPersistenceAdapter implements SaveMemberPort, UpdateMemberPor
 	}
 
 	@Override
-	public void updatePassword(Long memberId, String password) {
-		memberRepository.updatePassword(memberId, password);
+	public void updatePassword(String email, String password) {
+		memberRepository.updatePassword(email, password);
 	}
 }

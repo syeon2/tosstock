@@ -6,5 +6,5 @@ public interface UpdateMemberUseCase {
 
 	boolean changeMemberInfo(Long memberId, UpdateMemberDto updateMemberDto);
 
-	boolean changePassword(Long id, String email, String password);
+	boolean changePassword(String email, String password);
 }

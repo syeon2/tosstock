@@ -33,7 +33,7 @@ public class MemberService implements JoinMemberUseCase, UpdateMemberUseCase {
 	@Transactional
 	public Long joinMember(Member member, String authCode) {
 		checkAuthCodeByMail(member.getEmail(), authCode);
-		checkDuplicatedMember(member);
+		checkDuplicatedMember(member.getEmail(), member.getPhoneNumber());
 
 		member.updateEncryptedPassword(encryptPassword(member.getPassword()));
 
@@ -50,10 +50,10 @@ public class MemberService implements JoinMemberUseCase, UpdateMemberUseCase {
 
 	@Override
 	@Transactional
-	public boolean changePassword(Long id, String email, String password) {
+	public boolean changePassword(String email, String password) {
 		deleteJwtTokenPort.deleteAll(email);
 
-		updateMemberPort.updatePassword(id, encryptPassword(password));
+		updateMemberPort.updatePassword(email, encryptPassword(password));
 
 		return true;
 	}
@@ -66,8 +66,8 @@ public class MemberService implements JoinMemberUseCase, UpdateMemberUseCase {
 		}
 	}
 
-	private void checkDuplicatedMember(Member member) {
-		findMemberPort.findMemberByEmailOrPhoneNumber(member.getEmail(), member.getPhoneNumber())
+	private void checkDuplicatedMember(String email, String phoneNumber) {
+		findMemberPort.findMemberByEmailOrPhoneNumber(email, phoneNumber)
 			.ifPresent(m -> {
 				throw new DuplicatedAccountException("이미 가입된 회원입니다.");
 			});

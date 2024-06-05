@@ -48,10 +48,10 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 	@Transactional
 	@Modifying(clearAutomatically = true)
 	@Override
-	public void updatePassword(Long memberId, String password) {
+	public void updatePassword(String email, String password) {
 		queryFactory.update(memberEntity)
 			.set(memberEntity.password, password)
-			.where(memberEntity.id.eq(memberId))
+			.where(memberEntity.email.eq(email))
 			.execute();
 	}
 

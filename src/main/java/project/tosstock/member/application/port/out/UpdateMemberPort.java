@@ -6,5 +6,5 @@ public interface UpdateMemberPort {
 
 	void updateInfo(Long memberId, UpdateMemberDto updateMemberDto);
 
-	void updatePassword(Long id, String password);
+	void updatePassword(String email, String password);
 }

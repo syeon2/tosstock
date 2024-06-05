@@ -1,6 +1,5 @@
 package project.tosstock.member.adapter.in.web;
 
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import project.tosstock.common.annotation.WebAdapter;
 import project.tosstock.common.wrapper.ApiResult;
 import project.tosstock.member.adapter.in.web.request.AuthEmailRequest;
-import project.tosstock.member.adapter.in.web.request.ChangePasswordRequest;
 import project.tosstock.member.adapter.in.web.request.JoinMemberRequest;
 import project.tosstock.member.application.port.in.JoinMemberUseCase;
 import project.tosstock.member.application.port.in.SendAuthCodeByMailUseCase;
@@ -39,11 +37,11 @@ public class MemberController {
 		return ApiResult.ok(result);
 	}
 
-	@PostMapping("/api/v1/member/{id}/password")
-	public ApiResult<Boolean> changePassword(
-		@PathVariable("id") Long id, @RequestBody ChangePasswordRequest request) {
-		boolean result = updateMemberUseCase.changePassword(id, request.getEmail(), request.getPassword());
-
-		return ApiResult.ok(result);
-	}
+	// @PostMapping("/api/v1/member/{id}/password")
+	// public ApiResult<Boolean> changePassword(
+	// 	@PathVariable("id") Long id, @RequestBody ChangePasswordRequest request) {
+	// 	boolean result = updateMemberUseCase.changePassword(id, request.getEmail(), request.getPassword());
+	//
+	// 	return ApiResult.ok(result);
+	// }
 }
