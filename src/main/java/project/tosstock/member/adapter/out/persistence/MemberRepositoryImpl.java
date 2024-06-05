@@ -38,9 +38,9 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
 		setNotNullFields(update, memberEntity.username, updateMemberDto.getUsername());
 		setNotNullFields(update, memberEntity.introduce, updateMemberDto.getIntroduce());
-		setNotNullFields(update, memberEntity.profileImageUrl, updateMemberDto.getProfileImageUrl());
 
 		update
+			.set(memberEntity.profileImageUrl, updateMemberDto.getProfileImageUrl())
 			.where(memberEntity.id.eq(memberId))
 			.execute();
 	}

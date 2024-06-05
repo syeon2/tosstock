@@ -174,7 +174,7 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 		Long saveMemberId = memberPersistenceAdapter.save(member);
 
 		String changeUsername = "kim!";
-		UpdateMemberDto updateMemberDto = createUpdateMemberDto(changeUsername, null, null);
+		UpdateMemberDto updateMemberDto = createUpdateMemberDto(changeUsername, null, profileImageUrl);
 
 		// when
 		memberPersistenceAdapter.updateInfo(saveMemberId, updateMemberDto);
@@ -200,7 +200,7 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 		Long saveMemberId = memberPersistenceAdapter.save(member);
 
 		String changeIntroduce = "안녕하세요!";
-		UpdateMemberDto updateMemberDto = createUpdateMemberDto(null, changeIntroduce, null);
+		UpdateMemberDto updateMemberDto = createUpdateMemberDto(username, changeIntroduce, profileImageUrl);
 
 		// when
 		memberPersistenceAdapter.updateInfo(saveMemberId, updateMemberDto);

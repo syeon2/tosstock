@@ -1,5 +1,7 @@
 package project.tosstock.member.adapter.in.web.request;
 
+import org.hibernate.validator.constraints.Length;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
@@ -12,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class ChangePasswordRequest {
 
 	@NotBlank(message = "비밀번호는 필수 값입니다.")
+	@Length(min = 8, max = 20, message = "비밀번호는 8 ~ 20자리입니다.")
 	private String password;
 
 	@Email(message = "아이디는 이메일 형식입니다.")
