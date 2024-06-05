@@ -27,7 +27,7 @@ import project.tosstock.member.adapter.in.web.request.ChangeMemberInfoRequest;
 import project.tosstock.member.adapter.in.web.request.ChangePasswordRequest;
 import project.tosstock.member.adapter.in.web.request.JoinMemberRequest;
 import project.tosstock.member.application.port.in.JoinMemberUseCase;
-import project.tosstock.member.application.port.in.SendAuthCodeByMailUseCase;
+import project.tosstock.member.application.port.in.SendAuthCodeUseCase;
 import project.tosstock.member.application.port.in.UpdateMemberUseCase;
 
 @WebMvcTest(
@@ -44,7 +44,7 @@ class MemberControllerTest extends ControllerTestSupport {
 	private JoinMemberUseCase joinMemberUseCase;
 
 	@MockBean
-	private SendAuthCodeByMailUseCase sendAuthCodeByMailUseCase;
+	private SendAuthCodeUseCase sendAuthCodeUseCase;
 
 	@MockBean
 	private UpdateMemberUseCase updateMemberUseCase;

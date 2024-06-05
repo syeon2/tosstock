@@ -16,7 +16,7 @@ import project.tosstock.member.adapter.in.web.request.JoinMemberRequest;
 import project.tosstock.member.adapter.in.web.response.BasicResponse;
 import project.tosstock.member.adapter.in.web.response.JoinMemberResponse;
 import project.tosstock.member.application.port.in.JoinMemberUseCase;
-import project.tosstock.member.application.port.in.SendAuthCodeByMailUseCase;
+import project.tosstock.member.application.port.in.SendAuthCodeUseCase;
 import project.tosstock.member.application.port.in.UpdateMemberUseCase;
 
 @WebAdapter
@@ -25,7 +25,7 @@ import project.tosstock.member.application.port.in.UpdateMemberUseCase;
 public class MemberController {
 
 	private final JoinMemberUseCase joinMemberUseCase;
-	private final SendAuthCodeByMailUseCase sendAuthCodeByMailUseCase;
+	private final SendAuthCodeUseCase sendAuthCodeUseCase;
 	private final UpdateMemberUseCase updateMemberUseCase;
 
 	@PostMapping("/api/v1/members")
@@ -37,7 +37,7 @@ public class MemberController {
 
 	@PostMapping("/api/v1/members/emails/verification-requests")
 	public ApiResult<BasicResponse> sendAuthCodeToEmail(@Valid @RequestBody AuthEmailRequest request) {
-		boolean result = sendAuthCodeByMailUseCase.sendEmail(request.getEmail());
+		boolean result = sendAuthCodeUseCase.dispatchAuthCodeToEmail(request.getEmail());
 
 		return ApiResult.ok(BasicResponse.of(result));
 	}

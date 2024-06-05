@@ -10,8 +10,8 @@ import project.tosstock.member.application.domain.model.Member;
 import project.tosstock.member.application.domain.model.UpdateMemberDto;
 import project.tosstock.member.application.port.in.JoinMemberUseCase;
 import project.tosstock.member.application.port.in.UpdateMemberUseCase;
-import project.tosstock.member.application.port.out.AuthCodeByMailPort;
 import project.tosstock.member.application.port.out.DeleteJwtTokenPort;
+import project.tosstock.member.application.port.out.FindAuthCodePort;
 import project.tosstock.member.application.port.out.FindMemberPort;
 import project.tosstock.member.application.port.out.SaveMemberPort;
 import project.tosstock.member.application.port.out.UpdateMemberPort;
@@ -24,7 +24,7 @@ public class MemberService implements JoinMemberUseCase, UpdateMemberUseCase {
 	private final FindMemberPort findMemberPort;
 	private final UpdateMemberPort updateMemberPort;
 
-	private final AuthCodeByMailPort authCodeByMailPort;
+	private final FindAuthCodePort findAuthCodePort;
 	private final DeleteJwtTokenPort deleteJwtTokenPort;
 
 	private final PasswordEncoder passwordEncoder;
@@ -59,11 +59,14 @@ public class MemberService implements JoinMemberUseCase, UpdateMemberUseCase {
 	}
 
 	private void checkAuthCodeByMail(String email, String code) {
-		String storedCode = authCodeByMailPort.findAuthCodeByMail(email);
-
-		if (!storedCode.equals(code)) {
-			throw new IllegalArgumentException("인증번호가 일치하지 않습니다.");
-		}
+		findAuthCodePort.findAuthCodeByMail(email)
+			.ifPresentOrElse(findAuthCode -> {
+				if (!findAuthCode.equals(code)) {
+					throw new IllegalArgumentException("인증번호가 일치하지 않습니다.");
+				}
+			}, () -> {
+				throw new IllegalArgumentException("인증번호가 일치하지 않습니다.");
+			});
 	}
 
 	private void checkDuplicatedMember(String email, String phoneNumber) {

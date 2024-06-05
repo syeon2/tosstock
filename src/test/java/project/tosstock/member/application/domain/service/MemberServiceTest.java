@@ -19,7 +19,8 @@ import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
 import project.tosstock.member.application.domain.model.Member;
 import project.tosstock.member.application.domain.model.UpdateMemberDto;
-import project.tosstock.member.application.port.out.AuthCodeByMailPort;
+import project.tosstock.member.application.port.out.FindAuthCodePort;
+import project.tosstock.member.application.port.out.SaveAuthCodePort;
 
 class MemberServiceTest extends IntegrationTestSupport {
 
@@ -33,7 +34,10 @@ class MemberServiceTest extends IntegrationTestSupport {
 	private PasswordEncoder passwordEncoder;
 
 	@MockBean
-	private AuthCodeByMailPort authCodeByMailPort;
+	private FindAuthCodePort findAuthCodePort;
+
+	@MockBean
+	private SaveAuthCodePort saveAuthCodePort;
 
 	@BeforeEach
 	void before() {
@@ -47,8 +51,8 @@ class MemberServiceTest extends IntegrationTestSupport {
 		Member member = createMember("gsy94@gmail.com", "01029391234");
 		String authCode = "000000";
 
-		given(authCodeByMailPort.findAuthCodeByMail(anyString()))
-			.willReturn(authCode);
+		given(findAuthCodePort.findAuthCodeByMail(anyString()))
+			.willReturn(Optional.of(authCode));
 
 		// when
 		Long savedMemberId = memberService.joinMember(member, authCode);
@@ -67,8 +71,8 @@ class MemberServiceTest extends IntegrationTestSupport {
 		Member member = createMember(email, "01011112222");
 		String authCode = "000000";
 
-		given(authCodeByMailPort.findAuthCodeByMail(anyString()))
-			.willReturn(authCode);
+		given(findAuthCodePort.findAuthCodeByMail(anyString()))
+			.willReturn(Optional.of(authCode));
 
 		memberService.joinMember(member, authCode);
 
@@ -89,8 +93,8 @@ class MemberServiceTest extends IntegrationTestSupport {
 		Member member = createMember("waterkite94@gmail.com", phoneNumber);
 		String authCode = "000000";
 
-		given(authCodeByMailPort.findAuthCodeByMail(anyString()))
-			.willReturn(authCode);
+		given(findAuthCodePort.findAuthCodeByMail(anyString()))
+			.willReturn(Optional.of(authCode));
 
 		memberService.joinMember(member, authCode);
 
