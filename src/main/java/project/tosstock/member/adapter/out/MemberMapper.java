@@ -20,10 +20,10 @@ public class MemberMapper {
 			.build();
 	}
 
-	public MemberEntity toEntity(Member domain, String encodedPassword) {
+	public MemberEntity toEntity(Member domain) {
 		return MemberEntity.builder()
 			.username(domain.getUsername())
-			.password(encodedPassword)
+			.password(domain.getPassword())
 			.email(domain.getEmail())
 			.phoneNumber(domain.getPhoneNumber())
 			.introduce(domain.getIntroduce())

@@ -38,69 +38,12 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 		Member member = createMember("waterkite94@gmail.com", "01000001111");
 
 		// when
-		Long savedMemberId = memberPersistenceAdapter.save(member, member.getPassword());
+		Long savedMemberId = memberPersistenceAdapter.save(member);
 
 		// then
 		Optional<MemberEntity> findMemberOptional = memberRepository.findById(savedMemberId);
 		assertThat(findMemberOptional).isPresent()
 			.hasValueSatisfying(m -> assertThat(m.getId()).isEqualTo(savedMemberId));
-	}
-
-	@Test
-	@DisplayName(value = "저장소에 가입하고자 하는 이메일과 중복된 값이 있는지 확인합니다. (값이 없을 경우)")
-	void is_duplicated_Email_Non() {
-		// given
-		String email = "waterkite94@gmail.com";
-
-		// when
-		boolean isDuplicated = memberPersistenceAdapter.isDuplicatedEmail(email);
-
-		// then
-		assertThat(isDuplicated).isFalse();
-	}
-
-	@Test
-	@DisplayName(value = "저장소에 가입하고자 하는 이메일과 중복된 값이 있는지 확인합니다. (값이 있는 경우)")
-	void is_duplicated_Email() {
-		// given
-		String email = "waterkite94@gmail.com";
-		Member member = createMember(email, "01011112222");
-		memberPersistenceAdapter.save(member, member.getPassword());
-
-		// when
-		boolean isDuplicated = memberPersistenceAdapter.isDuplicatedEmail(email);
-
-		// then
-		assertThat(isDuplicated).isTrue();
-	}
-
-	@Test
-	@DisplayName(value = "저장소에 가입하고자 하는 전화번호와 중복된 값이 있는지 확인합니다. (값이 있는 경우)")
-	void is_duplicated_PhoneNumber() {
-		// given
-		String phoneNumber = "01011112222";
-
-		Member member = createMember("waterkite94@gmail.com", phoneNumber);
-		memberPersistenceAdapter.save(member, member.getPassword());
-
-		// when
-		boolean isExist = memberPersistenceAdapter.isExistPhoneNumber(phoneNumber);
-
-		// then
-		assertThat(isExist).isTrue();
-	}
-
-	@Test
-	@DisplayName(value = "저장소에 가입하고자 하는 전화번호와 중복된 값이 있는지 확인합니다. (값이 없는 경우)")
-	void is_duplicated_PhoneNumber_Non() {
-		// given
-		String phoneNumber = "01011112222";
-
-		// when
-		boolean isExist = memberPersistenceAdapter.isExistPhoneNumber(phoneNumber);
-
-		// then
-		assertThat(isExist).isFalse();
 	}
 
 	@Test
@@ -111,7 +54,7 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 		String encodedPassword = passwordEncoder.encode("12345678");
 
 		Member member = createMember(email, encodedPassword, "01011112222");
-		memberPersistenceAdapter.save(member, member.getPassword());
+		memberPersistenceAdapter.save(member);
 
 		// when
 		String findPassword = memberPersistenceAdapter.findPasswordByEmail(email);
@@ -136,10 +79,9 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 	@DisplayName(value = "회원 이름을 변경합니다.")
 	void update_username() {
 		// given
-		String password = "12345678";
 		Member member =
-			createMember("waterkite94@gmail.com", "suyeon", password, "https://syeon2.github.io/");
-		Long saveMemberId = memberPersistenceAdapter.save(member, password);
+			createMember("waterkite94@gmail.com", "suyeon", "12345678", "https://syeon2.github.io/");
+		Long saveMemberId = memberPersistenceAdapter.save(member);
 
 		// when
 		String changedUsername = "kimsuyeon";
@@ -156,11 +98,10 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 	@DisplayName(value = "회원 프로필 이미지 URL을 변경합니다.")
 	void update_url() {
 		// given
-		String password = "12345678";
 		String url = "https://syeon2.github.io/";
 		Member member =
-			createMember("waterkite94@gmail.com", "suyeon", password, url);
-		Long saveMemberId = memberPersistenceAdapter.save(member, password);
+			createMember("waterkite94@gmail.com", "suyeon", "12345678", url);
+		Long saveMemberId = memberPersistenceAdapter.save(member);
 
 		// when
 		String changedUrl = "https://github.com/syeon2";
@@ -177,10 +118,9 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 	@DisplayName(value = "회원 비밀번호를 변경합니다.")
 	void update_password() {
 		// given
-		String password = "12345678";
 		Member member =
-			createMember("waterkite94@gmail.com", "suyeon", password, "https://syeon2.github.io/");
-		Long saveMemberId = memberPersistenceAdapter.save(member, password);
+			createMember("waterkite94@gmail.com", "suyeon", "12345678", "https://syeon2.github.io/");
+		Long saveMemberId = memberPersistenceAdapter.save(member);
 
 		// when
 		String changedPassword = "987654321";
@@ -199,7 +139,7 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 	void find_member_by_Id() {
 		// given
 		Member member = createMember("waterkite94@gmail.com", "01000001111");
-		Long savedMemberId = memberPersistenceAdapter.save(member, "123411231");
+		Long savedMemberId = memberPersistenceAdapter.save(member);
 
 		// when
 		MemberEntity findMember = memberPersistenceAdapter.findMemberById(savedMemberId);
@@ -217,7 +157,37 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 		// when  // then
 		assertThatThrownBy(() -> memberPersistenceAdapter.findMemberById(memberId))
 			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("존재히지 않는 회원입니다.");
+			.hasMessage("존재하지 않는 회원입니다.");
+	}
+
+	@Test
+	@DisplayName(value = "이메일과 전화번호 둘 중 하나의 값과 일치하는 회원을 조회합니다.")
+	void find_member_by_email_or_phoneNumber() {
+		// given
+		String email = "waterkite94@gmail.com";
+		String phoneNumber = "01011112222";
+
+		Member member = createMember(email, phoneNumber);
+		memberPersistenceAdapter.save(member);
+
+		// when
+		Optional<MemberEntity> findMemberOptional1 =
+			memberPersistenceAdapter.findMemberByEmailOrPhoneNumber("gsy4568@gmailc.om", phoneNumber);
+
+		Optional<MemberEntity> findMemberOptional2 =
+			memberPersistenceAdapter.findMemberByEmailOrPhoneNumber(email, "01020204949");
+
+		Optional<MemberEntity> findMemberOptional3 =
+			memberPersistenceAdapter.findMemberByEmailOrPhoneNumber("345@gmail.com", "18012841123");
+
+		// then
+		assertThat(findMemberOptional1).isPresent()
+			.hasValueSatisfying(m -> assertThat(m.getPhoneNumber()).isEqualTo(phoneNumber));
+
+		assertThat(findMemberOptional2).isPresent()
+			.hasValueSatisfying(m -> assertThat(m.getEmail()).isEqualTo(email));
+
+		assertThat(findMemberOptional3).isEmpty();
 	}
 
 	private Member createMember(String email, String phoneNumber) {

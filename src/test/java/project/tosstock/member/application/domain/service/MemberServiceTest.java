@@ -43,7 +43,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 	@DisplayName(value = "회원 도메인을 parameter로 받아 Repository에 저장합니다.")
 	void join_member() {
 		// given
-		Member member = createMember("waterkite94@gmail.com", "01011112222");
+		Member member = createMember("gsy94@gmail.com", "01029391234");
 		String authCode = "000000";
 
 		given(authCodeByMailPort.findAuthCodeByMail(anyString()))
@@ -77,7 +77,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 		// then
 		assertThatThrownBy(() -> memberService.joinMember(member2, authCode))
 			.isInstanceOf(DuplicatedAccountException.class)
-			.hasMessage("이미 존재하는 이메일입니다.");
+			.hasMessage("이미 가입된 회원입니다.");
 	}
 
 	@Test
@@ -100,7 +100,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 		// then
 		assertThatThrownBy(() -> memberService.joinMember(member2, authCode))
 			.isInstanceOf(DuplicatedAccountException.class)
-			.hasMessage("이미 가입된 전화번호입니다.");
+			.hasMessage("이미 가입된 회원입니다.");
 	}
 
 	@Test

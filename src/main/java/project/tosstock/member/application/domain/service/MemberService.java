@@ -11,17 +11,17 @@ import project.tosstock.member.application.port.in.JoinMemberUseCase;
 import project.tosstock.member.application.port.in.UpdateMemberUseCase;
 import project.tosstock.member.application.port.out.AuthCodeByMailPort;
 import project.tosstock.member.application.port.out.DeleteJwtTokenPort;
+import project.tosstock.member.application.port.out.FindMemberPort;
 import project.tosstock.member.application.port.out.SaveMemberPort;
 import project.tosstock.member.application.port.out.UpdateMemberPort;
-import project.tosstock.member.application.port.out.VerifyMemberPort;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService implements JoinMemberUseCase, UpdateMemberUseCase {
 
 	private final SaveMemberPort saveMemberPort;
-	private final VerifyMemberPort verifyMemberPort;
 	private final UpdateMemberPort updateMemberPort;
+	private final FindMemberPort findMemberPort;
 
 	private final AuthCodeByMailPort authCodeByMailPort;
 	private final DeleteJwtTokenPort deleteJwtTokenPort;
@@ -34,7 +34,9 @@ public class MemberService implements JoinMemberUseCase, UpdateMemberUseCase {
 		checkAuthCodeByMail(member.getEmail(), authCode);
 		checkDuplicatedMember(member);
 
-		return saveMemberPort.save(member, passwordEncoder.encode(member.getPassword()));
+		encryptPassword(member);
+
+		return saveMemberPort.save(member);
 	}
 
 	@Override
@@ -73,12 +75,13 @@ public class MemberService implements JoinMemberUseCase, UpdateMemberUseCase {
 	}
 
 	private void checkDuplicatedMember(Member member) {
-		if (verifyMemberPort.isDuplicatedEmail(member.getEmail())) {
-			throw new DuplicatedAccountException("이미 존재하는 이메일입니다.");
-		}
+		findMemberPort.findMemberByEmailOrPhoneNumber(member.getEmail(), member.getPhoneNumber())
+			.ifPresent(m -> {
+				throw new DuplicatedAccountException("이미 가입된 회원입니다.");
+			});
+	}
 
-		if (verifyMemberPort.isExistPhoneNumber(member.getPhoneNumber())) {
-			throw new DuplicatedAccountException("이미 가입된 전화번호입니다.");
-		}
+	private void encryptPassword(Member member) {
+		member.encryptePassword(passwordEncoder.encode(member.getPassword()));
 	}
 }

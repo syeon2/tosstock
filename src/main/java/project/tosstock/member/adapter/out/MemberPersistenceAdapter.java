@@ -1,5 +1,7 @@
 package project.tosstock.member.adapter.out;
 
+import java.util.Optional;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
@@ -10,43 +12,36 @@ import project.tosstock.member.application.domain.model.Member;
 import project.tosstock.member.application.port.out.FindMemberPort;
 import project.tosstock.member.application.port.out.SaveMemberPort;
 import project.tosstock.member.application.port.out.UpdateMemberPort;
-import project.tosstock.member.application.port.out.VerifyMemberPort;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
-public class MemberPersistenceAdapter implements SaveMemberPort, VerifyMemberPort, UpdateMemberPort, FindMemberPort {
+public class MemberPersistenceAdapter implements SaveMemberPort, UpdateMemberPort, FindMemberPort {
 
 	private final MemberRepository memberRepository;
 	private final MemberMapper memberMapper;
 
 	@Override
-	public Long save(Member member, String encodedPassword) {
-		MemberEntity entity = memberMapper.toEntity(member, encodedPassword);
-		memberRepository.save(entity);
+	public Long save(Member member) {
+		MemberEntity savedMemberEntity = memberRepository.save(memberMapper.toEntity(member));
 
-		return entity.getId();
-	}
-
-	@Override
-	public boolean isDuplicatedEmail(String email) {
-		return memberRepository.findByEmail(email).isPresent();
-	}
-
-	@Override
-	public boolean isExistPhoneNumber(String phoneNumber) {
-		return memberRepository.findByPhoneNumber(phoneNumber).isPresent();
+		return savedMemberEntity.getId();
 	}
 
 	@Override
 	public MemberEntity findMemberById(Long memberId) {
 		return memberRepository.findById(memberId)
-			.orElseThrow(() -> new IllegalArgumentException("존재히지 않는 회원입니다."));
+			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 	}
 
 	@Override
 	public String findPasswordByEmail(String email) {
 		return memberRepository.findPasswordByEmail(email)
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 이메일입니다."));
+	}
+
+	@Override
+	public Optional<MemberEntity> findMemberByEmailOrPhoneNumber(String email, String phoneNumber) {
+		return memberRepository.findByEmailOrPhoneNumber(email, phoneNumber);
 	}
 
 	@Override

@@ -4,5 +4,5 @@ import project.tosstock.member.application.domain.model.Member;
 
 public interface SaveMemberPort {
 
-	Long save(Member member, String encodedPassword);
+	Long save(Member member);
 }

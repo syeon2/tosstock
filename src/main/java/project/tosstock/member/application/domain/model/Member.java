@@ -31,4 +31,8 @@ public class Member {
 		this.introduce = introduce;
 		this.profileImageUrl = profileImageUrl;
 	}
+
+	public void encryptePassword(String encodedPassword) {
+		this.password = encodedPassword;
+	}
 }
