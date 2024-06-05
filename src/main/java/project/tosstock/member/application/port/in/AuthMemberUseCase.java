@@ -6,9 +6,9 @@ public interface AuthMemberUseCase {
 
 	JwtTokenDto login(String email, String password, String address);
 
-	void logout(String email, String address);
+	boolean logout(String email, String address);
 
-	void logoutAll(String email);
+	boolean logoutAll(String email);
 
 	JwtTokenDto updateJwtToken(String refreshToken);
 }

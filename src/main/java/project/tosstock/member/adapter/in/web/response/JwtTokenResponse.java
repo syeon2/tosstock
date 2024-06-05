@@ -20,7 +20,7 @@ public class JwtTokenResponse {
 		this.refreshToken = refreshToken;
 	}
 
-	public static JwtTokenResponse toRequest(JwtTokenDto jwtTokenDto) {
+	public static JwtTokenResponse of(JwtTokenDto jwtTokenDto) {
 		return JwtTokenResponse.builder()
 			.accessToken(jwtTokenDto.getAccessToken())
 			.refreshToken(jwtTokenDto.getRefreshToken())
