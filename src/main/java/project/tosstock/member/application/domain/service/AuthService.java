@@ -94,6 +94,7 @@ public class AuthService implements AuthMemberUseCase {
 	}
 
 	private String findPasswordByEmail(String email) {
-		return findMemberPort.findPasswordByEmail(email);
+		return findMemberPort.findPasswordByEmail(email)
+			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 	}
 }

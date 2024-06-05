@@ -24,8 +24,6 @@ import project.tosstock.common.config.web.filter.JwtExceptionFilter;
 import project.tosstock.common.config.web.filter.JwtVerificationFilter;
 import project.tosstock.member.adapter.in.web.request.AuthEmailRequest;
 import project.tosstock.member.adapter.in.web.request.ChangePasswordRequest;
-import project.tosstock.member.adapter.in.web.request.ChangeProfileImageUrlRequest;
-import project.tosstock.member.adapter.in.web.request.ChangeUsernameRequest;
 import project.tosstock.member.adapter.in.web.request.JoinMemberRequest;
 import project.tosstock.member.application.port.in.JoinMemberUseCase;
 import project.tosstock.member.application.port.in.SendAuthCodeByMailUseCase;
@@ -320,78 +318,6 @@ class MemberControllerTest extends ControllerTestSupport {
 						.description("인증 성공시 true")
 				)
 			));
-	}
-
-	@Test
-	@DisplayName(value = "회원 이름을 업데이트합니다.")
-	void change_username() throws Exception {
-		// given
-		ChangeUsernameRequest request = new ChangeUsernameRequest("changeName");
-
-		// when  // then
-		mockMvc.perform(
-				post("/api/v1/member/{id}/username", 1)
-					.content(objectMapper.writeValueAsString(request))
-					.contentType(MediaType.APPLICATION_JSON)
-			)
-			.andDo(print())
-			.andExpect(jsonPath("$.status").isNumber())
-			.andExpect(jsonPath("$.message").isEmpty())
-			.andExpect(jsonPath("$.data").isBoolean())
-			.andDo(document("member-update-username",
-				preprocessRequest(prettyPrint()),
-				preprocessResponse(prettyPrint()),
-				pathParameters(
-					parameterWithName("id").description("회원 아이디")
-				),
-				requestFields(
-					fieldWithPath("username").type(JsonFieldType.STRING)
-						.description("변경할 회원 이름")
-				),
-				responseFields(
-					fieldWithPath("status").type(JsonFieldType.NUMBER)
-						.description("상태 코드"),
-					fieldWithPath("message").type(JsonFieldType.NULL)
-						.description("메시지"),
-					fieldWithPath("data").type(JsonFieldType.BOOLEAN)
-						.description("변경 여부 값")
-				)));
-	}
-
-	@Test
-	@DisplayName(value = "회원 프로필 이미지 URL을 업데이트합니다.")
-	void change_profile_image_url() throws Exception {
-		// given
-		ChangeProfileImageUrlRequest request = new ChangeProfileImageUrlRequest("www.xxxx.xxxx");
-
-		// when  // then
-		mockMvc.perform(
-				post("/api/v1/member/{id}/profile-image-url", 1)
-					.content(objectMapper.writeValueAsString(request))
-					.contentType(MediaType.APPLICATION_JSON)
-			)
-			.andDo(print())
-			.andExpect(jsonPath("$.status").isNumber())
-			.andExpect(jsonPath("$.message").isEmpty())
-			.andExpect(jsonPath("$.data").isBoolean())
-			.andDo(document("member-update-profile-image-url",
-				preprocessRequest(prettyPrint()),
-				preprocessResponse(prettyPrint()),
-				pathParameters(
-					parameterWithName("id").description("회원 아이디")
-				),
-				requestFields(
-					fieldWithPath("profileImageUrl").type(JsonFieldType.STRING)
-						.description("변경할 프로필 이미지 URL")
-				),
-				responseFields(
-					fieldWithPath("status").type(JsonFieldType.NUMBER)
-						.description("상태 코드"),
-					fieldWithPath("message").type(JsonFieldType.NULL)
-						.description("메시지"),
-					fieldWithPath("data").type(JsonFieldType.BOOLEAN)
-						.description("변경 여부 값")
-				)));
 	}
 
 	@Test

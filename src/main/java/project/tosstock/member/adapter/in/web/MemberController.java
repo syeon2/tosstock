@@ -11,8 +11,6 @@ import project.tosstock.common.annotation.WebAdapter;
 import project.tosstock.common.wrapper.ApiResult;
 import project.tosstock.member.adapter.in.web.request.AuthEmailRequest;
 import project.tosstock.member.adapter.in.web.request.ChangePasswordRequest;
-import project.tosstock.member.adapter.in.web.request.ChangeProfileImageUrlRequest;
-import project.tosstock.member.adapter.in.web.request.ChangeUsernameRequest;
 import project.tosstock.member.adapter.in.web.request.JoinMemberRequest;
 import project.tosstock.member.application.port.in.JoinMemberUseCase;
 import project.tosstock.member.application.port.in.SendAuthCodeByMailUseCase;
@@ -37,23 +35,6 @@ public class MemberController {
 	@PostMapping("/api/v1/members/emails/verification-requests")
 	public ApiResult<Boolean> sendAuthCodeToEmail(@Valid @RequestBody AuthEmailRequest request) {
 		boolean result = sendAuthCodeByMailUseCase.sendEmail(request.getEmail());
-
-		return ApiResult.ok(result);
-	}
-
-	@PostMapping("/api/v1/member/{id}/username")
-	public ApiResult<Boolean> changeUsername(
-		@PathVariable("id") Long id, @RequestBody ChangeUsernameRequest request
-	) {
-		boolean result = updateMemberUseCase.changeUsername(id, request.getUsername());
-
-		return ApiResult.ok(result);
-	}
-
-	@PostMapping("/api/v1/member/{id}/profile-image-url")
-	public ApiResult<Boolean> changeProfileImageUrl(
-		@PathVariable("id") Long id, @RequestBody ChangeProfileImageUrlRequest request) {
-		boolean result = updateMemberUseCase.changeProfileImageUrl(id, request.getProfileImageUrl());
 
 		return ApiResult.ok(result);
 	}

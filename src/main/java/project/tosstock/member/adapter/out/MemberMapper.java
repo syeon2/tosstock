@@ -17,6 +17,8 @@ public class MemberMapper {
 			.phoneNumber(entity.getPhoneNumber())
 			.introduce(entity.getIntroduce())
 			.profileImageUrl(entity.getProfileImageUrl())
+			.createdAt(entity.getCreatedAt())
+			.updatedAt(entity.getUpdatedAt())
 			.build();
 	}
 

@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import project.tosstock.common.error.exception.DuplicatedAccountException;
 import project.tosstock.member.application.domain.model.Member;
+import project.tosstock.member.application.domain.model.UpdateMemberDto;
 import project.tosstock.member.application.port.in.JoinMemberUseCase;
 import project.tosstock.member.application.port.in.UpdateMemberUseCase;
 import project.tosstock.member.application.port.out.AuthCodeByMailPort;
@@ -20,8 +21,8 @@ import project.tosstock.member.application.port.out.UpdateMemberPort;
 public class MemberService implements JoinMemberUseCase, UpdateMemberUseCase {
 
 	private final SaveMemberPort saveMemberPort;
-	private final UpdateMemberPort updateMemberPort;
 	private final FindMemberPort findMemberPort;
+	private final UpdateMemberPort updateMemberPort;
 
 	private final AuthCodeByMailPort authCodeByMailPort;
 	private final DeleteJwtTokenPort deleteJwtTokenPort;
@@ -34,23 +35,15 @@ public class MemberService implements JoinMemberUseCase, UpdateMemberUseCase {
 		checkAuthCodeByMail(member.getEmail(), authCode);
 		checkDuplicatedMember(member);
 
-		encryptPassword(member);
+		member.updateEncryptedPassword(encryptPassword(member.getPassword()));
 
 		return saveMemberPort.save(member);
 	}
 
 	@Override
 	@Transactional
-	public boolean changeUsername(Long id, String username) {
-		updateMemberPort.updateUsername(id, username);
-
-		return true;
-	}
-
-	@Override
-	@Transactional
-	public boolean changeProfileImageUrl(Long id, String profileImageUrl) {
-		updateMemberPort.updateProfileImageUrl(id, profileImageUrl);
+	public boolean changeMemberInfo(Long memberId, UpdateMemberDto updateMemberDto) {
+		updateMemberPort.updateInfo(memberId, updateMemberDto);
 
 		return true;
 	}
@@ -58,10 +51,9 @@ public class MemberService implements JoinMemberUseCase, UpdateMemberUseCase {
 	@Override
 	@Transactional
 	public boolean changePassword(Long id, String email, String password) {
-		String encodedPassword = passwordEncoder.encode(password);
-
 		deleteJwtTokenPort.deleteAll(email);
-		updateMemberPort.updatePassword(id, encodedPassword);
+
+		updateMemberPort.updatePassword(id, encryptPassword(password));
 
 		return true;
 	}
@@ -81,7 +73,7 @@ public class MemberService implements JoinMemberUseCase, UpdateMemberUseCase {
 			});
 	}
 
-	private void encryptPassword(Member member) {
-		member.encryptePassword(passwordEncoder.encode(member.getPassword()));
+	private String encryptPassword(String password) {
+		return passwordEncoder.encode(password);
 	}
 }
