@@ -17,13 +17,15 @@ public class MemberMapper {
 			.phoneNumber(entity.getPhoneNumber())
 			.introduce(entity.getIntroduce())
 			.profileImageUrl(entity.getProfileImageUrl())
+			.createdAt(entity.getCreatedAt())
+			.updatedAt(entity.getUpdatedAt())
 			.build();
 	}
 
-	public MemberEntity toEntity(Member domain, String encodedPassword) {
+	public MemberEntity toEntity(Member domain) {
 		return MemberEntity.builder()
 			.username(domain.getUsername())
-			.password(encodedPassword)
+			.password(domain.getPassword())
 			.email(domain.getEmail())
 			.phoneNumber(domain.getPhoneNumber())
 			.introduce(domain.getIntroduce())

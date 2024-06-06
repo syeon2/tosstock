@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import project.tosstock.IntegrationTestSupport;
 import project.tosstock.activity.adapter.out.entity.PostEntity;
+import project.tosstock.activity.adapter.out.persistence.CommentRepository;
 import project.tosstock.activity.adapter.out.persistence.PostRepository;
 import project.tosstock.activity.application.domain.model.Post;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
@@ -31,9 +32,13 @@ class PostServiceTest extends IntegrationTestSupport {
 	@Autowired
 	private NewsFeedRepository newsFeedRepository;
 
+	@Autowired
+	private CommentRepository commentRepository;
+
 	@BeforeEach
 	void before() {
 		newsFeedRepository.deleteAllInBatch();
+		commentRepository.deleteAllInBatch();
 		postRepository.deleteAllInBatch();
 		memberRepository.deleteAllInBatch();
 	}

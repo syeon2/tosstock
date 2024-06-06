@@ -1,8 +1,6 @@
 package project.tosstock.member.application.port.out;
 
-public interface AuthCodeByMailPort {
+public interface SaveAuthCodePort {
 
 	void save(String email, String code);
-
-	String findAuthCodeByMail(String email);
 }

@@ -30,7 +30,8 @@ public class PostLikeService implements PostLikeUseCase {
 	public boolean likePost(Long memberId, Long postId) {
 		Long savePostLikeId = savePostLikePort.save(memberId, postId);
 
-		String likePostUsername = findMemberPort.findMemberById(memberId).getUsername();
+		String likePostUsername = findMemberPort.findMemberById(memberId)
+			.orElseThrow(() -> new IllegalArgumentException("존재히지 않는 회원입니다.")).getUsername();
 		PostEntity findPost = findPostPort.findPostById(postId);
 		String postedUsername = findPost.getMember().getUsername();
 

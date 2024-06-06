@@ -1,10 +1,10 @@
 package project.tosstock.member.application.port.out;
 
+import project.tosstock.member.application.domain.model.UpdateMemberDto;
+
 public interface UpdateMemberPort {
 
-	void updateUsername(Long id, String username);
+	void updateInfo(Long memberId, UpdateMemberDto updateMemberDto);
 
-	void updateProfileImageUrl(Long id, String profileImageUrl);
-
-	void updatePassword(Long id, String password);
+	void updatePassword(String email, String password);
 }

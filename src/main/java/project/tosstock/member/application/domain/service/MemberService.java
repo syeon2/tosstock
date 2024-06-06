@@ -7,23 +7,24 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import project.tosstock.common.error.exception.DuplicatedAccountException;
 import project.tosstock.member.application.domain.model.Member;
+import project.tosstock.member.application.domain.model.UpdateMemberDto;
 import project.tosstock.member.application.port.in.JoinMemberUseCase;
 import project.tosstock.member.application.port.in.UpdateMemberUseCase;
-import project.tosstock.member.application.port.out.AuthCodeByMailPort;
 import project.tosstock.member.application.port.out.DeleteJwtTokenPort;
+import project.tosstock.member.application.port.out.FindAuthCodePort;
+import project.tosstock.member.application.port.out.FindMemberPort;
 import project.tosstock.member.application.port.out.SaveMemberPort;
 import project.tosstock.member.application.port.out.UpdateMemberPort;
-import project.tosstock.member.application.port.out.VerifyMemberPort;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService implements JoinMemberUseCase, UpdateMemberUseCase {
 
 	private final SaveMemberPort saveMemberPort;
-	private final VerifyMemberPort verifyMemberPort;
+	private final FindMemberPort findMemberPort;
 	private final UpdateMemberPort updateMemberPort;
 
-	private final AuthCodeByMailPort authCodeByMailPort;
+	private final FindAuthCodePort findAuthCodePort;
 	private final DeleteJwtTokenPort deleteJwtTokenPort;
 
 	private final PasswordEncoder passwordEncoder;
@@ -32,53 +33,50 @@ public class MemberService implements JoinMemberUseCase, UpdateMemberUseCase {
 	@Transactional
 	public Long joinMember(Member member, String authCode) {
 		checkAuthCodeByMail(member.getEmail(), authCode);
-		checkDuplicatedMember(member);
+		checkDuplicatedMember(member.getEmail(), member.getPhoneNumber());
 
-		return saveMemberPort.save(member, passwordEncoder.encode(member.getPassword()));
+		member.updateEncryptedPassword(encryptPassword(member.getPassword()));
+
+		return saveMemberPort.save(member);
 	}
 
 	@Override
 	@Transactional
-	public boolean changeUsername(Long id, String username) {
-		updateMemberPort.updateUsername(id, username);
+	public boolean changeMemberInfo(Long memberId, UpdateMemberDto updateMemberDto) {
+		updateMemberPort.updateInfo(memberId, updateMemberDto);
 
 		return true;
 	}
 
 	@Override
 	@Transactional
-	public boolean changeProfileImageUrl(Long id, String profileImageUrl) {
-		updateMemberPort.updateProfileImageUrl(id, profileImageUrl);
-
-		return true;
-	}
-
-	@Override
-	@Transactional
-	public boolean changePassword(Long id, String email, String password) {
-		String encodedPassword = passwordEncoder.encode(password);
-
+	public boolean changePassword(String email, String password) {
 		deleteJwtTokenPort.deleteAll(email);
-		updateMemberPort.updatePassword(id, encodedPassword);
+
+		updateMemberPort.updatePassword(email, encryptPassword(password));
 
 		return true;
 	}
 
 	private void checkAuthCodeByMail(String email, String code) {
-		String storedCode = authCodeByMailPort.findAuthCodeByMail(email);
-
-		if (!storedCode.equals(code)) {
-			throw new IllegalArgumentException("인증번호가 일치하지 않습니다.");
-		}
+		findAuthCodePort.findAuthCodeByMail(email)
+			.ifPresentOrElse(findAuthCode -> {
+				if (!findAuthCode.equals(code)) {
+					throw new IllegalArgumentException("인증번호가 일치하지 않습니다.");
+				}
+			}, () -> {
+				throw new IllegalArgumentException("인증번호가 일치하지 않습니다.");
+			});
 	}
 
-	private void checkDuplicatedMember(Member member) {
-		if (verifyMemberPort.isDuplicatedEmail(member.getEmail())) {
-			throw new DuplicatedAccountException("이미 존재하는 이메일입니다.");
-		}
+	private void checkDuplicatedMember(String email, String phoneNumber) {
+		findMemberPort.findMemberByEmailOrPhoneNumber(email, phoneNumber)
+			.ifPresent(m -> {
+				throw new DuplicatedAccountException("이미 가입된 회원입니다.");
+			});
+	}
 
-		if (verifyMemberPort.isExistPhoneNumber(member.getPhoneNumber())) {
-			throw new DuplicatedAccountException("이미 가입된 전화번호입니다.");
-		}
+	private String encryptPassword(String password) {
+		return passwordEncoder.encode(password);
 	}
 }

@@ -14,6 +14,7 @@ import project.tosstock.member.adapter.in.web.request.LoginRequest;
 import project.tosstock.member.adapter.in.web.request.LogoutAllRequest;
 import project.tosstock.member.adapter.in.web.request.LogoutRequest;
 import project.tosstock.member.adapter.in.web.request.RefreshTokenRequest;
+import project.tosstock.member.adapter.in.web.response.BasicResponse;
 import project.tosstock.member.adapter.in.web.response.JwtTokenResponse;
 import project.tosstock.member.application.domain.model.JwtTokenDto;
 import project.tosstock.member.application.port.in.AuthMemberUseCase;
@@ -29,27 +30,27 @@ public class AuthController {
 	public ApiResult<JwtTokenResponse> login(@Valid @RequestBody LoginRequest request) {
 		JwtTokenDto tokenDto = authMemberUseCase.login(request.getEmail(), request.getPassword(), request.getAddress());
 
-		return ApiResult.ok(JwtTokenResponse.toRequest(tokenDto));
+		return ApiResult.ok(JwtTokenResponse.of(tokenDto));
 	}
 
 	@DeleteMapping("/api/v1/auth/logout")
-	public ApiResult<Boolean> logout(@Valid @RequestBody LogoutRequest request) {
-		authMemberUseCase.logout(request.getEmail(), request.getAddress());
+	public ApiResult<BasicResponse> logout(@Valid @RequestBody LogoutRequest request) {
+		boolean result = authMemberUseCase.logout(request.getEmail(), request.getAddress());
 
-		return ApiResult.ok(true);
+		return ApiResult.ok(BasicResponse.of(result));
 	}
 
 	@DeleteMapping("/api/v1/auth/logout-all")
-	public ApiResult<Boolean> logoutAll(@Valid @RequestBody LogoutAllRequest request) {
-		authMemberUseCase.logoutAll(request.getEmail());
+	public ApiResult<BasicResponse> logoutAll(@Valid @RequestBody LogoutAllRequest request) {
+		boolean result = authMemberUseCase.logoutAll(request.getEmail());
 
-		return ApiResult.ok(true);
+		return ApiResult.ok(BasicResponse.of(result));
 	}
 
 	@PostMapping("/api/v1/auth/refresh-token")
 	public ApiResult<JwtTokenResponse> updateJwtToken(@Valid @RequestBody RefreshTokenRequest request) {
 		JwtTokenDto jwtTokenDto = authMemberUseCase.updateJwtToken(request.getRefreshToken());
 
-		return ApiResult.ok(JwtTokenResponse.toRequest(jwtTokenDto));
+		return ApiResult.ok(JwtTokenResponse.of(jwtTokenDto));
 	}
 }

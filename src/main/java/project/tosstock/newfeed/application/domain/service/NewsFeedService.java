@@ -21,7 +21,7 @@ public class NewsFeedService implements NewsFeedFilterUseCase {
 	@Override
 	public List<TestNewsFeed> showNewsFeedBasic(Long memberId) {
 		return findNewsFeedPort.findNewsFeed(memberId).stream()
-			.map(n -> TestNewsFeed.toDomain(n, findMemberPort.findMemberById(n.getMemberId()).getUsername()))
+			.map(n -> TestNewsFeed.toDomain(n, findMemberPort.findMemberById(n.getMemberId()).get().getUsername()))
 			.collect(Collectors.toList());
 	}
 }

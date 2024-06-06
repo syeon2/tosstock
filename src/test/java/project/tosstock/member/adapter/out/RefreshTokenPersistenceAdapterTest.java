@@ -1,4 +1,4 @@
-package project.tosstock.member.adapter.out.persistence;
+package project.tosstock.member.adapter.out;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -11,10 +11,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 
 import project.tosstock.IntegrationTestSupport;
 
-class RedisRefreshTokenRepositoryTest extends IntegrationTestSupport {
+class RefreshTokenPersistenceAdapterTest extends IntegrationTestSupport {
 
 	@Autowired
-	private RedisRefreshTokenRepository redisRefreshTokenRepository;
+	private RefreshTokenPersistenceAdapter refreshTokenPersistenceAdapter;
 
 	@Autowired
 	@Qualifier(value = "redisRefreshTokenTemplate")
@@ -26,15 +26,15 @@ class RedisRefreshTokenRepositoryTest extends IntegrationTestSupport {
 	}
 
 	@Test
-	@DisplayName(value = "Email(key), Address(hashKey), Token(value) 을 가진 Map 자료구조로 저장합니다.")
+	@DisplayName(value = "토큰을 저장합니다.")
 	void save() {
 		// given
 		String email = "waterkite94@gmail.com";
-		String token = "token";
 		String address = "1";
+		String token = "asdfalsdkfasldfj";
 
 		// when
-		redisRefreshTokenRepository.save(email, address, token);
+		refreshTokenPersistenceAdapter.save(email, address, token);
 
 		// then
 		Object findToken = redisRefreshTokenTemplate.opsForHash().get(email, address);
@@ -54,11 +54,11 @@ class RedisRefreshTokenRepositoryTest extends IntegrationTestSupport {
 		String token1 = "1234";
 		String token2 = "5678";
 
-		redisRefreshTokenRepository.save(email, address1, token1);
-		redisRefreshTokenRepository.save(email, address2, token2);
+		redisRefreshTokenTemplate.opsForHash().put(email, address1, token1);
+		redisRefreshTokenTemplate.opsForHash().put(email, address2, token2);
 
 		// when
-		redisRefreshTokenRepository.delete(email, address1);
+		refreshTokenPersistenceAdapter.delete(email, address1);
 
 		// then
 		Object findToken1 = redisRefreshTokenTemplate.opsForHash().get(email, address1);
@@ -79,11 +79,11 @@ class RedisRefreshTokenRepositoryTest extends IntegrationTestSupport {
 		String token1 = "1234";
 		String token2 = "5678";
 
-		redisRefreshTokenRepository.save(email, address1, token1);
-		redisRefreshTokenRepository.save(email, address2, token2);
+		redisRefreshTokenTemplate.opsForHash().put(email, address1, token1);
+		redisRefreshTokenTemplate.opsForHash().put(email, address2, token2);
 
 		// when
-		redisRefreshTokenRepository.deleteAll(email);
+		refreshTokenPersistenceAdapter.deleteAll(email);
 
 		// then
 		Object findToken1 = redisRefreshTokenTemplate.opsForHash().get(email, address1);

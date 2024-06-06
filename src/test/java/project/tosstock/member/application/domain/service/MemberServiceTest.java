@@ -18,7 +18,9 @@ import project.tosstock.common.error.exception.DuplicatedAccountException;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
 import project.tosstock.member.application.domain.model.Member;
-import project.tosstock.member.application.port.out.AuthCodeByMailPort;
+import project.tosstock.member.application.domain.model.UpdateMemberDto;
+import project.tosstock.member.application.port.out.FindAuthCodePort;
+import project.tosstock.member.application.port.out.SaveAuthCodePort;
 
 class MemberServiceTest extends IntegrationTestSupport {
 
@@ -32,7 +34,10 @@ class MemberServiceTest extends IntegrationTestSupport {
 	private PasswordEncoder passwordEncoder;
 
 	@MockBean
-	private AuthCodeByMailPort authCodeByMailPort;
+	private FindAuthCodePort findAuthCodePort;
+
+	@MockBean
+	private SaveAuthCodePort saveAuthCodePort;
 
 	@BeforeEach
 	void before() {
@@ -41,13 +46,13 @@ class MemberServiceTest extends IntegrationTestSupport {
 
 	@Test
 	@DisplayName(value = "회원 도메인을 parameter로 받아 Repository에 저장합니다.")
-	void join_member() {
+	void joinMember() {
 		// given
-		Member member = createMember("waterkite94@gmail.com", "01011112222");
+		Member member = createMember("gsy94@gmail.com", "01029391234");
 		String authCode = "000000";
 
-		given(authCodeByMailPort.findAuthCodeByMail(anyString()))
-			.willReturn(authCode);
+		given(findAuthCodePort.findAuthCodeByMail(anyString()))
+			.willReturn(Optional.of(authCode));
 
 		// when
 		Long savedMemberId = memberService.joinMember(member, authCode);
@@ -60,126 +65,126 @@ class MemberServiceTest extends IntegrationTestSupport {
 
 	@Test
 	@DisplayName(value = "이미 가입된 이메일로 가입 시 예외를 반환합니다.")
-	void join_member_exception_email() {
+	void joinMember_exception_duplicatedEmail() {
 		// given
 		String email = "waterkite94@gmail.com";
-		Member member1 = createMember(email, "01011112222");
+		Member member = createMember(email, "01011112222");
 		String authCode = "000000";
 
-		given(authCodeByMailPort.findAuthCodeByMail(anyString()))
-			.willReturn(authCode);
+		given(findAuthCodePort.findAuthCodeByMail(anyString()))
+			.willReturn(Optional.of(authCode));
 
-		memberService.joinMember(member1, authCode);
+		memberService.joinMember(member, authCode);
 
 		// when
-		Member member2 = createMember(email, "01022223333");
+		Member duplicatedEmailMember = createMember(email, "01022223333");
 
 		// then
-		assertThatThrownBy(() -> memberService.joinMember(member2, authCode))
+		assertThatThrownBy(() -> memberService.joinMember(duplicatedEmailMember, authCode))
 			.isInstanceOf(DuplicatedAccountException.class)
-			.hasMessage("이미 존재하는 이메일입니다.");
+			.hasMessage("이미 가입된 회원입니다.");
 	}
 
 	@Test
 	@DisplayName(value = "이미 가입된 전화번호로 가입 시 예외를 반환합니다.")
-	void join_member_exception_phoneNumber() {
+	void joinMember_exception_duplicatedPhoneNumber() {
 		// given
-		String email = "waterkite94@gmail.com";
 		String phoneNumber = "01011112222";
-		Member member1 = createMember(email, phoneNumber);
-
+		Member member = createMember("waterkite94@gmail.com", phoneNumber);
 		String authCode = "000000";
-		given(authCodeByMailPort.findAuthCodeByMail(anyString()))
-			.willReturn(authCode);
 
-		memberService.joinMember(member1, authCode);
+		given(findAuthCodePort.findAuthCodeByMail(anyString()))
+			.willReturn(Optional.of(authCode));
+
+		memberService.joinMember(member, authCode);
 
 		// when
-		Member member2 = createMember("gsy4568@gmail.com", phoneNumber);
+		Member duplicatedPhoneNumberMember = createMember("gsy4568@gmail.com", phoneNumber);
 
 		// then
-		assertThatThrownBy(() -> memberService.joinMember(member2, authCode))
+		assertThatThrownBy(() -> memberService.joinMember(duplicatedPhoneNumberMember, authCode))
 			.isInstanceOf(DuplicatedAccountException.class)
-			.hasMessage("이미 가입된 전화번호입니다.");
-	}
-
-	@Test
-	@DisplayName(value = "회원 이름을 변경합니다.")
-	void update_username() {
-		// given
-		String password = "12345678";
-		MemberEntity entity = MemberEntity.builder()
-			.email("waterkite94@gmail.com")
-			.username("suyeon")
-			.password(passwordEncoder.encode(password))
-			.phoneNumber("00011112222")
-			.build();
-
-		memberRepository.save(entity);
-
-		// when
-		String changedUsername = "kimsuyeon";
-		memberService.changeUsername(entity.getId(), changedUsername);
-
-		// then
-		Optional<MemberEntity> findMemberOptional = memberRepository.findById(entity.getId());
-
-		assertThat(findMemberOptional).isPresent()
-			.hasValueSatisfying(s -> assertThat(s.getUsername()).isEqualTo(changedUsername));
-	}
-
-	@Test
-	@DisplayName(value = "회원 프로필 이미지 URL을 변경합니다.")
-	void update_url() {
-		// given
-		String password = "12345678";
-		MemberEntity entity = MemberEntity.builder()
-			.email("waterkite94@gmail.com")
-			.username("suyeon")
-			.password(passwordEncoder.encode(password))
-			.phoneNumber("00011112222")
-			.build();
-
-		memberRepository.save(entity);
-
-		// when
-		String changedUrl = "https://github.com/syeon2";
-		memberService.changeProfileImageUrl(entity.getId(), changedUrl);
-
-		// then
-		Optional<MemberEntity> findMemberOptional = memberRepository.findById(entity.getId());
-
-		assertThat(findMemberOptional).isPresent()
-			.hasValueSatisfying(s -> assertThat(s.getProfileImageUrl()).isEqualTo(changedUrl));
+			.hasMessage("이미 가입된 회원입니다.");
 	}
 
 	@Test
 	@DisplayName(value = "회원 비밀번호를 변경합니다.")
-	void update_password() {
+	void updatePassword() {
 		// given
-		String password = "12345678";
 		String email = "waterkite94@gmail.com";
-		MemberEntity entity = MemberEntity.builder()
-			.email(email)
-			.username("suyeon")
-			.password(passwordEncoder.encode(password))
-			.phoneNumber("00011112222")
-			.build();
+		String password = "12345678";
+		MemberEntity entity = createMemberEntity(email, password);
 
 		memberRepository.save(entity);
 
 		// when
 		String changedPassword = "987654321";
-		memberService.changePassword(entity.getId(), email, changedPassword);
+		memberService.changePassword(email, changedPassword);
 
 		// then
 		Optional<MemberEntity> findMemberOptional = memberRepository.findById(entity.getId());
 
 		assertThat(findMemberOptional).isPresent()
-			.hasValueSatisfying(s -> assertThat(passwordEncoder.matches(changedPassword, s.getPassword())).isTrue());
+			.hasValueSatisfying(s -> assertThat(passwordEncoder.matches(password, s.getPassword())).isFalse());
 
 		assertThat(findMemberOptional).isPresent()
-			.hasValueSatisfying(s -> assertThat(passwordEncoder.matches(password, s.getPassword())).isFalse());
+			.hasValueSatisfying(s -> assertThat(passwordEncoder.matches(changedPassword, s.getPassword())).isTrue());
+	}
+
+	@Test
+	@DisplayName(value = "회원 아이디와 변경할 DTO를 받고 회원 정보를 수정합니다.")
+	void changeMemberInfo() {
+		// given
+		String username = "suyeon";
+		String introduce = "안녕하세요";
+		String profileImageUrl = "www.github.com/syeon2";
+		MemberEntity member = createMemberEntity(username, introduce, profileImageUrl);
+
+		Long savedMemberId = memberRepository.save(member).getId();
+
+		String changeName = "kim!";
+		String changeIntroduce = "반갑습니다.";
+		String changeProfileImageUrl = "www.syeon2.github.io";
+		UpdateMemberDto updateMemberDto = createUpdateMemberDto(changeName, changeIntroduce, changeProfileImageUrl);
+
+		// when
+		memberService.changeMemberInfo(savedMemberId, updateMemberDto);
+
+		// then
+		Optional<MemberEntity> findMemberOptional = memberRepository.findById(savedMemberId);
+
+		assertThat(findMemberOptional).isPresent()
+			.hasValueSatisfying(m -> assertThat(m.getUsername()).isEqualTo(changeName))
+			.hasValueSatisfying(m -> assertThat(m.getIntroduce()).isEqualTo(changeIntroduce))
+			.hasValueSatisfying(m -> assertThat(m.getProfileImageUrl()).isEqualTo(changeProfileImageUrl));
+	}
+
+	private UpdateMemberDto createUpdateMemberDto(String changeName, String introduce, String profileImageUrl) {
+		return UpdateMemberDto.builder()
+			.username(changeName)
+			.introduce(introduce)
+			.profileImageUrl(profileImageUrl)
+			.build();
+	}
+
+	private MemberEntity createMemberEntity(String email, String password) {
+		return MemberEntity.builder()
+			.email(email)
+			.username("suyeon")
+			.password(passwordEncoder.encode(password))
+			.phoneNumber("00011112222")
+			.build();
+	}
+
+	private MemberEntity createMemberEntity(String username, String introduce, String profileImageUrl) {
+		return MemberEntity.builder()
+			.email("www@wwww")
+			.username(username)
+			.password("1231321312321")
+			.phoneNumber("00011112222")
+			.introduce(introduce)
+			.profileImageUrl(profileImageUrl)
+			.build();
 	}
 
 	private Member createMember(String email, String phoneNumber) {

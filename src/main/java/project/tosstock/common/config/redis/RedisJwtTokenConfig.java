@@ -25,7 +25,7 @@ public class RedisJwtTokenConfig {
 	}
 
 	@Bean
-	@Qualifier(value = "redisJwtTokenTemplate")
+	@Qualifier(value = "redisRefreshTokenTemplate")
 	public RedisTemplate<String, Object> redisTemplate() {
 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 

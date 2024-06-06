@@ -10,12 +10,13 @@ import lombok.RequiredArgsConstructor;
 import project.tosstock.common.annotation.WebAdapter;
 import project.tosstock.common.wrapper.ApiResult;
 import project.tosstock.member.adapter.in.web.request.AuthEmailRequest;
+import project.tosstock.member.adapter.in.web.request.ChangeMemberInfoRequest;
 import project.tosstock.member.adapter.in.web.request.ChangePasswordRequest;
-import project.tosstock.member.adapter.in.web.request.ChangeProfileImageUrlRequest;
-import project.tosstock.member.adapter.in.web.request.ChangeUsernameRequest;
 import project.tosstock.member.adapter.in.web.request.JoinMemberRequest;
+import project.tosstock.member.adapter.in.web.response.BasicResponse;
+import project.tosstock.member.adapter.in.web.response.JoinMemberResponse;
 import project.tosstock.member.application.port.in.JoinMemberUseCase;
-import project.tosstock.member.application.port.in.SendAuthCodeByMailUseCase;
+import project.tosstock.member.application.port.in.SendAuthCodeUseCase;
 import project.tosstock.member.application.port.in.UpdateMemberUseCase;
 
 @WebAdapter
@@ -24,45 +25,37 @@ import project.tosstock.member.application.port.in.UpdateMemberUseCase;
 public class MemberController {
 
 	private final JoinMemberUseCase joinMemberUseCase;
-	private final SendAuthCodeByMailUseCase sendAuthCodeByMailUseCase;
+	private final SendAuthCodeUseCase sendAuthCodeUseCase;
 	private final UpdateMemberUseCase updateMemberUseCase;
 
 	@PostMapping("/api/v1/members")
-	public ApiResult<Long> joinMember(@Valid @RequestBody JoinMemberRequest request) {
+	public ApiResult<JoinMemberResponse> joinMember(@Valid @RequestBody JoinMemberRequest request) {
 		Long joinedMemberId = joinMemberUseCase.joinMember(request.toDomain(), request.getAuthCode());
 
-		return ApiResult.ok(joinedMemberId);
+		return ApiResult.ok(JoinMemberResponse.of(joinedMemberId));
 	}
 
 	@PostMapping("/api/v1/members/emails/verification-requests")
-	public ApiResult<Boolean> sendAuthCodeToEmail(@Valid @RequestBody AuthEmailRequest request) {
-		boolean result = sendAuthCodeByMailUseCase.sendEmail(request.getEmail());
+	public ApiResult<BasicResponse> sendAuthCodeToEmail(@Valid @RequestBody AuthEmailRequest request) {
+		boolean result = sendAuthCodeUseCase.dispatchAuthCodeToEmail(request.getEmail());
 
-		return ApiResult.ok(result);
+		return ApiResult.ok(BasicResponse.of(result));
 	}
 
-	@PostMapping("/api/v1/member/{id}/username")
-	public ApiResult<Boolean> changeUsername(
-		@PathVariable("id") Long id, @RequestBody ChangeUsernameRequest request
+	@PostMapping("/api/v1/member/{memberId}")
+	public ApiResult<BasicResponse> changeMemberInfo(
+		@PathVariable("memberId") Long memberId,
+		@Valid @RequestBody ChangeMemberInfoRequest request
 	) {
-		boolean result = updateMemberUseCase.changeUsername(id, request.getUsername());
+		boolean result = updateMemberUseCase.changeMemberInfo(memberId, request.toServiceDto());
 
-		return ApiResult.ok(result);
+		return ApiResult.ok(BasicResponse.of(result));
 	}
 
-	@PostMapping("/api/v1/member/{id}/profile-image-url")
-	public ApiResult<Boolean> changeProfileImageUrl(
-		@PathVariable("id") Long id, @RequestBody ChangeProfileImageUrlRequest request) {
-		boolean result = updateMemberUseCase.changeProfileImageUrl(id, request.getProfileImageUrl());
+	@PostMapping("/api/v1/member/password")
+	public ApiResult<BasicResponse> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+		boolean result = updateMemberUseCase.changePassword(request.getEmail(), request.getPassword());
 
-		return ApiResult.ok(result);
-	}
-
-	@PostMapping("/api/v1/member/{id}/password")
-	public ApiResult<Boolean> changePassword(
-		@PathVariable("id") Long id, @RequestBody ChangePasswordRequest request) {
-		boolean result = updateMemberUseCase.changePassword(id, request.getEmail(), request.getPassword());
-
-		return ApiResult.ok(result);
+		return ApiResult.ok(BasicResponse.of(result));
 	}
 }

@@ -1,75 +1,55 @@
 package project.tosstock.member.adapter.out;
 
-import org.springframework.transaction.annotation.Transactional;
+import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 import project.tosstock.common.annotation.PersistenceAdapter;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
 import project.tosstock.member.application.domain.model.Member;
+import project.tosstock.member.application.domain.model.UpdateMemberDto;
 import project.tosstock.member.application.port.out.FindMemberPort;
 import project.tosstock.member.application.port.out.SaveMemberPort;
 import project.tosstock.member.application.port.out.UpdateMemberPort;
-import project.tosstock.member.application.port.out.VerifyMemberPort;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
-public class MemberPersistenceAdapter implements SaveMemberPort, VerifyMemberPort, UpdateMemberPort, FindMemberPort {
+public class MemberPersistenceAdapter implements SaveMemberPort, UpdateMemberPort, FindMemberPort {
 
 	private final MemberRepository memberRepository;
 	private final MemberMapper memberMapper;
 
 	@Override
-	public Long save(Member member, String encodedPassword) {
-		MemberEntity entity = memberMapper.toEntity(member, encodedPassword);
-		memberRepository.save(entity);
+	public Long save(Member member) {
+		MemberEntity savedMemberEntity = memberRepository.save(memberMapper.toEntity(member));
 
-		return entity.getId();
+		return savedMemberEntity.getId();
 	}
 
 	@Override
-	public boolean isDuplicatedEmail(String email) {
-		return memberRepository.findByEmail(email).isPresent();
-	}
-
-	@Override
-	public boolean isExistPhoneNumber(String phoneNumber) {
-		return memberRepository.findByPhoneNumber(phoneNumber).isPresent();
-	}
-
-	@Override
-	public MemberEntity findMemberById(Long memberId) {
+	public Optional<Member> findMemberById(Long memberId) {
 		return memberRepository.findById(memberId)
-			.orElseThrow(() -> new IllegalArgumentException("존재히지 않는 회원입니다."));
+			.map(memberMapper::toDomain);
 	}
 
 	@Override
-	public String findPasswordByEmail(String email) {
-		return memberRepository.findPasswordByEmail(email)
-			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 이메일입니다."));
+	public Optional<String> findPasswordByEmail(String email) {
+		return memberRepository.findPasswordByEmail(email);
 	}
 
 	@Override
-	@Transactional
-	public void updateUsername(Long id, String username) {
-		memberRepository.findById(id)
-			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."))
-			.changeUsername(username);
+	public Optional<Member> findMemberByEmailOrPhoneNumber(String email, String phoneNumber) {
+		return memberRepository.findByEmailOrPhoneNumber(email, phoneNumber)
+			.map(memberMapper::toDomain);
 	}
 
 	@Override
-	@Transactional
-	public void updateProfileImageUrl(Long id, String profileImageUrl) {
-		memberRepository.findById(id)
-			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."))
-			.changeProfileImageUrl(profileImageUrl);
+	public void updateInfo(Long memberId, UpdateMemberDto updateMemberDto) {
+		memberRepository.updateInfo(memberId, updateMemberDto);
 	}
 
 	@Override
-	@Transactional
-	public void updatePassword(Long id, String password) {
-		memberRepository.findById(id)
-			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."))
-			.changePassword(password);
+	public void updatePassword(String email, String password) {
+		memberRepository.updatePassword(email, password);
 	}
 }

@@ -1,10 +1,10 @@
 package project.tosstock.member.application.port.in;
 
+import project.tosstock.member.application.domain.model.UpdateMemberDto;
+
 public interface UpdateMemberUseCase {
 
-	boolean changeUsername(Long id, String username);
+	boolean changeMemberInfo(Long memberId, UpdateMemberDto updateMemberDto);
 
-	boolean changeProfileImageUrl(Long id, String profileImageUrl);
-
-	boolean changePassword(Long id, String email, String password);
+	boolean changePassword(String email, String password);
 }
