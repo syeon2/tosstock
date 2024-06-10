@@ -14,7 +14,6 @@ import project.tosstock.IntegrationTestSupport;
 import project.tosstock.activity.adapter.out.entity.FollowEntity;
 import project.tosstock.activity.adapter.out.entity.PostEntity;
 import project.tosstock.activity.adapter.out.persistence.FollowRepository;
-import project.tosstock.activity.adapter.out.persistence.PostLikeRepository;
 import project.tosstock.activity.adapter.out.persistence.PostRepository;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
@@ -40,13 +39,9 @@ class NewsFeedPersistenceAdapterTest extends IntegrationTestSupport {
 	@Autowired
 	private FollowRepository followRepository;
 
-	@Autowired
-	private PostLikeRepository postLikeRepository;
-
 	@BeforeEach
 	void before() {
 		newsFeedRepository.deleteAllInBatch();
-		postLikeRepository.deleteAllInBatch();
 		followRepository.deleteAllInBatch();
 		postRepository.deleteAllInBatch();
 		memberRepository.deleteAllInBatch();
@@ -56,12 +51,12 @@ class NewsFeedPersistenceAdapterTest extends IntegrationTestSupport {
 	@DisplayName(value = "뉴스피드를 저장합니다.")
 	void save() {
 		// given
-		MemberEntity member = createMemberEntity("www@wwww", "00011112222");
-		memberRepository.save(member);
+		MemberEntity savedMember = memberRepository.save(createMember("www@wwww", "00011112222"));
 
 		long feedId = 1L;
 		FeedType feedType = FeedType.POST;
-		NewsFeed newsFeed = createNewsFeed(feedId, member.getId(), feedType);
+
+		NewsFeed newsFeed = createNewsFeed(feedId, savedMember.getId(), feedType);
 
 		// when
 		Long savedNewsFeedId = newsFeedPersistenceAdapter.save(newsFeed, feedType);
@@ -79,12 +74,11 @@ class NewsFeedPersistenceAdapterTest extends IntegrationTestSupport {
 	@DisplayName(value = "뉴스피드를 삭제합니다.")
 	void delete() {
 		// given
-		MemberEntity member = createMemberEntity("www@wwww", "00011112222");
-		memberRepository.save(member);
+		MemberEntity savedMember = memberRepository.save(createMember("www@wwww", "00011112222"));
 
 		long feedId = 1L;
 		FeedType feedType = FeedType.POST;
-		NewsFeed newsFeed = createNewsFeed(feedId, member.getId(), feedType);
+		NewsFeed newsFeed = createNewsFeed(feedId, savedMember.getId(), feedType);
 
 		Long savedNewsFeedId = newsFeedPersistenceAdapter.save(newsFeed, feedType);
 
@@ -101,55 +95,25 @@ class NewsFeedPersistenceAdapterTest extends IntegrationTestSupport {
 	@DisplayName(value = "뉴스피드를 조회합니다.")
 	void findNewFeed() {
 		// given
-		MemberEntity member1 = createMemberEntity("www@wwww", "00011112222");
-		memberRepository.save(member1);
-		MemberEntity member2 = createMemberEntity("www@wwww11", "00011112223");
-		memberRepository.save(member2);
-		MemberEntity member3 = createMemberEntity("www@wwww112", "00011112111");
-		memberRepository.save(member3);
+		MemberEntity savedMember1 = memberRepository.save(createMember("www@wwww", "00011112222"));
+		MemberEntity savedMember2 = memberRepository.save(createMember("www@wwww11", "00011112223"));
+		MemberEntity savedMember3 = memberRepository.save(createMember("www@wwww112", "00011112111"));
 
-		PostEntity post = createPost(member2, "member2 Post");
-		postRepository.save(post);
-		PostEntity post2 = createPost(member2, "member2 Post");
-		postRepository.save(post2);
-		PostEntity post3 = createPost(member3, "member3 Post");
-		postRepository.save(post3);
+		PostEntity savedPost1 = postRepository.save(createPost(savedMember2, "member2 Post"));
+		PostEntity savedPost2 = postRepository.save(createPost(savedMember2, "member2 Post"));
+		PostEntity savedPost3 = postRepository.save(createPost(savedMember3, "member3 Post"));
 
 		FollowEntity follow1 = followRepository.save(
-			FollowEntity.builder().followerId(member1.getId()).followeeId(member2.getId()).build());
+			FollowEntity.builder().followerId(savedMember1.getId()).followeeId(savedMember2.getId()).build());
 
 		FollowEntity follow2 = followRepository.save(
-			FollowEntity.builder().followerId(member2.getId()).followeeId(member3.getId()).build());
+			FollowEntity.builder().followerId(savedMember2.getId()).followeeId(savedMember3.getId()).build());
 
-		NewsFeed newsfeed1 = NewsFeed.builder()
-			.article("member2 Post")
-			.feedId(post.getId())
-			.memberId(member2.getId())
-			.build();
-
-		NewsFeed newsfeed2 = NewsFeed.builder()
-			.article("member2 Post")
-			.feedId(post2.getId())
-			.memberId(member2.getId())
-			.build();
-
-		NewsFeed newsfeed3 = NewsFeed.builder()
-			.article("member3 Post")
-			.feedId(post3.getId())
-			.memberId(member3.getId())
-			.build();
-
-		NewsFeed newsfeed4 = NewsFeed.builder()
-			.article("member1 follow member2")
-			.feedId(follow1.getId())
-			.memberId(member1.getId())
-			.build();
-
-		NewsFeed newsfeed5 = NewsFeed.builder()
-			.article("member2 follow member3")
-			.feedId(follow2.getId())
-			.memberId(member2.getId())
-			.build();
+		NewsFeed newsfeed1 = createNewsFeed(savedPost1, savedMember2, "member2 Post");
+		NewsFeed newsfeed2 = createNewsFeed(savedPost2, savedMember2, "member2 Post");
+		NewsFeed newsfeed3 = createNewsFeed(savedPost3, savedMember3, "member3 Post");
+		NewsFeed newsfeed4 = createNewsFeed(follow1, savedMember1);
+		NewsFeed newsfeed5 = createNewsFeed(follow2, savedMember2);
 
 		newsFeedPersistenceAdapter.save(newsfeed1, FeedType.POST);
 		newsFeedPersistenceAdapter.save(newsfeed2, FeedType.POST);
@@ -158,10 +122,26 @@ class NewsFeedPersistenceAdapterTest extends IntegrationTestSupport {
 		newsFeedPersistenceAdapter.save(newsfeed5, FeedType.FOLLOW);
 
 		// when
-		List<NewsFeed> findNewsFeeds = newsFeedPersistenceAdapter.findNewsFeed(member1.getId());
+		List<NewsFeed> findNewsFeeds = newsFeedPersistenceAdapter.findNewsFeed(savedMember1.getId());
 
 		// then  member 1 -> member 2's content (post 2, follow 1)
 		assertThat(findNewsFeeds.size()).isEqualTo(3);
+	}
+
+	private NewsFeed createNewsFeed(FollowEntity follow1, MemberEntity savedMember1) {
+		return NewsFeed.builder()
+			.article("member1 follow member2")
+			.feedId(follow1.getId())
+			.memberId(savedMember1.getId())
+			.build();
+	}
+
+	private NewsFeed createNewsFeed(PostEntity savedPost1, MemberEntity savedMember2, String article) {
+		return NewsFeed.builder()
+			.article(article)
+			.feedId(savedPost1.getId())
+			.memberId(savedMember2.getId())
+			.build();
 	}
 
 	private NewsFeed createNewsFeed(Long feedId, Long memberId, FeedType feedType) {
@@ -180,7 +160,7 @@ class NewsFeedPersistenceAdapterTest extends IntegrationTestSupport {
 			.build();
 	}
 
-	private MemberEntity createMemberEntity(String email, String phoneNumber) {
+	private MemberEntity createMember(String email, String phoneNumber) {
 		return MemberEntity.builder()
 			.username("suyeon")
 			.email(email)
