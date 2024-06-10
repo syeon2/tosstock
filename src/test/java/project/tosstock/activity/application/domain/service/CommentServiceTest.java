@@ -18,6 +18,7 @@ import project.tosstock.activity.adapter.out.persistence.PostRepository;
 import project.tosstock.activity.application.domain.model.Comment;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
+import project.tosstock.newfeed.adapter.out.persistence.NewsFeedRepository;
 import project.tosstock.newfeed.application.port.out.DeleteNewsFeedPort;
 import project.tosstock.newfeed.application.port.out.FindNewsFeedPort;
 import project.tosstock.newfeed.application.port.out.SaveNewsFeedPort;
@@ -45,8 +46,12 @@ class CommentServiceTest extends IntegrationTestSupport {
 	@MockBean
 	private FindNewsFeedPort findNewsFeedPort;
 
+	@Autowired
+	private NewsFeedRepository newsFeedRepository;
+
 	@BeforeEach
 	void after() {
+		newsFeedRepository.deleteAllInBatch();
 		commentRepository.deleteAllInBatch();
 		postRepository.deleteAllInBatch();
 		memberRepository.deleteAllInBatch();

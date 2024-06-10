@@ -10,17 +10,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.transaction.annotation.Transactional;
 
 import project.tosstock.IntegrationTestSupport;
 import project.tosstock.activity.adapter.out.entity.FollowEntity;
-import project.tosstock.activity.adapter.out.persistence.CommentRepository;
 import project.tosstock.activity.adapter.out.persistence.FollowRepository;
-import project.tosstock.activity.adapter.out.persistence.PostRepository;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
-import project.tosstock.newfeed.application.port.in.NewsFeedFilterUseCase;
 import project.tosstock.newfeed.application.port.out.DeleteNewsFeedPort;
+import project.tosstock.newfeed.application.port.out.FindNewsFeedPort;
 import project.tosstock.newfeed.application.port.out.SaveNewsFeedPort;
 
 class FollowServiceTest extends IntegrationTestSupport {
@@ -41,40 +38,20 @@ class FollowServiceTest extends IntegrationTestSupport {
 	private DeleteNewsFeedPort deleteNewsFeedPort;
 
 	@MockBean
-	private NewsFeedFilterUseCase newsFeedFilterUseCase;
-
-	@Autowired
-	private CommentRepository commentRepository;
-
-	@Autowired
-	private PostRepository postRepository;
+	private FindNewsFeedPort findNewsFeedPort;
 
 	@BeforeEach
 	void before() {
-		commentRepository.deleteAllInBatch();
-		postRepository.deleteAllInBatch();
 		followRepository.deleteAllInBatch();
 		memberRepository.deleteAllInBatch();
 	}
 
 	@Test
 	@DisplayName(value = "회원이 타 회원을 Follow합니다.")
-	@Transactional
 	void followMember() {
 		// given
-		MemberEntity member1 = MemberEntity.builder()
-			.username("suyeon1")
-			.email("waterkite94@gmail.com")
-			.password("12345678")
-			.phoneNumber("00011112222")
-			.build();
-
-		MemberEntity member2 = MemberEntity.builder()
-			.username("suyeon1")
-			.email("gsy4568@gmail.com")
-			.password("12345674")
-			.phoneNumber("00011112221")
-			.build();
+		MemberEntity member1 = createMember("waterkite94@gmail.com", "00011112222");
+		MemberEntity member2 = createMember("gsy4568@gmail.com", "00011112221");
 
 		memberRepository.save(member1);
 		memberRepository.save(member2);
@@ -95,22 +72,10 @@ class FollowServiceTest extends IntegrationTestSupport {
 
 	@Test
 	@DisplayName(value = "회원이 타 회원을 언팔로우합니다.")
-	@Transactional
 	void unfollowMember() {
 		// given
-		MemberEntity member1 = MemberEntity.builder()
-			.username("suyeon1")
-			.email("4569ksy@gmail.com")
-			.password("12345678")
-			.phoneNumber("00011112226")
-			.build();
-
-		MemberEntity member2 = MemberEntity.builder()
-			.username("suyeon1")
-			.email("34568ksy@gmail.com")
-			.password("12345674")
-			.phoneNumber("00011112228")
-			.build();
+		MemberEntity member1 = createMember("waterkite94@gmail.com", "00011112222");
+		MemberEntity member2 = createMember("gsy4568@gmail.com", "00011112221");
 
 		memberRepository.save(member1);
 		memberRepository.save(member2);
@@ -127,5 +92,14 @@ class FollowServiceTest extends IntegrationTestSupport {
 		List<FollowEntity> findAll = followRepository.findAll();
 
 		assertThat(findAll).isEmpty();
+	}
+
+	private MemberEntity createMember(String email, String phoneNumber) {
+		return MemberEntity.builder()
+			.username("suyeon1")
+			.email(email)
+			.password("12345678")
+			.phoneNumber(phoneNumber)
+			.build();
 	}
 }

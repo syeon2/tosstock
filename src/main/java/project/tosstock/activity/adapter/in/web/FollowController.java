@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
+import project.tosstock.activity.adapter.in.web.response.BasicActivityResponse;
 import project.tosstock.activity.application.port.in.FollowMemberUseCase;
 import project.tosstock.common.annotation.WebAdapter;
 import project.tosstock.common.wrapper.ApiResult;
@@ -18,18 +19,21 @@ public class FollowController {
 	private final FollowMemberUseCase followMemberUseCase;
 
 	@PostMapping("/api/v1/member/follower/{followerId}/followee/{followeeId}")
-	private ApiResult<Long> followMember(
+	private ApiResult<BasicActivityResponse<Long>> followMember(
 		@PathVariable("followerId") Long followerId,
 		@PathVariable("followeeId") Long followeeId
 	) {
-		return ApiResult.ok(followMemberUseCase.followMember(followerId, followeeId));
+		Long followId = followMemberUseCase.followMember(followerId, followeeId);
+
+		return ApiResult.ok(BasicActivityResponse.of(followId));
 	}
 
 	@DeleteMapping("/api/v1/member/follower/{followerId}/followee/{followeeId}")
-	private ApiResult<Long> unfollowMember(
+	private ApiResult<BasicActivityResponse<Long>> unfollowMember(
 		@PathVariable("followerId") Long followerId,
 		@PathVariable("followeeId") Long followeeId
 	) {
-		return ApiResult.ok(followMemberUseCase.unfollowMember(followerId, followeeId));
+		Long followId = followMemberUseCase.unfollowMember(followerId, followeeId);
+		return ApiResult.ok(BasicActivityResponse.of(followId));
 	}
 }

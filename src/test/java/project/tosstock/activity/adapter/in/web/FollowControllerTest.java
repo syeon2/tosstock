@@ -38,7 +38,7 @@ class FollowControllerTest extends ControllerTestSupport {
 
 	@Test
 	@DisplayName(value = "follower id인 팔로워가 다른 회원(followee id)을 팔로우합니다.")
-	void follow_member() throws Exception {
+	void followMember() throws Exception {
 		// given
 		Long followerId = 1L;
 		Long followeeId = 2L;
@@ -51,7 +51,8 @@ class FollowControllerTest extends ControllerTestSupport {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.status").isNumber())
 			.andExpect(jsonPath("$.message").isEmpty())
-			.andExpect(jsonPath("$.data").isNumber())
+			.andExpect(jsonPath("$.data").exists())
+			.andExpect(jsonPath("$.data.result").isNumber())
 			.andDo(document("member-follow",
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
@@ -64,14 +65,16 @@ class FollowControllerTest extends ControllerTestSupport {
 						.description("상태 코드"),
 					fieldWithPath("message").type(JsonFieldType.NULL)
 						.description("메시지"),
-					fieldWithPath("data").type(JsonFieldType.NUMBER)
-						.description("팔로우 고유 아이디")
+					fieldWithPath("data").type(JsonFieldType.OBJECT)
+						.description("응답 데이터 DTO"),
+					fieldWithPath("data.result").type(JsonFieldType.NUMBER)
+						.description("follow 데이터 아이디")
 				)));
 	}
 
 	@Test
 	@DisplayName(value = "follower id인 팔로워가 다른 회원(followee id)을 언팔로우합니다.")
-	void unfollow_member() throws Exception {
+	void unfollowMember() throws Exception {
 		// given
 		Long followerId = 1L;
 		Long followeeId = 2L;
@@ -84,7 +87,8 @@ class FollowControllerTest extends ControllerTestSupport {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.status").isNumber())
 			.andExpect(jsonPath("$.message").isEmpty())
-			.andExpect(jsonPath("$.data").isNumber())
+			.andExpect(jsonPath("$.data").exists())
+			.andExpect(jsonPath("$.data.result").isNumber())
 			.andDo(document("member-unfollow",
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
@@ -97,8 +101,10 @@ class FollowControllerTest extends ControllerTestSupport {
 						.description("상태 코드"),
 					fieldWithPath("message").type(JsonFieldType.NULL)
 						.description("메시지"),
-					fieldWithPath("data").type(JsonFieldType.NUMBER)
-						.description("언팔로우 고유 아이디")
+					fieldWithPath("data").type(JsonFieldType.OBJECT)
+						.description("응답 데이터 DTO"),
+					fieldWithPath("data.result").type(JsonFieldType.NUMBER)
+						.description("삭제한 follow 데이터 아이디")
 				)));
 	}
 }
