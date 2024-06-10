@@ -24,19 +24,16 @@ public class PostLikePersistenceAdapter implements SavePostLikePort, DeletePostL
 	private final PostLikeMapper postLikeMapper;
 
 	@Override
-	@Transactional
 	public Long save(Long memberId, Long postId) {
-		MemberEntity member = memberRepository.findById(memberId)
-			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-
-		PostEntity post = postRepository.findById(postId)
-			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 포스트입니다."));
+		MemberEntity member = memberRepository.getReferenceById(memberId);
+		PostEntity post = postRepository.getReferenceById(postId);
 
 		PostLikeEntity savedPostLike = postLikeRepository.save(postLikeMapper.toEntity(member, post));
 
 		return savedPostLike.getId();
 	}
 
+	@Transactional
 	@Override
 	public boolean delete(Long memberId, Long postId) {
 		postLikeRepository.deleteByMemberIdAndPostId(memberId, postId);

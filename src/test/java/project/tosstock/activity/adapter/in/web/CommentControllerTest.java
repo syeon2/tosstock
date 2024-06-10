@@ -53,7 +53,7 @@ class CommentControllerTest extends ControllerTestSupport {
 			.andExpect(jsonPath("$.status").isNumber())
 			.andExpect(jsonPath("$.message").isEmpty())
 			.andExpect(jsonPath("$.data").exists())
-			.andExpect(jsonPath("$.data.id").exists())
+			.andExpect(jsonPath("$.data.result").exists())
 			.andDo(document("comment-create",
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
@@ -72,7 +72,7 @@ class CommentControllerTest extends ControllerTestSupport {
 						.description("메시지"),
 					fieldWithPath("data").type(JsonFieldType.OBJECT)
 						.description("응답 데이터"),
-					fieldWithPath("data.id").type(JsonFieldType.NUMBER)
+					fieldWithPath("data.result").type(JsonFieldType.NUMBER)
 						.description("저장된 댓글 아이디")
 				)));
 	}
@@ -92,7 +92,7 @@ class CommentControllerTest extends ControllerTestSupport {
 			.andExpect(jsonPath("$.status").isNumber())
 			.andExpect(jsonPath("$.message").isEmpty())
 			.andExpect(jsonPath("$.data").exists())
-			.andExpect(jsonPath("$.data.id").isNumber())
+			.andExpect(jsonPath("$.data.result").isNumber())
 			.andDo(document("comment-remove",
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
@@ -106,7 +106,7 @@ class CommentControllerTest extends ControllerTestSupport {
 						.description("메시지"),
 					fieldWithPath("data").type(JsonFieldType.OBJECT)
 						.description("응답 데이터"),
-					fieldWithPath("data.id").type(JsonFieldType.NUMBER)
+					fieldWithPath("data.result").type(JsonFieldType.NUMBER)
 						.description("삭제된 댓글 아이디")
 				)));
 	}

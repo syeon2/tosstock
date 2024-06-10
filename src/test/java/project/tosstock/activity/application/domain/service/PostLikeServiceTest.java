@@ -52,22 +52,22 @@ class PostLikeServiceTest extends IntegrationTestSupport {
 	@Test
 	@Transactional
 	@DisplayName(value = "회원이 해당 포스트를 좋아합니다. 를 누릅니다.")
-	void like_post() {
+	void likePost() {
 		// given
-		MemberEntity member = createMemberEntity("wwww@wwww");
-		memberRepository.save(member);
-
-		PostEntity post = createPost(member);
-		postRepository.save(post);
+		MemberEntity savedMember = memberRepository.save(createMember("wwww@wwww"));
+		PostEntity savedPost = postRepository.save(createPost(savedMember));
 
 		// when
-		boolean result = postLikeService.likePost(member.getId(), post.getId());
+		Long memberId = savedMember.getId();
+		Long postId = savedPost.getId();
+
+		boolean result = postLikeService.likePost(memberId, postId);
 
 		// then
 		assertThat(result).isTrue();
 
-		assertThat(postLikeRepository.findAll().get(0).getPost().getId()).isEqualTo(post.getId());
-		assertThat(postLikeRepository.findAll().get(0).getMember().getId()).isEqualTo(member.getId());
+		assertThat(postLikeRepository.findAll().get(0).getPost().getId()).isEqualTo(postId);
+		assertThat(postLikeRepository.findAll().get(0).getMember().getId()).isEqualTo(memberId);
 	}
 
 	@Test
@@ -75,16 +75,16 @@ class PostLikeServiceTest extends IntegrationTestSupport {
 	@DisplayName(value = "회원이 해당 포스트를 좋아합니다. 를 해제합니다.")
 	void unlike_post() {
 		// given
-		MemberEntity member = createMemberEntity("wwww@wwww");
-		memberRepository.save(member);
+		MemberEntity savedMember = memberRepository.save(createMember("wwww@wwww"));
+		PostEntity savedPost = postRepository.save(createPost(savedMember));
 
-		PostEntity post = createPost(member);
-		postRepository.save(post);
+		Long memberId = savedMember.getId();
+		Long postId = savedPost.getId();
 
-		postLikeService.likePost(member.getId(), post.getId());
+		postLikeService.likePost(memberId, postId);
 
 		// when
-		boolean result = postLikeService.unlikePost(member.getId(), post.getId());
+		boolean result = postLikeService.unlikePost(memberId, postId);
 
 		// then
 		assertThat(result).isTrue();
@@ -99,7 +99,7 @@ class PostLikeServiceTest extends IntegrationTestSupport {
 			.build();
 	}
 
-	private MemberEntity createMemberEntity(String email) {
+	private MemberEntity createMember(String email) {
 		return MemberEntity.builder()
 			.username("suyeon")
 			.email(email)

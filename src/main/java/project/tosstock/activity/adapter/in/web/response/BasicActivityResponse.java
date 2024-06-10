@@ -6,15 +6,15 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BasicActivityResponse {
+public class BasicActivityResponse<T> {
 
-	private Long id;
+	private T result;
 
-	public BasicActivityResponse(Long id) {
-		this.id = id;
+	public BasicActivityResponse(T result) {
+		this.result = result;
 	}
 
-	public static BasicActivityResponse of(Long id) {
-		return new BasicActivityResponse(id);
+	public static <T> BasicActivityResponse<T> of(T result) {
+		return new BasicActivityResponse<>(result);
 	}
 }
