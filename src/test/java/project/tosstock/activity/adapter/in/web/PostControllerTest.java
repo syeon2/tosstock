@@ -54,7 +54,7 @@ class PostControllerTest extends ControllerTestSupport {
 			.andExpect(jsonPath("$.status").isNumber())
 			.andExpect(jsonPath("$.message").isEmpty())
 			.andExpect(jsonPath("$.data").exists())
-			.andExpect(jsonPath("$.data.result").isNumber())
+			.andExpect(jsonPath("$.data.id").isNumber())
 			.andDo(document("post-create",
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
@@ -71,7 +71,7 @@ class PostControllerTest extends ControllerTestSupport {
 						.description("메시지"),
 					fieldWithPath("data").type(JsonFieldType.OBJECT)
 						.description("응답 데이터"),
-					fieldWithPath("data.result").type(JsonFieldType.NUMBER)
+					fieldWithPath("data.id").type(JsonFieldType.NUMBER)
 						.description("생성된 포스트 아이디"))
 			));
 	}
@@ -127,7 +127,7 @@ class PostControllerTest extends ControllerTestSupport {
 			.andExpect(jsonPath("$.status").isNumber())
 			.andExpect(jsonPath("$.message").isEmpty())
 			.andExpect(jsonPath("$.data").exists())
-			.andExpect(jsonPath("$.data.result").isNumber())
+			.andExpect(jsonPath("$.data.id").isNumber())
 			.andDo(document("post-remove",
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
@@ -141,7 +141,7 @@ class PostControllerTest extends ControllerTestSupport {
 						.description("메시지"),
 					fieldWithPath("data").type(JsonFieldType.OBJECT)
 						.description("응답 데이터"),
-					fieldWithPath("data.result").type(JsonFieldType.NUMBER)
+					fieldWithPath("data.id").type(JsonFieldType.NUMBER)
 						.description("삭제된 포스트 아이디")
 				)
 			));

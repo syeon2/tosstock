@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import project.tosstock.activity.adapter.in.web.request.CreateCommentRequest;
+import project.tosstock.activity.adapter.in.web.response.BasicActivityResponse;
 import project.tosstock.activity.application.port.in.CommentUseCase;
 import project.tosstock.common.annotation.WebAdapter;
 import project.tosstock.common.wrapper.ApiResult;
@@ -21,16 +22,16 @@ public class CommentController {
 	private final CommentUseCase commentUseCase;
 
 	@PostMapping("/api/v1/posts/comments")
-	private ApiResult<Long> createComment(@Valid @RequestBody CreateCommentRequest request) {
+	private ApiResult<BasicActivityResponse> createComment(@Valid @RequestBody CreateCommentRequest request) {
 		Long createdCommentId = commentUseCase.createComment(request.toDomain());
 
-		return ApiResult.ok(createdCommentId);
+		return ApiResult.ok(BasicActivityResponse.of(createdCommentId));
 	}
 
 	@DeleteMapping("/api/v1/posts/comment/{commentId}")
-	private ApiResult<Long> removeComment(@PathVariable("commentId") Long commentId) {
+	private ApiResult<BasicActivityResponse> removeComment(@PathVariable("commentId") Long commentId) {
 		Long removedCommentId = commentUseCase.removeComment(commentId);
 
-		return ApiResult.ok(removedCommentId);
+		return ApiResult.ok(BasicActivityResponse.of(removedCommentId));
 	}
 }

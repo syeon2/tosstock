@@ -41,7 +41,7 @@ class CommentControllerTest extends ControllerTestSupport {
 	@DisplayName(value = "댓글을 생성하는 API를 호출합니다.")
 	void create_comment() throws Exception {
 		// given
-		CreateCommentRequest request = getCreateCommentRequest();
+		CreateCommentRequest request = createCommentRequest();
 
 		// when  // then
 		mockMvc.perform(
@@ -52,8 +52,9 @@ class CommentControllerTest extends ControllerTestSupport {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.status").isNumber())
 			.andExpect(jsonPath("$.message").isEmpty())
-			.andExpect(jsonPath("$.data").isNumber())
-			.andDo(document("create-post-comment",
+			.andExpect(jsonPath("$.data").exists())
+			.andExpect(jsonPath("$.data.id").exists())
+			.andDo(document("comment-create",
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestFields(
@@ -69,7 +70,9 @@ class CommentControllerTest extends ControllerTestSupport {
 						.description("상태 코드"),
 					fieldWithPath("message").type(JsonFieldType.NULL)
 						.description("메시지"),
-					fieldWithPath("data").type(JsonFieldType.NUMBER)
+					fieldWithPath("data").type(JsonFieldType.OBJECT)
+						.description("응답 데이터"),
+					fieldWithPath("data.id").type(JsonFieldType.NUMBER)
 						.description("저장된 댓글 아이디")
 				)));
 	}
@@ -88,8 +91,9 @@ class CommentControllerTest extends ControllerTestSupport {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.status").isNumber())
 			.andExpect(jsonPath("$.message").isEmpty())
-			.andExpect(jsonPath("$.data").isNumber())
-			.andDo(document("remove-post-comment",
+			.andExpect(jsonPath("$.data").exists())
+			.andExpect(jsonPath("$.data.id").isNumber())
+			.andDo(document("comment-remove",
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				pathParameters(
@@ -100,12 +104,14 @@ class CommentControllerTest extends ControllerTestSupport {
 						.description("상태 코드"),
 					fieldWithPath("message").type(JsonFieldType.NULL)
 						.description("메시지"),
-					fieldWithPath("data").type(JsonFieldType.NUMBER)
+					fieldWithPath("data").type(JsonFieldType.OBJECT)
+						.description("응답 데이터"),
+					fieldWithPath("data.id").type(JsonFieldType.NUMBER)
 						.description("삭제된 댓글 아이디")
 				)));
 	}
 
-	private static CreateCommentRequest getCreateCommentRequest() {
+	private static CreateCommentRequest createCommentRequest() {
 		return CreateCommentRequest.builder()
 			.article("댓글")
 			.postId(1L)

@@ -43,12 +43,10 @@ class CommentPersistenceAdapterTest extends IntegrationTestSupport {
 	@DisplayName(value = "댓글을 저장합니다.")
 	void save() {
 		// given
-		MemberEntity member = createMemberEntity("www@www");
-		memberRepository.save(member);
-		PostEntity post = createPost();
-		postRepository.save(post);
+		MemberEntity savedMember = memberRepository.save(createMember("www@www"));
+		PostEntity savedPost = postRepository.save(createPost());
 
-		Comment comment = createComment(post, member);
+		Comment comment = createComment(savedPost, savedMember);
 
 		// when
 		Long saveCommentId = commentPersistenceAdapter.save(comment);
@@ -57,19 +55,18 @@ class CommentPersistenceAdapterTest extends IntegrationTestSupport {
 		Optional<CommentEntity> findCommentOptional = commentRepository.findById(saveCommentId);
 
 		assertThat(findCommentOptional).isPresent()
-			.hasValueSatisfying(c -> assertThat(c.getPost().getId()).isEqualTo(post.getId()));
+			.hasValueSatisfying(c -> assertThat(c.getPost().getId()).isEqualTo(savedPost.getId()))
+			.hasValueSatisfying(c -> assertThat(c.getMember().getId()).isEqualTo(savedMember.getId()));
 	}
 
 	@Test
 	@DisplayName(value = "댓글을 삭제합니다.")
 	void delete() {
 		// given
-		MemberEntity member = createMemberEntity("www@www");
-		memberRepository.save(member);
-		PostEntity post = createPost();
-		postRepository.save(post);
+		MemberEntity savedMember = memberRepository.save(createMember("www@www"));
+		PostEntity savedPost = postRepository.save(createPost());
 
-		Comment comment = createComment(post, member);
+		Comment comment = createComment(savedPost, savedMember);
 
 		Long saveCommentId = commentPersistenceAdapter.save(comment);
 
@@ -82,7 +79,7 @@ class CommentPersistenceAdapterTest extends IntegrationTestSupport {
 		assertThat(findCommentOptional).isEmpty();
 	}
 
-	private MemberEntity createMemberEntity(String email) {
+	private MemberEntity createMember(String email) {
 		return MemberEntity.builder()
 			.username("suyeon")
 			.email(email)
