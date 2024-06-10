@@ -2,5 +2,5 @@ package project.tosstock.activity.application.port.out;
 
 public interface DeletePostPort {
 
-	Long delete(Long postId);
+	void delete(Long postId);
 }

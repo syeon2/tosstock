@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import project.tosstock.activity.adapter.in.web.request.CreatePostRequest;
-import project.tosstock.activity.application.port.in.CreatePostUseCase;
+import project.tosstock.activity.adapter.in.web.response.BasicPostResponse;
+import project.tosstock.activity.application.port.in.PostingUseCase;
 import project.tosstock.common.annotation.WebAdapter;
 import project.tosstock.common.wrapper.ApiResult;
 
@@ -18,19 +19,19 @@ import project.tosstock.common.wrapper.ApiResult;
 @RequiredArgsConstructor
 public class PostController {
 
-	private final CreatePostUseCase createPostUseCase;
+	private final PostingUseCase postingUseCase;
 
 	@PostMapping("/api/v1/posts")
-	public ApiResult<Long> createPost(@Valid @RequestBody CreatePostRequest request) {
-		Long createPostId = createPostUseCase.createPost(request.toDomain());
+	public ApiResult<BasicPostResponse> createPost(@Valid @RequestBody CreatePostRequest request) {
+		Long createPostId = postingUseCase.createPost(request.toDomain());
 
-		return ApiResult.ok(createPostId);
+		return ApiResult.ok(BasicPostResponse.of(createPostId));
 	}
 
 	@DeleteMapping("/api/v1/post/{postId}")
-	public ApiResult<Long> removePost(@PathVariable("postId") Long postId) {
-		Long removedPostId = createPostUseCase.removePost(postId);
+	public ApiResult<BasicPostResponse> removePost(@PathVariable("postId") Long postId) {
+		Long removedPostId = postingUseCase.removePost(postId);
 
-		return ApiResult.ok(removedPostId);
+		return ApiResult.ok(BasicPostResponse.of(removedPostId));
 	}
 }

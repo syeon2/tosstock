@@ -20,7 +20,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 
 import project.tosstock.ControllerTestSupport;
 import project.tosstock.activity.adapter.in.web.request.CreatePostRequest;
-import project.tosstock.activity.application.port.in.CreatePostUseCase;
+import project.tosstock.activity.application.port.in.PostingUseCase;
 import project.tosstock.common.config.web.WebConfig;
 import project.tosstock.common.config.web.filter.JwtExceptionFilter;
 import project.tosstock.common.config.web.filter.JwtVerificationFilter;
@@ -36,16 +36,13 @@ import project.tosstock.common.config.web.filter.JwtVerificationFilter;
 class PostControllerTest extends ControllerTestSupport {
 
 	@MockBean
-	private CreatePostUseCase createPostUseCase;
+	private PostingUseCase postingUseCase;
 
 	@Test
 	@DisplayName(value = "포스트를 작성하는 API를 요청합니다.")
-	void create_post() throws Exception {
+	void createPost() throws Exception {
 		// given
-		CreatePostRequest request = CreatePostRequest.builder()
-			.article("텍스트입니다.")
-			.memberId(1L)
-			.build();
+		CreatePostRequest request = createPostRequest("텍스트입니다.", 1L);
 
 		// when  // then
 		mockMvc.perform(
@@ -56,7 +53,8 @@ class PostControllerTest extends ControllerTestSupport {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.status").isNumber())
 			.andExpect(jsonPath("$.message").isEmpty())
-			.andExpect(jsonPath("$.data").isNumber())
+			.andExpect(jsonPath("$.data").exists())
+			.andExpect(jsonPath("$.data.result").isNumber())
 			.andDo(document("post-create",
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
@@ -71,8 +69,10 @@ class PostControllerTest extends ControllerTestSupport {
 						.description("상태 코드"),
 					fieldWithPath("message").type(JsonFieldType.NULL)
 						.description("메시지"),
-					fieldWithPath("data").type(JsonFieldType.NUMBER)
-						.description("작성된 포스트 아이디"))
+					fieldWithPath("data").type(JsonFieldType.OBJECT)
+						.description("응답 데이터"),
+					fieldWithPath("data.result").type(JsonFieldType.NUMBER)
+						.description("생성된 포스트 아이디"))
 			));
 	}
 
@@ -80,10 +80,7 @@ class PostControllerTest extends ControllerTestSupport {
 	@DisplayName(value = "게시글이 빈칸이면 예외를 반환합니다.")
 	void create_post_exception_article_blank() throws Exception {
 		// given
-		CreatePostRequest request = CreatePostRequest.builder()
-			.article("")
-			.memberId(1L)
-			.build();
+		CreatePostRequest request = createPostRequest("", 1L);
 
 		// when  // then
 		mockMvc.perform(
@@ -101,9 +98,7 @@ class PostControllerTest extends ControllerTestSupport {
 	@DisplayName(value = "회원 아이디가 null이면 예외를 반환합니다.")
 	void create_post_exception_memberId_null() throws Exception {
 		// given
-		CreatePostRequest request = CreatePostRequest.builder()
-			.article("텍스트 입니다.")
-			.build();
+		CreatePostRequest request = createPostRequest("텍스트 입니다.", null);
 
 		// when  // then
 		mockMvc.perform(
@@ -131,7 +126,8 @@ class PostControllerTest extends ControllerTestSupport {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.status").isNumber())
 			.andExpect(jsonPath("$.message").isEmpty())
-			.andExpect(jsonPath("$.data").isNumber())
+			.andExpect(jsonPath("$.data").exists())
+			.andExpect(jsonPath("$.data.result").isNumber())
 			.andDo(document("post-remove",
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
@@ -143,9 +139,18 @@ class PostControllerTest extends ControllerTestSupport {
 						.description("상태 코드"),
 					fieldWithPath("message").type(JsonFieldType.NULL)
 						.description("메시지"),
-					fieldWithPath("data").type(JsonFieldType.NUMBER)
-						.description("삭제한 포스트 아이디")
+					fieldWithPath("data").type(JsonFieldType.OBJECT)
+						.description("응답 데이터"),
+					fieldWithPath("data.result").type(JsonFieldType.NUMBER)
+						.description("삭제된 포스트 아이디")
 				)
 			));
+	}
+
+	private CreatePostRequest createPostRequest(String article, Long memberId) {
+		return CreatePostRequest.builder()
+			.article(article)
+			.memberId(memberId)
+			.build();
 	}
 }

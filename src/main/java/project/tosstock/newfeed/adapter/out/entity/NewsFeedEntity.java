@@ -1,6 +1,5 @@
 package project.tosstock.newfeed.adapter.out.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -41,7 +40,7 @@ public class NewsFeedEntity extends BaseEntity {
 	@Column(name = "article", columnDefinition = "varchar(255)")
 	private String article;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
 	private MemberEntity member;
 
