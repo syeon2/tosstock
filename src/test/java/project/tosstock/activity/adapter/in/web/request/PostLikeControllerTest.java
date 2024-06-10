@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 
 import project.tosstock.ControllerTestSupport;
+import project.tosstock.activity.adapter.in.web.PostLikeController;
 import project.tosstock.activity.application.port.in.PostLikeUseCase;
 import project.tosstock.common.config.web.WebConfig;
 import project.tosstock.common.config.web.filter.JwtExceptionFilter;
@@ -45,14 +46,15 @@ class PostLikeControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				post("/api/v1/member/{memberId}/post/{postId}", memberId, postId)
+				post("/api/v1/member/{memberId}/post/{postId}/like", memberId, postId)
 					.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.status").isNumber())
 			.andExpect(jsonPath("$.message").isEmpty())
-			.andExpect(jsonPath("$.data").isBoolean())
-			.andDo(document("like-post",
+			.andExpect(jsonPath("$.data").exists())
+			.andExpect(jsonPath("$.data.result").isBoolean())
+			.andDo(document("like-post-like",
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				pathParameters(
@@ -64,8 +66,10 @@ class PostLikeControllerTest extends ControllerTestSupport {
 						.description("상태 코드"),
 					fieldWithPath("message").type(JsonFieldType.NULL)
 						.description("메시지"),
-					fieldWithPath("data").type(JsonFieldType.BOOLEAN)
-						.description("좋아요 성공 여부")
+					fieldWithPath("data").type(JsonFieldType.OBJECT)
+						.description("응답 데이터 DTO"),
+					fieldWithPath("data.result").type(JsonFieldType.BOOLEAN)
+						.description("좋아요 요청 성공 여부")
 				)));
 	}
 
@@ -78,14 +82,15 @@ class PostLikeControllerTest extends ControllerTestSupport {
 
 		// when  // then
 		mockMvc.perform(
-				delete("/api/v1/member/{memberId}/post/{postId}", memberId, postId)
+				delete("/api/v1/member/{memberId}/post/{postId}/like", memberId, postId)
 					.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.status").isNumber())
 			.andExpect(jsonPath("$.message").isEmpty())
-			.andExpect(jsonPath("$.data").isBoolean())
-			.andDo(document("unlike-post",
+			.andExpect(jsonPath("$.data").exists())
+			.andExpect(jsonPath("$.data.result").isBoolean())
+			.andDo(document("like-post-unlike",
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				pathParameters(
@@ -97,8 +102,10 @@ class PostLikeControllerTest extends ControllerTestSupport {
 						.description("상태 코드"),
 					fieldWithPath("message").type(JsonFieldType.NULL)
 						.description("메시지"),
-					fieldWithPath("data").type(JsonFieldType.BOOLEAN)
-						.description("좋아요 해제 성공 여부")
+					fieldWithPath("data").type(JsonFieldType.OBJECT)
+						.description("응답 데이터 DTO"),
+					fieldWithPath("data.result").type(JsonFieldType.BOOLEAN)
+						.description("좋아요 해제 요청 성공 여부")
 				)));
 	}
 }
