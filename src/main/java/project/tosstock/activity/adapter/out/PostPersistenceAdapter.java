@@ -1,6 +1,6 @@
 package project.tosstock.activity.adapter.out;
 
-import org.springframework.transaction.annotation.Transactional;
+import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 import project.tosstock.activity.adapter.out.entity.PostEntity;
@@ -23,26 +23,21 @@ public class PostPersistenceAdapter implements SavePostPort, DeletePostPort, Fin
 	private final PostMapper postMapper;
 
 	@Override
-	@Transactional
 	public Long save(Post post) {
-		MemberEntity member = memberRepository.findById(post.getMemberId())
-			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+		MemberEntity proxyMember = memberRepository.getReferenceById(post.getMemberId());
+		PostEntity savedPost = postRepository.save(postMapper.toEntity(proxyMember, post));
 
-		PostEntity savePost = postRepository.save(postMapper.toEntity(member, post));
-
-		return savePost.getId();
+		return savedPost.getId();
 	}
 
 	@Override
-	public Long delete(Long postId) {
+	public void delete(Long postId) {
 		postRepository.deleteById(postId);
-
-		return postId;
 	}
 
 	@Override
-	public PostEntity findPostById(Long postId) {
+	public Optional<Post> findPostById(Long postId) {
 		return postRepository.findById(postId)
-			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 포스트입니다."));
+			.map(postMapper::toDomain);
 	}
 }

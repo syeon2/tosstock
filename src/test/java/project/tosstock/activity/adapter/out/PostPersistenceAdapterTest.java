@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import project.tosstock.IntegrationTestSupport;
 import project.tosstock.activity.adapter.out.entity.PostEntity;
-import project.tosstock.activity.adapter.out.persistence.CommentRepository;
 import project.tosstock.activity.adapter.out.persistence.PostRepository;
 import project.tosstock.activity.application.domain.model.Post;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
@@ -29,12 +28,8 @@ class PostPersistenceAdapterTest extends IntegrationTestSupport {
 	@Autowired
 	private MemberRepository memberRepository;
 
-	@Autowired
-	private CommentRepository commentRepository;
-
 	@BeforeEach
 	void before() {
-		commentRepository.deleteAllInBatch();
 		postRepository.deleteAllInBatch();
 		memberRepository.deleteAllInBatch();
 	}
@@ -43,11 +38,10 @@ class PostPersistenceAdapterTest extends IntegrationTestSupport {
 	@DisplayName(value = "작성한 포스트를 저장합니다.")
 	void save() {
 		// given
-		MemberEntity member = createMember();
-		memberRepository.save(member);
+		MemberEntity savedMember = memberRepository.save(createMember());
 
 		String article = "텍스트 작성";
-		Post post = createPost(article, member.getId());
+		Post post = createPost(article, savedMember.getId());
 
 		// when
 		Long savePostId = postPersistenceAdapter.save(post);
@@ -62,33 +56,31 @@ class PostPersistenceAdapterTest extends IntegrationTestSupport {
 	@Test
 	@Transactional
 	@DisplayName(value = "회원과 포스트 간 연관관계 설정을 확인합니다.")
-	void check_related_connect_pos_and_member() {
+	void checkRelatedConnectPostAndMember() {
 		// given
-		MemberEntity member = createMember();
-		memberRepository.save(member);
+		MemberEntity savedMember = memberRepository.save(createMember());
 
 		String article = "텍스트 작성";
-		Post post = createPost(article, member.getId());
+		Post post = createPost(article, savedMember.getId());
 
-		Long savePostId = postPersistenceAdapter.save(post);
+		Long savedPostId = postPersistenceAdapter.save(post);
 
 		// when
-		Optional<PostEntity> findPostOptional = postRepository.findById(savePostId);
+		Optional<PostEntity> findPostOptional = postRepository.findById(savedPostId);
 
 		// then
 		assertThat(findPostOptional).isPresent()
-			.hasValueSatisfying(f -> assertThat(f.getMember().getId()).isEqualTo(member.getId()));
+			.hasValueSatisfying(f -> assertThat(f.getMember().getId()).isEqualTo(savedMember.getId()));
 	}
 
 	@Test
 	@DisplayName(value = "작성된 포스트를 삭제합니다..")
 	void delete() {
 		// given
-		MemberEntity member = createMember();
-		memberRepository.save(member);
+		MemberEntity savedMember = memberRepository.save(createMember());
 
 		String article = "텍스트 작성";
-		Post post = createPost(article, member.getId());
+		Post post = createPost(article, savedMember.getId());
 
 		Long savePostId = postPersistenceAdapter.save(post);
 

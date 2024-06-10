@@ -45,10 +45,17 @@ public class PostEntity extends BaseEntity {
 
 	@OneToMany(
 		mappedBy = "post",
-		cascade = CascadeType.ALL,
+		cascade = CascadeType.REMOVE,
 		orphanRemoval = true,
 		fetch = FetchType.LAZY)
 	private List<CommentEntity> comments = new ArrayList<>();
+
+	@OneToMany(
+		mappedBy = "post",
+		cascade = CascadeType.REMOVE,
+		orphanRemoval = true,
+		fetch = FetchType.LAZY)
+	private List<PostLikeEntity> postLikes = new ArrayList<>();
 
 	@Builder
 	private PostEntity(Long id, String article, MemberEntity member) {

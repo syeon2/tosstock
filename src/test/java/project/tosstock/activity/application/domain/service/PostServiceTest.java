@@ -8,15 +8,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import project.tosstock.IntegrationTestSupport;
 import project.tosstock.activity.adapter.out.entity.PostEntity;
-import project.tosstock.activity.adapter.out.persistence.CommentRepository;
 import project.tosstock.activity.adapter.out.persistence.PostRepository;
 import project.tosstock.activity.application.domain.model.Post;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
-import project.tosstock.newfeed.adapter.out.persistence.NewsFeedRepository;
+import project.tosstock.newfeed.application.port.out.DeleteNewsFeedPort;
+import project.tosstock.newfeed.application.port.out.FindNewsFeedPort;
+import project.tosstock.newfeed.application.port.out.SaveNewsFeedPort;
 
 class PostServiceTest extends IntegrationTestSupport {
 
@@ -29,46 +31,45 @@ class PostServiceTest extends IntegrationTestSupport {
 	@Autowired
 	private MemberRepository memberRepository;
 
-	@Autowired
-	private NewsFeedRepository newsFeedRepository;
+	@MockBean
+	private SaveNewsFeedPort saveNewsFeedPort;
 
-	@Autowired
-	private CommentRepository commentRepository;
+	@MockBean
+	private DeleteNewsFeedPort deleteNewsFeedPort;
+
+	@MockBean
+	private FindNewsFeedPort findNewsFeedPort;
 
 	@BeforeEach
 	void before() {
-		newsFeedRepository.deleteAllInBatch();
-		commentRepository.deleteAllInBatch();
 		postRepository.deleteAllInBatch();
 		memberRepository.deleteAllInBatch();
 	}
 
 	@Test
 	@DisplayName(value = "게시글을 작성합니다.")
-	void create_post() {
+	void createPost() {
 		// given
-		MemberEntity member = createMember();
-		memberRepository.save(member);
+		MemberEntity savedMember = memberRepository.save(createMember());
 
 		// when
-		Post post = createPost("텍스트 입니다.", member.getId());
+		Post post = createPost("텍스트 입니다.", savedMember.getId());
 		Long createPostId = postService.createPost(post);
 
 		// then
 		Optional<PostEntity> findPostOptional = postRepository.findById(createPostId);
 
 		assertThat(findPostOptional).isPresent()
-			.hasValueSatisfying(p -> assertThat(p.getMember().getId()).isEqualTo(member.getId()));
+			.hasValueSatisfying(p -> assertThat(p.getMember().getId()).isEqualTo(savedMember.getId()));
 	}
 
 	@Test
 	@DisplayName(value = "게시글을 삭제합니다.")
-	void remove_post() {
+	void removePost() {
 		// given
-		MemberEntity member = createMember();
-		memberRepository.save(member);
+		MemberEntity savedMember = memberRepository.save(createMember());
 
-		Post post = createPost("텍스트 입니다.", member.getId());
+		Post post = createPost("텍스트 입니다.", savedMember.getId());
 		Long createPostId = postService.createPost(post);
 
 		// when

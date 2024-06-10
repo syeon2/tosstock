@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import project.tosstock.activity.adapter.out.entity.PostEntity;
+import project.tosstock.activity.application.domain.model.Post;
 import project.tosstock.activity.application.port.in.PostLikeUseCase;
 import project.tosstock.activity.application.port.out.DeletePostLikePort;
 import project.tosstock.activity.application.port.out.FindPostPort;
@@ -32,8 +32,12 @@ public class PostLikeService implements PostLikeUseCase {
 
 		String likePostUsername = findMemberPort.findMemberById(memberId)
 			.orElseThrow(() -> new IllegalArgumentException("존재히지 않는 회원입니다.")).getUsername();
-		PostEntity findPost = findPostPort.findPostById(postId);
-		String postedUsername = findPost.getMember().getUsername();
+
+		Post findPost = findPostPort.findPostById(postId)
+			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 포스트입니다."));
+
+		String postedUsername = findMemberPort.findMemberById(findPost.getMemberId())
+			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다.")).getUsername();
 
 		publishNewsFeed(savePostLikeId, memberId, likePostUsername, postedUsername);
 

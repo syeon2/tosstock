@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import project.tosstock.activity.application.domain.model.Post;
-import project.tosstock.activity.application.port.in.CreatePostUseCase;
+import project.tosstock.activity.application.port.in.PostingUseCase;
 import project.tosstock.activity.application.port.out.DeletePostPort;
 import project.tosstock.activity.application.port.out.SavePostPort;
 import project.tosstock.newfeed.application.domain.model.FeedType;
@@ -15,7 +15,7 @@ import project.tosstock.newfeed.application.port.out.SaveNewsFeedPort;
 
 @Service
 @RequiredArgsConstructor
-public class PostService implements CreatePostUseCase {
+public class PostService implements PostingUseCase {
 
 	private final SavePostPort savePostPort;
 	private final DeletePostPort deletePostPort;
@@ -35,11 +35,10 @@ public class PostService implements CreatePostUseCase {
 
 	@Override
 	public Long removePost(Long postId) {
-		Long deletedPostId = deletePostPort.delete(postId);
+		deletePostPort.delete(postId);
+		deleteNewsFeedPort.delete(postId, FeedType.POST);
 
-		deleteNewsFeedPort.delete(deletedPostId, FeedType.POST);
-
-		return deletedPostId;
+		return postId;
 	}
 
 	private void publishNewsFeed(Post post, Long savedPostId) {
