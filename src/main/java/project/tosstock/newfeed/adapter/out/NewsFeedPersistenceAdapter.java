@@ -27,11 +27,8 @@ public class NewsFeedPersistenceAdapter implements SaveNewsFeedPort, DeleteNewsF
 	private final NewsFeedMapper newsFeedMapper;
 
 	@Override
-	@Transactional
 	public Long save(NewsFeed newsFeed, FeedType feedType) {
-		MemberEntity member = memberRepository.findById(newsFeed.getMemberId())
-			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-
+		MemberEntity member = memberRepository.getReferenceById(newsFeed.getMemberId());
 		NewsFeedEntity saveNewsFeed = newsFeedRepository.save(newsFeedMapper.toEntity(newsFeed, member, feedType));
 
 		return saveNewsFeed.getId();
@@ -44,7 +41,6 @@ public class NewsFeedPersistenceAdapter implements SaveNewsFeedPort, DeleteNewsF
 	}
 
 	@Override
-	@Transactional
 	public List<NewsFeed> findNewsFeed(Long memberId) {
 		return newsFeedRepository.findNewsFeedsJoinFolloweeId(memberId).stream()
 			.map(newsFeedMapper::toDomain)

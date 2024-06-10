@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import project.tosstock.member.application.port.out.FindMemberPort;
@@ -19,6 +20,7 @@ public class NewsFeedService implements NewsFeedFilterUseCase {
 	private final FindMemberPort findMemberPort;
 
 	@Override
+	@Transactional
 	public List<TestNewsFeed> showNewsFeedBasic(Long memberId) {
 		return findNewsFeedPort.findNewsFeed(memberId).stream()
 			.map(n -> TestNewsFeed.toDomain(n, findMemberPort.findMemberById(n.getMemberId()).get().getUsername()))
