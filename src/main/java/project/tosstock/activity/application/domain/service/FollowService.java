@@ -1,11 +1,13 @@
 package project.tosstock.activity.application.domain.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import project.tosstock.activity.application.port.in.FollowMemberUseCase;
 import project.tosstock.activity.application.port.out.DeleteFollowPort;
 import project.tosstock.activity.application.port.out.SaveFollowPort;
+import project.tosstock.member.application.domain.model.Member;
 import project.tosstock.member.application.port.out.FindMemberPort;
 import project.tosstock.newfeed.application.domain.model.FeedType;
 import project.tosstock.newfeed.application.domain.model.NewsFeed;
@@ -22,21 +24,23 @@ public class FollowService implements FollowMemberUseCase {
 	private final SaveNewsFeedPort saveNewsFeedPort;
 
 	@Override
+	@Transactional
 	public Long followMember(Long followerId, Long followeeId) {
 		Long savedFollowId = saveFollowPort.save(followerId, followeeId);
 
-		// MemberEntity findFollower = findMemberPort.findMemberById(followerId)
-		// 	.orElseThrow(() -> new IllegalArgumentException("존재히지 않는 회원입니다."));
-		//
-		// MemberEntity findFollowee = findMemberPort.findMemberById(followeeId)
-		// 	.orElseThrow(() -> new IllegalArgumentException("존재히지 않는 회원입니다."));
+		Member findFollower = findMemberPort.findMemberById(followerId)
+			.orElseThrow(() -> new IllegalArgumentException("존재히지 않는 회원입니다."));
 
-		// publishNewsFeed(followerId, savedFollowId, findFollower.getUsername(), findFollowee.getUsername());
+		Member findFollowee = findMemberPort.findMemberById(followeeId)
+			.orElseThrow(() -> new IllegalArgumentException("존재히지 않는 회원입니다."));
+
+		publishNewsFeed(followerId, savedFollowId, findFollower.getUsername(), findFollowee.getUsername());
 
 		return savedFollowId;
 	}
 
 	@Override
+	@Transactional
 	public Long unfollowMember(Long followerId, Long followeeId) {
 		deleteFollowPort.delete(followerId, followeeId);
 
