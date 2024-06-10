@@ -1,7 +1,5 @@
 package project.tosstock.activity.adapter.out;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import lombok.RequiredArgsConstructor;
 import project.tosstock.activity.adapter.out.entity.CommentEntity;
 import project.tosstock.activity.adapter.out.entity.PostEntity;
@@ -25,13 +23,9 @@ public class CommentPersistenceAdapter implements SaveCommentPort, DeleteComment
 	private final CommentMapper commentMapper;
 
 	@Override
-	@Transactional
 	public Long save(Comment comment) {
-		MemberEntity member = memberRepository.findById(comment.getMemberId())
-			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-
-		PostEntity post = postRepository.findById(comment.getPostId())
-			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 포스트입니다."));
+		MemberEntity member = memberRepository.getReferenceById(comment.getMemberId());
+		PostEntity post = postRepository.getReferenceById(comment.getPostId());
 
 		CommentEntity saveComment = commentRepository.save(commentMapper.toEntity(comment, member, post));
 

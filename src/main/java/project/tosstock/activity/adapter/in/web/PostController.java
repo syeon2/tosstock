@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import project.tosstock.activity.adapter.in.web.request.CreatePostRequest;
-import project.tosstock.activity.adapter.in.web.response.BasicPostResponse;
+import project.tosstock.activity.adapter.in.web.response.BasicActivityResponse;
 import project.tosstock.activity.application.port.in.PostingUseCase;
 import project.tosstock.common.annotation.WebAdapter;
 import project.tosstock.common.wrapper.ApiResult;
@@ -22,16 +22,16 @@ public class PostController {
 	private final PostingUseCase postingUseCase;
 
 	@PostMapping("/api/v1/posts")
-	public ApiResult<BasicPostResponse> createPost(@Valid @RequestBody CreatePostRequest request) {
+	public ApiResult<BasicActivityResponse> createPost(@Valid @RequestBody CreatePostRequest request) {
 		Long createPostId = postingUseCase.createPost(request.toDomain());
 
-		return ApiResult.ok(BasicPostResponse.of(createPostId));
+		return ApiResult.ok(BasicActivityResponse.of(createPostId));
 	}
 
 	@DeleteMapping("/api/v1/post/{postId}")
-	public ApiResult<BasicPostResponse> removePost(@PathVariable("postId") Long postId) {
+	public ApiResult<BasicActivityResponse> removePost(@PathVariable("postId") Long postId) {
 		Long removedPostId = postingUseCase.removePost(postId);
 
-		return ApiResult.ok(BasicPostResponse.of(removedPostId));
+		return ApiResult.ok(BasicActivityResponse.of(removedPostId));
 	}
 }

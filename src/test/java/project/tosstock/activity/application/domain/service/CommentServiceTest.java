@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import project.tosstock.IntegrationTestSupport;
 import project.tosstock.activity.adapter.out.entity.CommentEntity;
@@ -17,7 +18,9 @@ import project.tosstock.activity.adapter.out.persistence.PostRepository;
 import project.tosstock.activity.application.domain.model.Comment;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
-import project.tosstock.newfeed.adapter.out.persistence.NewsFeedRepository;
+import project.tosstock.newfeed.application.port.out.DeleteNewsFeedPort;
+import project.tosstock.newfeed.application.port.out.FindNewsFeedPort;
+import project.tosstock.newfeed.application.port.out.SaveNewsFeedPort;
 
 class CommentServiceTest extends IntegrationTestSupport {
 
@@ -33,12 +36,17 @@ class CommentServiceTest extends IntegrationTestSupport {
 	@Autowired
 	private MemberRepository memberRepository;
 
-	@Autowired
-	private NewsFeedRepository newsFeedRepository;
+	@MockBean
+	private SaveNewsFeedPort saveNewsFeedPort;
+
+	@MockBean
+	private DeleteNewsFeedPort deleteNewsFeedPort;
+
+	@MockBean
+	private FindNewsFeedPort findNewsFeedPort;
 
 	@BeforeEach
-	void before() {
-		newsFeedRepository.deleteAllInBatch();
+	void after() {
 		commentRepository.deleteAllInBatch();
 		postRepository.deleteAllInBatch();
 		memberRepository.deleteAllInBatch();
@@ -46,14 +54,12 @@ class CommentServiceTest extends IntegrationTestSupport {
 
 	@Test
 	@DisplayName(value = "댓글을 생성합니다.")
-	void create_comment() {
+	void createComment() {
 		// given
-		MemberEntity member = createMemberEntity("www@www");
-		memberRepository.save(member);
-		PostEntity post = createPost();
-		postRepository.save(post);
+		MemberEntity savedMember = memberRepository.save(createMember("www@www"));
+		PostEntity savedPost = postRepository.save(createPost());
 
-		Comment comment = createComment(member, post);
+		Comment comment = createComment(savedMember, savedPost);
 
 		// when
 		Long saveCommentId = commentService.createComment(comment);
@@ -62,19 +68,18 @@ class CommentServiceTest extends IntegrationTestSupport {
 		Optional<CommentEntity> findCommentOptional = commentRepository.findById(saveCommentId);
 
 		assertThat(findCommentOptional).isPresent()
-			.hasValueSatisfying(c -> assertThat(c.getPost().getId()).isEqualTo(post.getId()));
+			.hasValueSatisfying(c -> assertThat(c.getPost().getId()).isEqualTo(savedPost.getId()))
+			.hasValueSatisfying(c -> assertThat(c.getMember().getId()).isEqualTo(savedMember.getId()));
 	}
 
 	@Test
 	@DisplayName(value = "댓글을 삭제합니다.")
 	void remove_comment() {
 		// given
-		MemberEntity member = createMemberEntity("www@www");
-		memberRepository.save(member);
-		PostEntity post = createPost();
-		postRepository.save(post);
+		MemberEntity savedMember = memberRepository.save(createMember("www@www"));
+		PostEntity savedPost = postRepository.save(createPost());
 
-		Comment comment = createComment(member, post);
+		Comment comment = createComment(savedMember, savedPost);
 
 		Long saveCommentId = commentService.createComment(comment);
 
@@ -85,7 +90,7 @@ class CommentServiceTest extends IntegrationTestSupport {
 		assertThat(commentRepository.findById(removedCommentId)).isEmpty();
 	}
 
-	private MemberEntity createMemberEntity(String email) {
+	private MemberEntity createMember(String email) {
 		return MemberEntity.builder()
 			.username("suyeon")
 			.email(email)
