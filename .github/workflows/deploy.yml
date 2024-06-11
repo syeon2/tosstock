@@ -29,10 +29,10 @@ jobs:
           distribution: 'corretto'
       - name: give execution role to gradlew
         run: chmod +x ./gradlew
-      - name: build project
-        run: ./gradlew clean build -x test
       - name: Build Asciidoctor Docs
         run: ./gradlew asciidoctor
+      - name: build project
+        run: ./gradlew clean build -x test
       - name: AWS credential configuration
         uses: aws-actions/configure-aws-credentials@v1
         with:
