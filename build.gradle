@@ -98,6 +98,10 @@ test {
 }
 
 asciidoctor {
+    doFirst {
+        file("$buildDir/generated-snippets").mkdirs()
+    }
+
     inputs.dir snippetsDir
     configurations 'asciidoctorExt'
 
