@@ -30,7 +30,7 @@ jobs:
       - name: give execution role to gradlew
         run: chmod +x ./gradlew
       - name: build project
-        run: ./gradlew clean build -x test
+        run: ./gradlew clean build
       - name: AWS credential configuration
         uses: aws-actions/configure-aws-credentials@v1
         with:
