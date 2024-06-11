@@ -31,6 +31,8 @@ jobs:
         run: chmod +x ./gradlew
       - name: build project
         run: ./gradlew clean build -x test
+      - name: Build Asciidoctor Docs
+        run: ./gradlew asciidoctor
       - name: AWS credential configuration
         uses: aws-actions/configure-aws-credentials@v1
         with:
