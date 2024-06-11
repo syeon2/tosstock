@@ -2,15 +2,15 @@
 === Comment API
 
 ==== Create Comment API
-include::{snippets}/create-post-comment/http-request.adoc[]
-include::{snippets}/create-post-comment/request-fields.adoc[]
+include::{snippets}/comment-create/http-request.adoc[]
+include::{snippets}/comment-create/request-fields.adoc[]
 
-include::{snippets}/create-post-comment/http-response.adoc[]
-include::{snippets}/create-post-comment/response-fields.adoc[]
+include::{snippets}/comment-create/http-response.adoc[]
+include::{snippets}/comment-create/response-fields.adoc[]
 
 ==== Remove Comment API
-include::{snippets}/remove-post-comment/http-request.adoc[]
-include::{snippets}/remove-post-comment/path-parameters.adoc[]
+include::{snippets}/comment-remove/http-request.adoc[]
+include::{snippets}/comment-remove/path-parameters.adoc[]
 
-include::{snippets}/remove-post-comment/http-response.adoc[]
-include::{snippets}/remove-post-comment/response-fields.adoc[]
+include::{snippets}/comment-remove/http-response.adoc[]
+include::{snippets}/comment-remove/response-fields.adoc[]

@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import project.tosstock.IntegrationTestSupport;
 import project.tosstock.activity.adapter.out.entity.PostEntity;
+import project.tosstock.activity.adapter.out.persistence.CommentRepository;
+import project.tosstock.activity.adapter.out.persistence.PostLikeRepository;
 import project.tosstock.activity.adapter.out.persistence.PostRepository;
 import project.tosstock.activity.application.domain.model.Post;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
@@ -28,8 +30,16 @@ class PostPersistenceAdapterTest extends IntegrationTestSupport {
 	@Autowired
 	private MemberRepository memberRepository;
 
+	@Autowired
+	private PostLikeRepository postLikeRepository;
+
+	@Autowired
+	private CommentRepository commentRepository;
+
 	@BeforeEach
 	void before() {
+		postLikeRepository.deleteAllInBatch();
+		commentRepository.deleteAllInBatch();
 		postRepository.deleteAllInBatch();
 		memberRepository.deleteAllInBatch();
 	}

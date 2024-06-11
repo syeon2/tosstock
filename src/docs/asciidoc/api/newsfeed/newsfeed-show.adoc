@@ -1,0 +1,8 @@
+[[Newsfeed]]
+=== Newsfeed API
+
+include::{snippets}/newsfeed-show/http-request.adoc[]
+include::{snippets}/newsfeed-show/path-parameters.adoc[]
+
+include::{snippets}/newsfeed-show/http-response.adoc[]
+include::{snippets}/newsfeed-show/response-fields.adoc[]

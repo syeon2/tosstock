@@ -26,3 +26,8 @@ include::api/activity/member-follow.adoc[]
 include::api/activity/post-store.adoc[]
 include::api/activity/post-comment.adoc[]
 include::api/activity/like-post.adoc[]
+
+[[Newsfeed-API]]
+== Newsfeed API
+
+include::api/newsfeed/newsfeed-show.adoc[]

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import project.tosstock.IntegrationTestSupport;
+import project.tosstock.activity.adapter.out.persistence.PostRepository;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
 import project.tosstock.member.application.domain.model.Member;
@@ -23,8 +24,12 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 	@Autowired
 	private MemberRepository memberRepository;
 
+	@Autowired
+	private PostRepository postRepository;
+
 	@BeforeEach
 	void before() {
+		postRepository.deleteAllInBatch();
 		memberRepository.deleteAllInBatch();
 	}
 
