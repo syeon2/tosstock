@@ -29,7 +29,11 @@ jobs:
           distribution: 'corretto'
       - name: give execution role to gradlew
         run: chmod +x ./gradlew
+      - name: Copy test application.yml
+        run: cp src/test/resources/application.yml src/main/resources/application.yml
       - name: Build Asciidoctor Docs
+        env:
+          SPRING_PROFILES_ACTIVES: test
         run: ./gradlew asciidoctor
       - name: build project
         run: ./gradlew clean build -x test
