@@ -40,5 +40,5 @@ jobs:
       - name: upload to s3
         run: aws deploy push --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }} --ignore-hidden-files --s3-location s3://project-tosstock/$GITHUB_SHA.zip --source .
       - name: deploy to EC2
-        run: aws deploy create-deployment --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }} --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name ${{ env.AWS_CODE_DEPLOY_GROUP }} --s3-location bucket=project-tosstock,bundleType=zip,key=$GITHUB_SHA.zip
+        run: aws deploy create-deployment --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }} --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} --s3-location bucket=project-tosstock,bundleType=zip,key=$GITHUB_SHA.zip
 
