@@ -120,3 +120,8 @@ bootJar {
 clean {
     delete files('src/main/generated', 'docker/mysql', 'docker/redis')
 }
+
+// build
+jar {
+    enabled = false
+}
