@@ -1,4 +1,7 @@
 spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 10
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${MYSQL_URL_DEV}
@@ -8,7 +11,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         show_sql: true
