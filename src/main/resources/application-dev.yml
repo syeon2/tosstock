@@ -22,8 +22,8 @@ spring:
       port: 6379
       expiration-minutes: 5
     redis-token:
-      host: localhost
-      port: 6380
+      host: ${REDIS_JWT_HOST}
+      port: ${REDIS_JWT_PORT}
 
 logging:
   level:
