@@ -15,7 +15,7 @@ public enum Market {
 
 	public static Market convertStringToEnum(String market) {
 		market = market.toLowerCase();
-		
+
 		if (KOSPI.text.equals(market)) {
 			return KOSPI;
 		}
