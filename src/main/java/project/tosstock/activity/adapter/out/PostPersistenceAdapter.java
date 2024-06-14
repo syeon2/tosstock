@@ -1,6 +1,11 @@
 package project.tosstock.activity.adapter.out;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import lombok.RequiredArgsConstructor;
 import project.tosstock.activity.adapter.out.entity.PostEntity;
@@ -39,5 +44,14 @@ public class PostPersistenceAdapter implements SavePostPort, DeletePostPort, Fin
 	public Optional<Post> findPostById(Long postId) {
 		return postRepository.findById(postId)
 			.map(postMapper::toDomain);
+	}
+
+	@Override
+	public List<Post> findPostByArticleContaining(String article, Pageable pageable) {
+		Page<PostEntity> findPosts = postRepository.findByArticleContaining(article, pageable);
+
+		return findPosts.getContent().stream()
+			.map(postMapper::toDomain)
+			.collect(Collectors.toList());
 	}
 }

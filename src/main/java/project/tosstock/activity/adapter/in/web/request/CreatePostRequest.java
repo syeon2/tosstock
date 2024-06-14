@@ -18,16 +18,21 @@ public class CreatePostRequest {
 	@NotNull(message = "회원 아이디는 필수 값입니다.")
 	private Long memberId;
 
+	@NotNull(message = "증권 아이디는 필수 값입니다.")
+	private Long stockId;
+
 	@Builder
-	private CreatePostRequest(String article, Long memberId) {
+	private CreatePostRequest(String article, Long memberId, Long stockId) {
 		this.article = article;
 		this.memberId = memberId;
+		this.stockId = stockId;
 	}
 
 	public Post toDomain() {
 		return Post.builder()
 			.article(this.article)
 			.memberId(this.memberId)
+			.stockId(this.stockId)
 			.build();
 	}
 }

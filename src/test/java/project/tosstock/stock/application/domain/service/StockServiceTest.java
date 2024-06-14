@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 
 import project.tosstock.IntegrationTestSupport;
 import project.tosstock.stock.adpater.out.StockPersistenceAdapter;
+import project.tosstock.stock.adpater.out.persistence.StockItemRepository;
 import project.tosstock.stock.adpater.out.persistence.StockRepository;
 import project.tosstock.stock.application.domain.model.Market;
 import project.tosstock.stock.application.domain.model.Stock;
@@ -28,8 +29,12 @@ class StockServiceTest extends IntegrationTestSupport {
 	@Autowired
 	private StockRepository stockRepository;
 
+	@Autowired
+	private StockItemRepository stockItemRepository;
+
 	@BeforeEach
 	void before() {
+		stockItemRepository.deleteAllInBatch();
 		stockRepository.deleteAllInBatch();
 	}
 

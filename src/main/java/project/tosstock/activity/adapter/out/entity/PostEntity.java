@@ -43,6 +43,9 @@ public class PostEntity extends BaseEntity {
 	@JoinColumn(name = "member_id")
 	private MemberEntity member;
 
+	@Column(name = "stock_id", columnDefinition = "bigint")
+	private Long stockId;
+
 	@OneToMany(
 		mappedBy = "post",
 		cascade = CascadeType.REMOVE,
@@ -58,9 +61,10 @@ public class PostEntity extends BaseEntity {
 	private List<PostLikeEntity> postLikes = new ArrayList<>();
 
 	@Builder
-	private PostEntity(Long id, String article, MemberEntity member) {
+	private PostEntity(Long id, String article, MemberEntity member, Long stockId) {
 		this.id = id;
 		this.article = article;
 		this.member = member;
+		this.stockId = stockId;
 	}
 }

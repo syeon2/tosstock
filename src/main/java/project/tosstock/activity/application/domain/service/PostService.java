@@ -1,12 +1,17 @@
 package project.tosstock.activity.application.domain.service;
 
+import java.util.List;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import project.tosstock.activity.application.domain.model.Post;
 import project.tosstock.activity.application.port.in.PostingUseCase;
+import project.tosstock.activity.application.port.in.SearchPostUseCase;
 import project.tosstock.activity.application.port.out.DeletePostPort;
+import project.tosstock.activity.application.port.out.FindPostPort;
 import project.tosstock.activity.application.port.out.SavePostPort;
 import project.tosstock.newfeed.application.domain.model.FeedType;
 import project.tosstock.newfeed.application.domain.model.NewsFeed;
@@ -15,9 +20,10 @@ import project.tosstock.newfeed.application.port.out.SaveNewsFeedPort;
 
 @Service
 @RequiredArgsConstructor
-public class PostService implements PostingUseCase {
+public class PostService implements PostingUseCase, SearchPostUseCase {
 
 	private final SavePostPort savePostPort;
+	private final FindPostPort findPostPort;
 	private final DeletePostPort deletePostPort;
 
 	private final SaveNewsFeedPort saveNewsFeedPort;
@@ -34,11 +40,18 @@ public class PostService implements PostingUseCase {
 	}
 
 	@Override
+	@Transactional
 	public Long removePost(Long postId) {
 		deletePostPort.delete(postId);
 		deleteNewsFeedPort.delete(postId, FeedType.POST);
 
 		return postId;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Post> searchPostByArticle(String article, Pageable pageable) {
+		return findPostPort.findPostByArticleContaining(article, pageable);
 	}
 
 	private void publishNewsFeed(Post post, Long savedPostId) {

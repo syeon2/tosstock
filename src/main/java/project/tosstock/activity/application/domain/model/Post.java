@@ -13,13 +13,16 @@ public class Post {
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 	private Long memberId;
+	private Long stockId;
 
 	@Builder
-	private Post(Long id, String article, LocalDateTime createdAt, LocalDateTime updatedAt, Long memberId) {
+	private Post(Long id, String article, LocalDateTime createdAt, LocalDateTime updatedAt, Long memberId,
+		Long stockId) {
 		this.id = id;
 		this.article = article;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 		this.memberId = memberId;
+		this.stockId = stockId;
 	}
 }
