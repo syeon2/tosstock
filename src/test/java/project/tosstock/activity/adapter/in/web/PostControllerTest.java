@@ -21,6 +21,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import project.tosstock.ControllerTestSupport;
 import project.tosstock.activity.adapter.in.web.request.CreatePostRequest;
 import project.tosstock.activity.application.port.in.PostingUseCase;
+import project.tosstock.activity.application.port.in.SearchPostUseCase;
 import project.tosstock.common.config.web.WebConfig;
 import project.tosstock.common.config.web.filter.JwtExceptionFilter;
 import project.tosstock.common.config.web.filter.JwtVerificationFilter;
@@ -37,6 +38,9 @@ class PostControllerTest extends ControllerTestSupport {
 
 	@MockBean
 	private PostingUseCase postingUseCase;
+
+	@MockBean
+	private SearchPostUseCase searchPostUseCase;
 
 	@Test
 	@DisplayName(value = "포스트를 작성하는 API를 요청합니다.")
