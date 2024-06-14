@@ -35,14 +35,14 @@ public class StockItemController {
 
 	@GetMapping("/api/v1/stocks/{stockId}/details/three-years")
 	private ApiResult<List<StockItem>> findStockItemsFromLastThreeYears(@PathVariable("stockId") Long stockId) {
-		List<StockItem> findStockItems = findStockItemUseCase.findStockItemsAfterThreeYears(stockId);
+		List<StockItem> findStockItems = findStockItemUseCase.findStockItemsFromLastThreeYears(stockId);
 
 		return ApiResult.ok(findStockItems);
 	}
 
 	@GetMapping("/api/v1/stocks/{stockId}/details/five-years")
 	private ApiResult<List<StockItem>> findStockItemsFromLastFiveYears(@PathVariable("stockId") Long stockId) {
-		List<StockItem> findStockItems = findStockItemUseCase.findStockItemsAfterFiveYears(stockId);
+		List<StockItem> findStockItems = findStockItemUseCase.findStockItemsFromLastFiveYears(stockId);
 
 		return ApiResult.ok(findStockItems);
 	}

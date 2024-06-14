@@ -35,7 +35,7 @@ public class StockItemService implements FindStockItemUseCase {
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<StockItem> findStockItemsAfterThreeYears(Long stockId) {
+	public List<StockItem> findStockItemsFromLastThreeYears(Long stockId) {
 		LocalDateTime lastMonth = LocalDateTime.now().minusYears(3);
 
 		return findStockItemPort.findStockItemsByStockIdAndTimeAfter(stockId, lastMonth);
@@ -43,7 +43,7 @@ public class StockItemService implements FindStockItemUseCase {
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<StockItem> findStockItemsAfterFiveYears(Long stockId) {
+	public List<StockItem> findStockItemsFromLastFiveYears(Long stockId) {
 		LocalDateTime lastMonth = LocalDateTime.now().minusYears(5);
 
 		return findStockItemPort.findStockItemsByStockIdAndTimeAfter(stockId, lastMonth);

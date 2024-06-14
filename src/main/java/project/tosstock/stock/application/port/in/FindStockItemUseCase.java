@@ -10,7 +10,7 @@ public interface FindStockItemUseCase {
 
 	List<StockItem> findStockItemsFromLastYear(Long stockId);
 
-	List<StockItem> findStockItemsAfterThreeYears(Long stockId);
+	List<StockItem> findStockItemsFromLastThreeYears(Long stockId);
 
-	List<StockItem> findStockItemsAfterFiveYears(Long stockId);
+	List<StockItem> findStockItemsFromLastFiveYears(Long stockId);
 }
