@@ -1,8 +1,8 @@
-package project.tosstock.newfeed.adapter.out.persistence;
+package project.tosstock.newsfeed.adapter.out.persistence;
 
 import java.util.List;
 
-import project.tosstock.newfeed.adapter.out.entity.NewsFeedEntity;
+import project.tosstock.newsfeed.adapter.out.entity.NewsFeedEntity;
 
 public interface NewsFeedRepositoryCustom {
 

@@ -23,9 +23,10 @@ import project.tosstock.ControllerTestSupport;
 import project.tosstock.common.config.web.WebConfig;
 import project.tosstock.common.config.web.filter.JwtExceptionFilter;
 import project.tosstock.common.config.web.filter.JwtVerificationFilter;
-import project.tosstock.newfeed.application.domain.model.FeedType;
-import project.tosstock.newfeed.application.domain.model.TestNewsFeed;
-import project.tosstock.newfeed.application.port.in.NewsFeedFilterUseCase;
+import project.tosstock.newsfeed.adapter.in.web.NewsFeedController;
+import project.tosstock.newsfeed.application.domain.model.FeedType;
+import project.tosstock.newsfeed.application.domain.model.TestNewsFeed;
+import project.tosstock.newsfeed.application.port.in.NewsFeedFilterUseCase;
 
 @WebMvcTest(
 	controllers = NewsFeedController.class,

@@ -13,10 +13,10 @@ import project.tosstock.activity.application.port.in.SearchPostUseCase;
 import project.tosstock.activity.application.port.out.DeletePostPort;
 import project.tosstock.activity.application.port.out.FindPostPort;
 import project.tosstock.activity.application.port.out.SavePostPort;
-import project.tosstock.newfeed.application.domain.model.FeedType;
-import project.tosstock.newfeed.application.domain.model.NewsFeed;
-import project.tosstock.newfeed.application.port.out.DeleteNewsFeedPort;
-import project.tosstock.newfeed.application.port.out.SaveNewsFeedPort;
+import project.tosstock.newsfeed.application.domain.model.FeedType;
+import project.tosstock.newsfeed.application.domain.model.NewsFeed;
+import project.tosstock.newsfeed.application.port.out.DeleteNewsFeedPort;
+import project.tosstock.newsfeed.application.port.out.SaveNewsFeedPort;
 
 @Service
 @RequiredArgsConstructor

@@ -8,10 +8,10 @@ import project.tosstock.activity.application.domain.model.Comment;
 import project.tosstock.activity.application.port.in.CommentUseCase;
 import project.tosstock.activity.application.port.out.DeleteCommentPort;
 import project.tosstock.activity.application.port.out.SaveCommentPort;
-import project.tosstock.newfeed.application.domain.model.FeedType;
-import project.tosstock.newfeed.application.domain.model.NewsFeed;
-import project.tosstock.newfeed.application.port.out.DeleteNewsFeedPort;
-import project.tosstock.newfeed.application.port.out.SaveNewsFeedPort;
+import project.tosstock.newsfeed.application.domain.model.FeedType;
+import project.tosstock.newsfeed.application.domain.model.NewsFeed;
+import project.tosstock.newsfeed.application.port.out.DeleteNewsFeedPort;
+import project.tosstock.newsfeed.application.port.out.SaveNewsFeedPort;
 
 @Service
 @RequiredArgsConstructor

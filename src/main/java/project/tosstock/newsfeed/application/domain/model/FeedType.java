@@ -1,4 +1,4 @@
-package project.tosstock.newfeed.application.domain.model;
+package project.tosstock.newsfeed.application.domain.model;
 
 public enum FeedType {
 	POST,

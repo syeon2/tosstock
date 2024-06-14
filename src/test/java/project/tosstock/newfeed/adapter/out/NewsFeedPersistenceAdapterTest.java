@@ -17,10 +17,11 @@ import project.tosstock.activity.adapter.out.persistence.FollowRepository;
 import project.tosstock.activity.adapter.out.persistence.PostRepository;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
-import project.tosstock.newfeed.adapter.out.entity.NewsFeedEntity;
-import project.tosstock.newfeed.adapter.out.persistence.NewsFeedRepository;
-import project.tosstock.newfeed.application.domain.model.FeedType;
-import project.tosstock.newfeed.application.domain.model.NewsFeed;
+import project.tosstock.newsfeed.adapter.out.NewsFeedPersistenceAdapter;
+import project.tosstock.newsfeed.adapter.out.entity.NewsFeedEntity;
+import project.tosstock.newsfeed.adapter.out.persistence.NewsFeedRepository;
+import project.tosstock.newsfeed.application.domain.model.FeedType;
+import project.tosstock.newsfeed.application.domain.model.NewsFeed;
 
 class NewsFeedPersistenceAdapterTest extends IntegrationTestSupport {
 

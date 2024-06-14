@@ -10,9 +10,9 @@ import project.tosstock.activity.application.port.out.DeletePostLikePort;
 import project.tosstock.activity.application.port.out.FindPostPort;
 import project.tosstock.activity.application.port.out.SavePostLikePort;
 import project.tosstock.member.application.port.out.FindMemberPort;
-import project.tosstock.newfeed.application.domain.model.FeedType;
-import project.tosstock.newfeed.application.domain.model.NewsFeed;
-import project.tosstock.newfeed.application.port.out.SaveNewsFeedPort;
+import project.tosstock.newsfeed.application.domain.model.FeedType;
+import project.tosstock.newsfeed.application.domain.model.NewsFeed;
+import project.tosstock.newsfeed.application.port.out.SaveNewsFeedPort;
 
 @Service
 @RequiredArgsConstructor

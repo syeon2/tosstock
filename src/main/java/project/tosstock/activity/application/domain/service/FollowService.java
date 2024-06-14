@@ -9,9 +9,9 @@ import project.tosstock.activity.application.port.out.DeleteFollowPort;
 import project.tosstock.activity.application.port.out.SaveFollowPort;
 import project.tosstock.member.application.domain.model.Member;
 import project.tosstock.member.application.port.out.FindMemberPort;
-import project.tosstock.newfeed.application.domain.model.FeedType;
-import project.tosstock.newfeed.application.domain.model.NewsFeed;
-import project.tosstock.newfeed.application.port.out.SaveNewsFeedPort;
+import project.tosstock.newsfeed.application.domain.model.FeedType;
+import project.tosstock.newsfeed.application.domain.model.NewsFeed;
+import project.tosstock.newsfeed.application.port.out.SaveNewsFeedPort;
 
 @Service
 @RequiredArgsConstructor

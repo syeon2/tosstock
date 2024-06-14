@@ -1,4 +1,4 @@
-package project.tosstock.newfeed.adapter.out;
+package project.tosstock.newsfeed.adapter.out;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,13 +9,13 @@ import lombok.RequiredArgsConstructor;
 import project.tosstock.common.annotation.PersistenceAdapter;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
-import project.tosstock.newfeed.adapter.out.entity.NewsFeedEntity;
-import project.tosstock.newfeed.adapter.out.persistence.NewsFeedRepository;
-import project.tosstock.newfeed.application.domain.model.FeedType;
-import project.tosstock.newfeed.application.domain.model.NewsFeed;
-import project.tosstock.newfeed.application.port.out.DeleteNewsFeedPort;
-import project.tosstock.newfeed.application.port.out.FindNewsFeedPort;
-import project.tosstock.newfeed.application.port.out.SaveNewsFeedPort;
+import project.tosstock.newsfeed.adapter.out.entity.NewsFeedEntity;
+import project.tosstock.newsfeed.adapter.out.persistence.NewsFeedRepository;
+import project.tosstock.newsfeed.application.domain.model.FeedType;
+import project.tosstock.newsfeed.application.domain.model.NewsFeed;
+import project.tosstock.newsfeed.application.port.out.DeleteNewsFeedPort;
+import project.tosstock.newsfeed.application.port.out.FindNewsFeedPort;
+import project.tosstock.newsfeed.application.port.out.SaveNewsFeedPort;
 
 @PersistenceAdapter
 @RequiredArgsConstructor

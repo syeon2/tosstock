@@ -16,9 +16,9 @@ import project.tosstock.activity.adapter.out.entity.FollowEntity;
 import project.tosstock.activity.adapter.out.persistence.FollowRepository;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
-import project.tosstock.newfeed.application.port.out.DeleteNewsFeedPort;
-import project.tosstock.newfeed.application.port.out.FindNewsFeedPort;
-import project.tosstock.newfeed.application.port.out.SaveNewsFeedPort;
+import project.tosstock.newsfeed.application.port.out.DeleteNewsFeedPort;
+import project.tosstock.newsfeed.application.port.out.FindNewsFeedPort;
+import project.tosstock.newsfeed.application.port.out.SaveNewsFeedPort;
 
 class FollowServiceTest extends IntegrationTestSupport {
 

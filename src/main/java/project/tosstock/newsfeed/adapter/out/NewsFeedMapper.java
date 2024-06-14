@@ -1,11 +1,11 @@
-package project.tosstock.newfeed.adapter.out;
+package project.tosstock.newsfeed.adapter.out;
 
 import org.springframework.stereotype.Component;
 
 import project.tosstock.member.adapter.out.entity.MemberEntity;
-import project.tosstock.newfeed.adapter.out.entity.NewsFeedEntity;
-import project.tosstock.newfeed.application.domain.model.FeedType;
-import project.tosstock.newfeed.application.domain.model.NewsFeed;
+import project.tosstock.newsfeed.adapter.out.entity.NewsFeedEntity;
+import project.tosstock.newsfeed.application.domain.model.FeedType;
+import project.tosstock.newsfeed.application.domain.model.NewsFeed;
 
 @Component
 public class NewsFeedMapper {

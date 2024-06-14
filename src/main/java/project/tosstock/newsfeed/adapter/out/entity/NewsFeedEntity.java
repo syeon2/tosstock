@@ -1,4 +1,4 @@
-package project.tosstock.newfeed.adapter.out.entity;
+package project.tosstock.newsfeed.adapter.out.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,11 +17,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.tosstock.common.wrapper.BaseEntity;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
-import project.tosstock.newfeed.application.domain.model.FeedType;
+import project.tosstock.newsfeed.application.domain.model.FeedType;
 
 @Getter
 @Entity
-@Table(name = "newfeed")
+@Table(name = "newsfeed")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class NewsFeedEntity extends BaseEntity {
 

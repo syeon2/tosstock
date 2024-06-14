@@ -1,4 +1,4 @@
-package project.tosstock.newfeed.adapter.out.persistence;
+package project.tosstock.newsfeed.adapter.out.persistence;
 
 import java.util.List;
 
@@ -6,8 +6,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 import project.tosstock.activity.adapter.out.entity.QFollowEntity;
-import project.tosstock.newfeed.adapter.out.entity.NewsFeedEntity;
-import project.tosstock.newfeed.adapter.out.entity.QNewsFeedEntity;
+import project.tosstock.newsfeed.adapter.out.entity.NewsFeedEntity;
+import project.tosstock.newsfeed.adapter.out.entity.QNewsFeedEntity;
 
 @RequiredArgsConstructor
 public class NewsFeedRepositoryImpl implements NewsFeedRepositoryCustom {

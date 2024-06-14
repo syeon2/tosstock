@@ -1,4 +1,4 @@
-package project.tosstock.newfeed.application.domain.service;
+package project.tosstock.newsfeed.application.domain.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -8,9 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import project.tosstock.member.application.port.out.FindMemberPort;
-import project.tosstock.newfeed.application.domain.model.TestNewsFeed;
-import project.tosstock.newfeed.application.port.in.NewsFeedFilterUseCase;
-import project.tosstock.newfeed.application.port.out.FindNewsFeedPort;
+import project.tosstock.newsfeed.application.domain.model.TestNewsFeed;
+import project.tosstock.newsfeed.application.port.in.NewsFeedFilterUseCase;
+import project.tosstock.newsfeed.application.port.out.FindNewsFeedPort;
 
 @Service
 @RequiredArgsConstructor
