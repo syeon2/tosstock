@@ -13,6 +13,7 @@ public class PostMapper {
 		return PostEntity.builder()
 			.article(post.getArticle())
 			.member(member)
+			.stockId(post.getStockId())
 			.build();
 	}
 
@@ -23,6 +24,7 @@ public class PostMapper {
 			.createdAt(post.getCreatedAt())
 			.updatedAt(post.getUpdatedAt())
 			.memberId(post.getMember().getId())
+			.stockId(post.getStockId())
 			.build();
 	}
 }

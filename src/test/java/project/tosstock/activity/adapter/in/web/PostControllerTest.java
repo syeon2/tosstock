@@ -42,7 +42,7 @@ class PostControllerTest extends ControllerTestSupport {
 	@DisplayName(value = "포스트를 작성하는 API를 요청합니다.")
 	void createPost() throws Exception {
 		// given
-		CreatePostRequest request = createPostRequest("텍스트입니다.", 1L);
+		CreatePostRequest request = createPostRequest("텍스트입니다.", 1L, 1L);
 
 		// when  // then
 		mockMvc.perform(
@@ -62,7 +62,9 @@ class PostControllerTest extends ControllerTestSupport {
 					fieldWithPath("article").type(JsonFieldType.STRING)
 						.description("게시글"),
 					fieldWithPath("memberId").type(JsonFieldType.NUMBER)
-						.description("게시글 작성한 회원 아이디")
+						.description("게시글 작성한 회원 아이디"),
+					fieldWithPath("stockId").type(JsonFieldType.NUMBER)
+						.description("게시글 작성할 증권 아이디")
 				),
 				responseFields(
 					fieldWithPath("status").type(JsonFieldType.NUMBER)
@@ -80,7 +82,7 @@ class PostControllerTest extends ControllerTestSupport {
 	@DisplayName(value = "게시글이 빈칸이면 예외를 반환합니다.")
 	void create_post_exception_article_blank() throws Exception {
 		// given
-		CreatePostRequest request = createPostRequest("", 1L);
+		CreatePostRequest request = createPostRequest("", 1L, 1L);
 
 		// when  // then
 		mockMvc.perform(
@@ -98,7 +100,7 @@ class PostControllerTest extends ControllerTestSupport {
 	@DisplayName(value = "회원 아이디가 null이면 예외를 반환합니다.")
 	void create_post_exception_memberId_null() throws Exception {
 		// given
-		CreatePostRequest request = createPostRequest("텍스트 입니다.", null);
+		CreatePostRequest request = createPostRequest("텍스트 입니다.", null, 1L);
 
 		// when  // then
 		mockMvc.perform(
@@ -147,10 +149,11 @@ class PostControllerTest extends ControllerTestSupport {
 			));
 	}
 
-	private CreatePostRequest createPostRequest(String article, Long memberId) {
+	private CreatePostRequest createPostRequest(String article, Long memberId, long stockId) {
 		return CreatePostRequest.builder()
 			.article(article)
 			.memberId(memberId)
+			.stockId(stockId)
 			.build();
 	}
 }
