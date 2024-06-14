@@ -80,31 +80,32 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 	}
 
 	@Test
-	@DisplayName(value = "회원 아이디로 회원을 조회합니다.")
-	void findMemberById() {
+	@DisplayName(value = "회원 아이디로 회원 이름을 조회합니다.")
+	void findUsernameById() {
 		// given
-		Member member = createMember("waterkite94@gmail.com", "01000001111");
+		String username = "suyeon";
+		Member member = createMember(username, "01011112222", "hello", "");
 		Long savedMemberId = memberPersistenceAdapter.save(member);
 
 		// when
-		Optional<Member> findMember = memberPersistenceAdapter.findMemberById(savedMemberId);
+		Optional<String> findUsernameOptional = memberPersistenceAdapter.findUsernameById(savedMemberId);
 
 		// then
-		assertThat(findMember).isPresent()
-			.hasValueSatisfying(m -> assertThat(m.getId()).isEqualTo(savedMemberId));
+		assertThat(findUsernameOptional).isPresent()
+			.hasValueSatisfying(m -> assertThat(m).isEqualTo(username));
 	}
 
 	@Test
 	@DisplayName(value = "존재하지 않은 회원을 조회했을 경우 null을 반환합니다.")
-	void findMemberById_null() {
+	void findUsernameById_null() {
 		// given
 		Long memberId = 1L;
 
 		// when
-		Optional<Member> findMemberById = memberPersistenceAdapter.findMemberById(memberId);
+		Optional<String> findUsernameOptional = memberPersistenceAdapter.findUsernameById(memberId);
 
 		// then
-		assertThat(findMemberById).isEmpty();
+		assertThat(findUsernameOptional).isEmpty();
 	}
 
 	@Test
@@ -297,12 +298,11 @@ class MemberPersistenceAdapterTest extends IntegrationTestSupport {
 
 	private static UpdateMemberDto createUpdateMemberDto(String changeUsername, String changeIntroduce,
 		String changeProfileImageUrl) {
-		UpdateMemberDto updateMemberDto = UpdateMemberDto.builder()
+		return UpdateMemberDto.builder()
 			.username(changeUsername)
 			.introduce(changeIntroduce)
 			.profileImageUrl(changeProfileImageUrl)
 			.build();
-		return updateMemberDto;
 	}
 
 	private Member createMember(String email, String phoneNumber) {

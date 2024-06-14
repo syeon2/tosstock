@@ -66,7 +66,7 @@ class MemberControllerTest extends ControllerTestSupport {
 			.andExpect(jsonPath("$.status").value(HttpStatus.OK.value()))
 			.andExpect(jsonPath("$.message").isEmpty())
 			.andExpect(jsonPath("$.data").exists())
-			.andExpect(jsonPath("$.data.memberId").isNumber())
+			.andExpect(jsonPath("$.data.result").isNumber())
 			.andDo(document("member-join",
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
@@ -95,7 +95,7 @@ class MemberControllerTest extends ControllerTestSupport {
 						.description("메시지"),
 					fieldWithPath("data").type(JsonFieldType.OBJECT)
 						.description("데이터"),
-					fieldWithPath("data.memberId").type(JsonFieldType.NUMBER)
+					fieldWithPath("data.result").type(JsonFieldType.NUMBER)
 						.description("회원 고유 아이디")
 				)
 			));

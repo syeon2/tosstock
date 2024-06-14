@@ -14,7 +14,7 @@ import project.tosstock.member.adapter.in.web.request.LoginRequest;
 import project.tosstock.member.adapter.in.web.request.LogoutAllRequest;
 import project.tosstock.member.adapter.in.web.request.LogoutRequest;
 import project.tosstock.member.adapter.in.web.request.RefreshTokenRequest;
-import project.tosstock.member.adapter.in.web.response.BasicResponse;
+import project.tosstock.member.adapter.in.web.response.BasicAuthResponse;
 import project.tosstock.member.adapter.in.web.response.JwtTokenResponse;
 import project.tosstock.member.application.domain.model.JwtTokenDto;
 import project.tosstock.member.application.port.in.AuthMemberUseCase;
@@ -34,17 +34,17 @@ public class AuthController {
 	}
 
 	@DeleteMapping("/api/v1/auth/logout")
-	public ApiResult<BasicResponse> logout(@Valid @RequestBody LogoutRequest request) {
+	public ApiResult<BasicAuthResponse> logout(@Valid @RequestBody LogoutRequest request) {
 		boolean result = authMemberUseCase.logout(request.getEmail(), request.getAddress());
 
-		return ApiResult.ok(BasicResponse.of(result));
+		return ApiResult.ok(BasicAuthResponse.of(result));
 	}
 
 	@DeleteMapping("/api/v1/auth/logout-all")
-	public ApiResult<BasicResponse> logoutAll(@Valid @RequestBody LogoutAllRequest request) {
+	public ApiResult<BasicAuthResponse> logoutAll(@Valid @RequestBody LogoutAllRequest request) {
 		boolean result = authMemberUseCase.logoutAll(request.getEmail());
 
-		return ApiResult.ok(BasicResponse.of(result));
+		return ApiResult.ok(BasicAuthResponse.of(result));
 	}
 
 	@PostMapping("/api/v1/auth/refresh-token")

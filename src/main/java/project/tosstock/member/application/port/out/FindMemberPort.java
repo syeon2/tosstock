@@ -6,7 +6,7 @@ import project.tosstock.member.application.domain.model.Member;
 
 public interface FindMemberPort {
 
-	Optional<Member> findMemberById(Long memberId);
+	Optional<String> findUsernameById(Long memberId);
 
 	Optional<String> findPasswordByEmail(String email);
 
