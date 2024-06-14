@@ -47,7 +47,7 @@ public class StockEntity {
 
 	@OneToMany(
 		mappedBy = "stock",
-		cascade = CascadeType.REMOVE,
+		cascade = CascadeType.ALL,
 		orphanRemoval = true,
 		fetch = FetchType.LAZY)
 	private List<StockItemEntity> stockItems = new ArrayList<>();
@@ -59,5 +59,10 @@ public class StockEntity {
 		this.name = name;
 		this.originTime = originTime;
 		this.market = market;
+	}
+
+	public void addStockItem(StockItemEntity stockItem) {
+		this.stockItems.add(stockItem);
+		stockItem.setStock(this);
 	}
 }
