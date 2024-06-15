@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,7 +16,8 @@ class RedisAuthCodeRepositoryTest extends IntegrationTestSupport {
 	private RedisAuthCodeRepository redisAuthCodeRepository;
 
 	@Test
-	void save_auth_code() {
+	@DisplayName(value = "코드를 저장하고 조회합니다.")
+	void saveAndFindCode() {
 		// given
 		String email = "waterkite94@gmail.com";
 		String authCode = "123456";
