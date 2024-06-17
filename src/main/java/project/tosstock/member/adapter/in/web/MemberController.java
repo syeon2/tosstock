@@ -36,7 +36,7 @@ public class MemberController {
 
 	@PostMapping("/api/v1/members/emails/verification-requests")
 	public ApiResult<BasicAuthResponse<Boolean>> sendAuthCodeToEmail(@Valid @RequestBody AuthEmailRequest request) {
-		boolean result = sendAuthCodeUseCase.dispatchAuthCodeToEmail(request.getEmail());
+		boolean result = sendAuthCodeUseCase.sendAuthCodeToEmail(request.getEmail());
 
 		return ApiResult.ok(BasicAuthResponse.of(result));
 	}
