@@ -27,9 +27,8 @@ public class MemberPersistenceAdapter implements SaveMemberPort, UpdateMemberPor
 	}
 
 	@Override
-	public Optional<Member> findMemberById(Long memberId) {
-		return memberRepository.findById(memberId)
-			.map(memberMapper::toDomain);
+	public Optional<String> findUsernameById(Long memberId) {
+		return memberRepository.findUsernameById(memberId);
 	}
 
 	@Override

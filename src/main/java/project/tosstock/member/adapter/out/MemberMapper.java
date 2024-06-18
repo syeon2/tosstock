@@ -13,7 +13,6 @@ public class MemberMapper {
 			.id(entity.getId())
 			.username(entity.getUsername())
 			.email(entity.getEmail())
-			.password(entity.getPassword())
 			.phoneNumber(entity.getPhoneNumber())
 			.introduce(entity.getIntroduce())
 			.profileImageUrl(entity.getProfileImageUrl())

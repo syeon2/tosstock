@@ -44,25 +44,14 @@ public class MemberEntity extends BaseEntity {
 	private String profileImageUrl;
 
 	@Builder
-	private MemberEntity(String username, String email, String password, String phoneNumber,
-		String introduce, String profileImageUrl) {
+	private MemberEntity(Long id, String username, String email, String password, String phoneNumber, String introduce,
+		String profileImageUrl) {
+		this.id = id;
 		this.username = username;
 		this.email = email;
 		this.password = password;
 		this.phoneNumber = phoneNumber;
 		this.introduce = introduce;
 		this.profileImageUrl = profileImageUrl;
-	}
-
-	public void changeUsername(String username) {
-		this.username = username;
-	}
-
-	public void changeProfileImageUrl(String profileImageUrl) {
-		this.profileImageUrl = profileImageUrl;
-	}
-
-	public void changePassword(String password) {
-		this.password = password;
 	}
 }

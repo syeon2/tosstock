@@ -30,14 +30,14 @@ public class PostLikeService implements PostLikeUseCase {
 	public boolean likePost(Long memberId, Long postId) {
 		Long savePostLikeId = savePostLikePort.save(memberId, postId);
 
-		String likePostUsername = findMemberPort.findMemberById(memberId)
-			.orElseThrow(() -> new IllegalArgumentException("존재히지 않는 회원입니다.")).getUsername();
+		String likePostUsername = findMemberPort.findUsernameById(memberId)
+			.orElseThrow(() -> new IllegalArgumentException("존재히지 않는 회원입니다."));
 
 		Post findPost = findPostPort.findPostById(postId)
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 포스트입니다."));
 
-		String postedUsername = findMemberPort.findMemberById(findPost.getMemberId())
-			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다.")).getUsername();
+		String postedUsername = findMemberPort.findUsernameById(findPost.getMemberId())
+			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
 		publishNewsFeed(savePostLikeId, memberId, likePostUsername, postedUsername);
 

@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import project.tosstock.activity.application.port.in.FollowMemberUseCase;
 import project.tosstock.activity.application.port.out.DeleteFollowPort;
 import project.tosstock.activity.application.port.out.SaveFollowPort;
-import project.tosstock.member.application.domain.model.Member;
 import project.tosstock.member.application.port.out.FindMemberPort;
 import project.tosstock.newsfeed.application.domain.model.FeedType;
 import project.tosstock.newsfeed.application.domain.model.NewsFeed;
@@ -28,13 +27,13 @@ public class FollowService implements FollowMemberUseCase {
 	public Long followMember(Long followerId, Long followeeId) {
 		Long savedFollowId = saveFollowPort.save(followerId, followeeId);
 
-		Member findFollower = findMemberPort.findMemberById(followerId)
+		String followerUsername = findMemberPort.findUsernameById(followerId)
 			.orElseThrow(() -> new IllegalArgumentException("존재히지 않는 회원입니다."));
 
-		Member findFollowee = findMemberPort.findMemberById(followeeId)
+		String followeeUsername = findMemberPort.findUsernameById(followeeId)
 			.orElseThrow(() -> new IllegalArgumentException("존재히지 않는 회원입니다."));
 
-		publishNewsFeed(followerId, savedFollowId, findFollower.getUsername(), findFollowee.getUsername());
+		publishNewsFeed(followerId, savedFollowId, followerUsername, followeeUsername);
 
 		return savedFollowId;
 	}

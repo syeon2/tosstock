@@ -19,6 +19,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
 	private final JPAQueryFactory queryFactory;
 
+	@Transactional
 	@Override
 	public Optional<String> findPasswordByEmail(String email) {
 		String password = queryFactory
@@ -28,6 +29,18 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 			.fetchOne();
 
 		return Optional.ofNullable(password);
+	}
+
+	@Transactional
+	@Override
+	public Optional<String> findUsernameById(Long memberId) {
+		String username = queryFactory
+			.select(memberEntity.username)
+			.from(memberEntity)
+			.where(memberEntity.id.eq(memberId))
+			.fetchOne();
+
+		return Optional.ofNullable(username);
 	}
 
 	@Transactional

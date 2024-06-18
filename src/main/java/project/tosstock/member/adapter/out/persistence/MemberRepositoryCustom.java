@@ -8,6 +8,8 @@ public interface MemberRepositoryCustom {
 
 	Optional<String> findPasswordByEmail(String email);
 
+	Optional<String> findUsernameById(Long memberId);
+
 	void updateInfo(Long memberId, UpdateMemberDto updateMemberDto);
 
 	void updatePassword(String email, String password);

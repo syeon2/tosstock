@@ -15,10 +15,10 @@ import org.springframework.mail.javamail.JavaMailSender;
 
 import project.tosstock.IntegrationTestSupport;
 
-class MailServiceTest extends IntegrationTestSupport {
+class AuthCodeMailServiceTest extends IntegrationTestSupport {
 
 	@Autowired
-	private MailService mailService;
+	private AuthCodeMailService authCodeMailService;
 
 	@MockBean
 	private JavaMailSender javaMailSender;
@@ -40,7 +40,7 @@ class MailServiceTest extends IntegrationTestSupport {
 		doNothing().when(javaMailSender).send(any(SimpleMailMessage.class));
 
 		// when
-		boolean result = mailService.dispatchAuthCodeToEmail(email);
+		boolean result = authCodeMailService.sendAuthCodeToEmail(email);
 
 		// then
 		assertThat(result).isTrue();

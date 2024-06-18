@@ -51,9 +51,8 @@ public class MemberService implements JoinMemberUseCase, UpdateMemberUseCase {
 	@Override
 	@Transactional
 	public boolean changePassword(String email, String password) {
-		deleteJwtTokenPort.deleteAll(email);
-
 		updateMemberPort.updatePassword(email, encryptPassword(password));
+		deleteJwtTokenPort.deleteAll(email);
 
 		return true;
 	}
@@ -65,7 +64,7 @@ public class MemberService implements JoinMemberUseCase, UpdateMemberUseCase {
 					throw new IllegalArgumentException("인증번호가 일치하지 않습니다.");
 				}
 			}, () -> {
-				throw new IllegalArgumentException("인증번호가 일치하지 않습니다.");
+				throw new IllegalArgumentException("인증번호가 존재히지 않습니다.");
 			});
 	}
 

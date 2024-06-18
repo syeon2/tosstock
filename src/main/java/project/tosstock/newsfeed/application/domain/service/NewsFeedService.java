@@ -23,7 +23,7 @@ public class NewsFeedService implements NewsFeedFilterUseCase {
 	@Transactional
 	public List<TestNewsFeed> showNewsFeedBasic(Long memberId) {
 		return findNewsFeedPort.findNewsFeed(memberId).stream()
-			.map(n -> TestNewsFeed.toDomain(n, findMemberPort.findMemberById(n.getMemberId()).get().getUsername()))
+			.map(n -> TestNewsFeed.toDomain(n, findMemberPort.findUsernameById(n.getMemberId()).get()))
 			.collect(Collectors.toList());
 	}
 }

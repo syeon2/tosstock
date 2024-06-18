@@ -13,8 +13,7 @@ import project.tosstock.member.adapter.in.web.request.AuthEmailRequest;
 import project.tosstock.member.adapter.in.web.request.ChangeMemberInfoRequest;
 import project.tosstock.member.adapter.in.web.request.ChangePasswordRequest;
 import project.tosstock.member.adapter.in.web.request.JoinMemberRequest;
-import project.tosstock.member.adapter.in.web.response.BasicResponse;
-import project.tosstock.member.adapter.in.web.response.JoinMemberResponse;
+import project.tosstock.member.adapter.in.web.response.BasicAuthResponse;
 import project.tosstock.member.application.port.in.JoinMemberUseCase;
 import project.tosstock.member.application.port.in.SendAuthCodeUseCase;
 import project.tosstock.member.application.port.in.UpdateMemberUseCase;
@@ -29,33 +28,33 @@ public class MemberController {
 	private final UpdateMemberUseCase updateMemberUseCase;
 
 	@PostMapping("/api/v1/members")
-	public ApiResult<JoinMemberResponse> joinMember(@Valid @RequestBody JoinMemberRequest request) {
+	public ApiResult<BasicAuthResponse<Long>> joinMember(@Valid @RequestBody JoinMemberRequest request) {
 		Long joinedMemberId = joinMemberUseCase.joinMember(request.toDomain(), request.getAuthCode());
 
-		return ApiResult.ok(JoinMemberResponse.of(joinedMemberId));
+		return ApiResult.ok(BasicAuthResponse.of(joinedMemberId));
 	}
 
 	@PostMapping("/api/v1/members/emails/verification-requests")
-	public ApiResult<BasicResponse> sendAuthCodeToEmail(@Valid @RequestBody AuthEmailRequest request) {
-		boolean result = sendAuthCodeUseCase.dispatchAuthCodeToEmail(request.getEmail());
+	public ApiResult<BasicAuthResponse<Boolean>> sendAuthCodeToEmail(@Valid @RequestBody AuthEmailRequest request) {
+		boolean result = sendAuthCodeUseCase.sendAuthCodeToEmail(request.getEmail());
 
-		return ApiResult.ok(BasicResponse.of(result));
+		return ApiResult.ok(BasicAuthResponse.of(result));
 	}
 
 	@PostMapping("/api/v1/member/{memberId}")
-	public ApiResult<BasicResponse> changeMemberInfo(
-		@PathVariable("memberId") Long memberId,
+	public ApiResult<BasicAuthResponse<Boolean>> changeMemberInfo(
+		@PathVariable Long memberId,
 		@Valid @RequestBody ChangeMemberInfoRequest request
 	) {
 		boolean result = updateMemberUseCase.changeMemberInfo(memberId, request.toServiceDto());
 
-		return ApiResult.ok(BasicResponse.of(result));
+		return ApiResult.ok(BasicAuthResponse.of(result));
 	}
 
 	@PostMapping("/api/v1/member/password")
-	public ApiResult<BasicResponse> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+	public ApiResult<BasicAuthResponse<Boolean>> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
 		boolean result = updateMemberUseCase.changePassword(request.getEmail(), request.getPassword());
 
-		return ApiResult.ok(BasicResponse.of(result));
+		return ApiResult.ok(BasicAuthResponse.of(result));
 	}
 }
