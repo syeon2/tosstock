@@ -60,13 +60,11 @@ public class JwtTokenProvider {
 			.compact();
 	}
 
-	public boolean verifyToken(String token) throws RuntimeException {
+	public void verifyToken(String token) throws RuntimeException {
 		Jwts.parser()
 			.verifyWith(getSignInKey())
 			.build()
 			.parseSignedClaims(token);
-
-		return true;
 	}
 
 	private SecretKeySpec getSignInKey() {

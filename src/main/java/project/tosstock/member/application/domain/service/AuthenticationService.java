@@ -6,7 +6,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import project.tosstock.common.jwt.JwtPayloadDto;
 import project.tosstock.common.jwt.JwtTokenProvider;
@@ -59,13 +58,9 @@ public class AuthenticationService implements AuthenticationMemberUseCase {
 		return renewAndSaveJwtTokens(refreshToken);
 	}
 
-	private boolean checkWrongRefreshToken(String refreshToken) {
+	private void checkWrongRefreshToken(String refreshToken) {
 		try {
 			jwtTokenProvider.verifyToken(refreshToken);
-
-			return false;
-		} catch (ExpiredJwtException exception) {
-			return false;
 		} catch (RuntimeException exception) {
 			throw new IllegalArgumentException("잘못된 토큰입니다.");
 		}

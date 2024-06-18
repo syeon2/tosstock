@@ -35,14 +35,14 @@ public class AuthenticationController {
 	}
 
 	@DeleteMapping("/api/v1/auth/logout")
-	public ApiResult<BasicAuthenticationResponse> logout(@Valid @RequestBody LogoutRequest request) {
+	public ApiResult<BasicAuthenticationResponse<Boolean>> logout(@Valid @RequestBody LogoutRequest request) {
 		boolean result = authenticationMemberUseCase.logout(request.getEmail(), request.getAddress());
 
 		return ApiResult.ok(BasicAuthenticationResponse.of(result));
 	}
 
 	@DeleteMapping("/api/v1/auth/logout-all")
-	public ApiResult<BasicAuthenticationResponse> logoutAll(@Valid @RequestBody LogoutAllRequest request) {
+	public ApiResult<BasicAuthenticationResponse<Boolean>> logoutAll(@Valid @RequestBody LogoutAllRequest request) {
 		boolean result = authenticationMemberUseCase.logoutAll(request.getEmail());
 
 		return ApiResult.ok(BasicAuthenticationResponse.of(result));
