@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import project.tosstock.member.application.domain.service.util.AuthCodeMailUtil;
 import project.tosstock.member.application.port.in.SendAuthCodeUseCase;
 import project.tosstock.member.application.port.out.SaveAuthCodePort;
 

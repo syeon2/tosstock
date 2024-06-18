@@ -1,4 +1,4 @@
-package project.tosstock.member.application.domain.service.util;
+package project.tosstock.member.application.domain.service;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;

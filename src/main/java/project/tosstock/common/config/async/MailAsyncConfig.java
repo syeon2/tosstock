@@ -1,4 +1,4 @@
-package project.tosstock.member.application.domain.service.util;
+package project.tosstock.common.config.async;
 
 import java.util.concurrent.Executor;
 
