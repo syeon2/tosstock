@@ -22,12 +22,12 @@ import project.tosstock.ControllerTestSupport;
 import project.tosstock.common.config.web.WebConfig;
 import project.tosstock.common.config.web.filter.JwtExceptionFilter;
 import project.tosstock.common.config.web.filter.JwtVerificationFilter;
-import project.tosstock.member.adapter.in.web.request.AuthEmailRequest;
 import project.tosstock.member.adapter.in.web.request.ChangeMemberInfoRequest;
 import project.tosstock.member.adapter.in.web.request.ChangePasswordRequest;
 import project.tosstock.member.adapter.in.web.request.JoinMemberRequest;
+import project.tosstock.member.adapter.in.web.request.VerificationEmailRequest;
 import project.tosstock.member.application.port.in.JoinMemberUseCase;
-import project.tosstock.member.application.port.in.SendAuthCodeUseCase;
+import project.tosstock.member.application.port.in.SendVerificationEmailCodeUseCase;
 import project.tosstock.member.application.port.in.UpdateMemberUseCase;
 
 @WebMvcTest(
@@ -44,7 +44,7 @@ class MemberControllerTest extends ControllerTestSupport {
 	private JoinMemberUseCase joinMemberUseCase;
 
 	@MockBean
-	private SendAuthCodeUseCase sendAuthCodeUseCase;
+	private SendVerificationEmailCodeUseCase sendVerificationEmailCodeUseCase;
 
 	@MockBean
 	private UpdateMemberUseCase updateMemberUseCase;
@@ -314,7 +314,7 @@ class MemberControllerTest extends ControllerTestSupport {
 	@DisplayName(value = "이메일을 통해 회원가입을 위한 인증 코드를 보냅니다.")
 	void sendAuthCodeToEmail() throws Exception {
 		// given
-		AuthEmailRequest request = new AuthEmailRequest("waterkite94@gmail.com");
+		VerificationEmailRequest request = new VerificationEmailRequest("waterkite94@gmail.com");
 
 		// when // then
 		mockMvc.perform(
@@ -351,7 +351,7 @@ class MemberControllerTest extends ControllerTestSupport {
 	@DisplayName(value = "인증코드 요청시 이메일은 필수 값입니다.")
 	void sendAuthCodeToEmail_exception_nullEmail() throws Exception {
 		// given
-		AuthEmailRequest request = new AuthEmailRequest(null);
+		VerificationEmailRequest request = new VerificationEmailRequest(null);
 
 		// when // then
 		mockMvc.perform(

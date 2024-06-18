@@ -8,12 +8,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import project.tosstock.member.application.port.in.SendAuthCodeUseCase;
-import project.tosstock.member.application.port.out.SaveAuthCodePort;
+import project.tosstock.member.application.port.in.SendVerificationEmailCodeUseCase;
+import project.tosstock.member.application.port.out.SaveVerificationEmailCodePort;
 
 @Service
 @RequiredArgsConstructor
-public class AuthCodeMailService implements SendAuthCodeUseCase {
+public class VerificationServiceEmail implements SendVerificationEmailCodeUseCase {
 
 	@Value("${spring.mail.title}")
 	private String mailTitle;
@@ -21,15 +21,15 @@ public class AuthCodeMailService implements SendAuthCodeUseCase {
 	@Value("${spring.mail.code-length}")
 	private Integer codeLength;
 
-	private final SaveAuthCodePort saveAuthCodePort;
-	private final AuthCodeMailUtil authCodeMailUtil;
+	private final SaveVerificationEmailCodePort saveVerificationEmailCodePort;
+	private final VerificationEmailUtil verificationEmailUtil;
 
 	@Override
 	public boolean sendAuthCodeToEmail(String toEmail) {
 		String authCode = createAuthCode(codeLength);
 
-		saveAuthCodePort.save(toEmail, authCode);
-		authCodeMailUtil.sendMailByJavaMailSender(toEmail, mailTitle, authCode);
+		saveVerificationEmailCodePort.save(toEmail, authCode);
+		verificationEmailUtil.sendMailByJavaMailSender(toEmail, mailTitle, authCode);
 
 		return true;
 	}

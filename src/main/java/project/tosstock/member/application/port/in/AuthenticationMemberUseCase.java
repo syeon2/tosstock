@@ -2,7 +2,7 @@ package project.tosstock.member.application.port.in;
 
 import project.tosstock.member.application.domain.model.JwtTokenDto;
 
-public interface AuthMemberUseCase {
+public interface AuthenticationMemberUseCase {
 
 	JwtTokenDto login(String email, String password, String address);
 

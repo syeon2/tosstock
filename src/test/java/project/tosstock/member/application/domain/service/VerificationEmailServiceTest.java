@@ -15,21 +15,21 @@ import org.springframework.mail.javamail.JavaMailSender;
 
 import project.tosstock.IntegrationTestSupport;
 
-class AuthCodeMailServiceTest extends IntegrationTestSupport {
+class VerificationEmailServiceTest extends IntegrationTestSupport {
 
 	@Autowired
-	private AuthCodeMailService authCodeMailService;
+	private VerificationServiceEmail verificationEmailService;
 
 	@MockBean
 	private JavaMailSender javaMailSender;
 
 	@Autowired
-	@Qualifier(value = "redisAuthCodeTemplate")
-	private RedisTemplate<String, String> redisAuthCodeTemplate;
+	@Qualifier(value = "redisVerificationEmailCodeTemplate")
+	private RedisTemplate<String, String> redisVerificationEmailCodeTemplate;
 
 	@BeforeEach
 	void before() {
-		redisAuthCodeTemplate.getConnectionFactory().getConnection().flushAll();
+		redisVerificationEmailCodeTemplate.getConnectionFactory().getConnection().flushAll();
 	}
 
 	@Test
@@ -40,12 +40,12 @@ class AuthCodeMailServiceTest extends IntegrationTestSupport {
 		doNothing().when(javaMailSender).send(any(SimpleMailMessage.class));
 
 		// when
-		boolean result = authCodeMailService.sendAuthCodeToEmail(email);
+		boolean result = verificationEmailService.sendAuthCodeToEmail(email);
 
 		// then
 		assertThat(result).isTrue();
 
-		String findAuthCode = redisAuthCodeTemplate.opsForValue().get(email);
+		String findAuthCode = redisVerificationEmailCodeTemplate.opsForValue().get(email);
 		assertThat(findAuthCode).isNotNull();
 	}
 }

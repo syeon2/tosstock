@@ -11,14 +11,14 @@ import lombok.RequiredArgsConstructor;
 import project.tosstock.common.jwt.JwtPayloadDto;
 import project.tosstock.common.jwt.JwtTokenProvider;
 import project.tosstock.member.application.domain.model.JwtTokenDto;
-import project.tosstock.member.application.port.in.AuthMemberUseCase;
+import project.tosstock.member.application.port.in.AuthenticationMemberUseCase;
 import project.tosstock.member.application.port.out.DeleteJwtTokenPort;
 import project.tosstock.member.application.port.out.FindMemberPort;
 import project.tosstock.member.application.port.out.SaveJwtTokenPort;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService implements AuthMemberUseCase {
+public class AuthenticationService implements AuthenticationMemberUseCase {
 
 	private final FindMemberPort findMemberPort;
 	private final SaveJwtTokenPort saveJwtTokenPort;

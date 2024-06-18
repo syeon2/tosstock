@@ -22,10 +22,10 @@ import project.tosstock.member.application.port.out.SaveMemberPort;
 import project.tosstock.member.application.port.out.UpdateMemberPort;
 
 @Transactional
-class AuthServiceTest extends IntegrationTestSupport {
+class AuthenticationServiceTest extends IntegrationTestSupport {
 
 	@Autowired
-	private AuthService authService;
+	private AuthenticationService authenticationService;
 
 	@MockBean
 	private FindMemberPort findMemberPort;
@@ -63,7 +63,7 @@ class AuthServiceTest extends IntegrationTestSupport {
 			.willReturn(true);
 
 		// when
-		JwtTokenDto tokenDto = authService.login(email, password, address);
+		JwtTokenDto tokenDto = authenticationService.login(email, password, address);
 
 		// then
 		assertThat(tokenDto.getAccessToken()).isNotNull().isInstanceOf(String.class);
@@ -83,7 +83,7 @@ class AuthServiceTest extends IntegrationTestSupport {
 		String address = "1";
 
 		// when  // then
-		assertThatThrownBy(() -> authService.login(email, password, address))
+		assertThatThrownBy(() -> authenticationService.login(email, password, address))
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessage("존재하지 않는 회원입니다.");
 	}
@@ -99,7 +99,7 @@ class AuthServiceTest extends IntegrationTestSupport {
 			.willReturn(Optional.of(password));
 
 		// when  // then
-		assertThatThrownBy(() -> authService.login(email, "11111111", "1"))
+		assertThatThrownBy(() -> authenticationService.login(email, "11111111", "1"))
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessage("잘못된 비밀번호입니다.");
 	}
@@ -118,13 +118,13 @@ class AuthServiceTest extends IntegrationTestSupport {
 		given(passwordEncoder.matches(any(), any()))
 			.willReturn(true);
 
-		JwtTokenDto tokenDto = authService.login(email, password, address);
+		JwtTokenDto tokenDto = authenticationService.login(email, password, address);
 
 		assertThat((String)redisAuthTokenTemplate.opsForHash().get(email, address))
 			.isEqualTo(tokenDto.getRefreshToken());
 
 		// when
-		authService.logout(email, address);
+		authenticationService.logout(email, address);
 
 		// then
 		Object findTokenByEmailAndAddress = redisAuthTokenTemplate.opsForHash().get(email, address);
@@ -147,14 +147,14 @@ class AuthServiceTest extends IntegrationTestSupport {
 		given(passwordEncoder.matches(any(), any()))
 			.willReturn(true);
 
-		JwtTokenDto tokenDto1 = authService.login(email, password, address1);
-		JwtTokenDto tokenDto2 = authService.login(email, password, address2);
+		JwtTokenDto tokenDto1 = authenticationService.login(email, password, address1);
+		JwtTokenDto tokenDto2 = authenticationService.login(email, password, address2);
 
 		assertThat(redisAuthTokenTemplate.opsForHash().get(email, address1)).isEqualTo(tokenDto1.getRefreshToken());
 		assertThat(redisAuthTokenTemplate.opsForHash().get(email, address2)).isEqualTo(tokenDto2.getRefreshToken());
 
 		// when
-		authService.logoutAll(email);
+		authenticationService.logoutAll(email);
 
 		// then
 		Object findToken1 = redisAuthTokenTemplate.opsForHash().get(email, address1);
@@ -178,12 +178,12 @@ class AuthServiceTest extends IntegrationTestSupport {
 		given(passwordEncoder.matches(any(), any()))
 			.willReturn(true);
 
-		JwtTokenDto tokenDto = authService.login(email, password, address);
+		JwtTokenDto tokenDto = authenticationService.login(email, password, address);
 
 		assertThat(redisAuthTokenTemplate.opsForHash().get(email, address)).isEqualTo(tokenDto.getRefreshToken());
 
 		// when
-		JwtTokenDto updatedJwtToken = authService.updateJwtToken(tokenDto.getRefreshToken());
+		JwtTokenDto updatedJwtToken = authenticationService.updateJwtToken(tokenDto.getRefreshToken());
 
 		// then
 		assertThat(redisAuthTokenTemplate.opsForHash().get(email, address))
@@ -197,7 +197,7 @@ class AuthServiceTest extends IntegrationTestSupport {
 		String refreshToken = "refresh_token";
 
 		// when  // then
-		assertThatThrownBy(() -> authService.updateJwtToken(refreshToken))
+		assertThatThrownBy(() -> authenticationService.updateJwtToken(refreshToken))
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessage("잘못된 토큰입니다.");
 	}

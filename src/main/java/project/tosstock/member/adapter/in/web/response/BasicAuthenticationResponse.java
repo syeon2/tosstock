@@ -6,15 +6,15 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BasicAuthResponse<T> {
+public class BasicAuthenticationResponse<T> {
 
 	private T result;
 
-	private BasicAuthResponse(T result) {
+	private BasicAuthenticationResponse(T result) {
 		this.result = result;
 	}
 
-	public static <T> BasicAuthResponse<T> of(T result) {
-		return new BasicAuthResponse<>(result);
+	public static <T> BasicAuthenticationResponse<T> of(T result) {
+		return new BasicAuthenticationResponse<>(result);
 	}
 }

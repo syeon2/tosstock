@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import project.tosstock.IntegrationTestSupport;
 
-class RedisAuthCodeRepositoryTest extends IntegrationTestSupport {
+class RedisVerificationEmailCodeRepositoryTest extends IntegrationTestSupport {
 
 	@Autowired
-	private RedisAuthCodeRepository redisAuthCodeRepository;
+	private RedisVerificationEmailCodeRepository redisVerificationEmailCodeRepository;
 
 	@Test
 	@DisplayName(value = "코드를 저장하고 조회합니다.")
@@ -23,10 +23,10 @@ class RedisAuthCodeRepositoryTest extends IntegrationTestSupport {
 		String authCode = "123456";
 
 		// when
-		redisAuthCodeRepository.save(email, authCode);
+		redisVerificationEmailCodeRepository.save(email, authCode);
 
 		// then
-		Optional<String> codeOptional = redisAuthCodeRepository.findCodeByEmail(email);
+		Optional<String> codeOptional = redisVerificationEmailCodeRepository.findCodeByEmail(email);
 
 		assertThat(codeOptional).isPresent()
 			.hasValueSatisfying(s -> assertThat(s).isEqualTo(authCode));

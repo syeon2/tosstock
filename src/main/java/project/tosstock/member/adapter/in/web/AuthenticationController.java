@@ -14,42 +14,43 @@ import project.tosstock.member.adapter.in.web.request.LoginRequest;
 import project.tosstock.member.adapter.in.web.request.LogoutAllRequest;
 import project.tosstock.member.adapter.in.web.request.LogoutRequest;
 import project.tosstock.member.adapter.in.web.request.RefreshTokenRequest;
-import project.tosstock.member.adapter.in.web.response.BasicAuthResponse;
+import project.tosstock.member.adapter.in.web.response.BasicAuthenticationResponse;
 import project.tosstock.member.adapter.in.web.response.JwtTokenResponse;
 import project.tosstock.member.application.domain.model.JwtTokenDto;
-import project.tosstock.member.application.port.in.AuthMemberUseCase;
+import project.tosstock.member.application.port.in.AuthenticationMemberUseCase;
 
 @WebAdapter
 @RestController
 @RequiredArgsConstructor
-public class AuthController {
+public class AuthenticationController {
 
-	private final AuthMemberUseCase authMemberUseCase;
+	private final AuthenticationMemberUseCase authenticationMemberUseCase;
 
 	@GetMapping("/api/v1/auth/login")
 	public ApiResult<JwtTokenResponse> login(@Valid @RequestBody LoginRequest request) {
-		JwtTokenDto tokenDto = authMemberUseCase.login(request.getEmail(), request.getPassword(), request.getAddress());
+		JwtTokenDto tokenDto = authenticationMemberUseCase.login(request.getEmail(), request.getPassword(),
+			request.getAddress());
 
 		return ApiResult.ok(JwtTokenResponse.of(tokenDto));
 	}
 
 	@DeleteMapping("/api/v1/auth/logout")
-	public ApiResult<BasicAuthResponse> logout(@Valid @RequestBody LogoutRequest request) {
-		boolean result = authMemberUseCase.logout(request.getEmail(), request.getAddress());
+	public ApiResult<BasicAuthenticationResponse> logout(@Valid @RequestBody LogoutRequest request) {
+		boolean result = authenticationMemberUseCase.logout(request.getEmail(), request.getAddress());
 
-		return ApiResult.ok(BasicAuthResponse.of(result));
+		return ApiResult.ok(BasicAuthenticationResponse.of(result));
 	}
 
 	@DeleteMapping("/api/v1/auth/logout-all")
-	public ApiResult<BasicAuthResponse> logoutAll(@Valid @RequestBody LogoutAllRequest request) {
-		boolean result = authMemberUseCase.logoutAll(request.getEmail());
+	public ApiResult<BasicAuthenticationResponse> logoutAll(@Valid @RequestBody LogoutAllRequest request) {
+		boolean result = authenticationMemberUseCase.logoutAll(request.getEmail());
 
-		return ApiResult.ok(BasicAuthResponse.of(result));
+		return ApiResult.ok(BasicAuthenticationResponse.of(result));
 	}
 
 	@PostMapping("/api/v1/auth/refresh-token")
 	public ApiResult<JwtTokenResponse> updateJwtToken(@Valid @RequestBody RefreshTokenRequest request) {
-		JwtTokenDto jwtTokenDto = authMemberUseCase.updateJwtToken(request.getRefreshToken());
+		JwtTokenDto jwtTokenDto = authenticationMemberUseCase.updateJwtToken(request.getRefreshToken());
 
 		return ApiResult.ok(JwtTokenResponse.of(jwtTokenDto));
 	}

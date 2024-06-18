@@ -10,7 +10,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
-public class RedisAuthCodeByMailConfig {
+public class RedisVerificationEmailCodeConfig {
 
 	@Value("${spring.data.redis-mail.host}")
 	private String host;
@@ -19,17 +19,17 @@ public class RedisAuthCodeByMailConfig {
 	private Integer port;
 
 	@Bean
-	@Qualifier(value = "redisAuthCodeByMailConnectionFactory")
-	public RedisConnectionFactory redisAuthCodeByMailConnectionFactory() {
+	@Qualifier(value = "redisVerificationEmailCodeConnectionFactory")
+	public RedisConnectionFactory redisVerificationEmailCodeConnectionFactory() {
 		return new LettuceConnectionFactory(host, port);
 	}
 
 	@Bean
-	@Qualifier(value = "redisAuthCodeTemplate")
-	public RedisTemplate<String, String> redisAuthCodeTemplate() {
+	@Qualifier(value = "redisVerificationEmailCodeTemplate")
+	public RedisTemplate<String, String> redisVerificationEmailCodeTemplate() {
 		RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
 
-		redisTemplate.setConnectionFactory(redisAuthCodeByMailConnectionFactory());
+		redisTemplate.setConnectionFactory(redisVerificationEmailCodeConnectionFactory());
 		redisTemplate.setKeySerializer(new StringRedisSerializer());
 		redisTemplate.setValueSerializer(new StringRedisSerializer());
 

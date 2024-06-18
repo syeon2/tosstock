@@ -8,13 +8,13 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AuthEmailRequest {
+public class VerificationEmailRequest {
 
 	@Email(message = "이메일 형식으로 요청 가능합니다. (ex. xxx@xxx.com)")
 	@NotBlank(message = "인증 요청을 위한 이메일 값은 필수입니다.")
 	private String email;
 
-	public AuthEmailRequest(String email) {
+	public VerificationEmailRequest(String email) {
 		this.email = email;
 	}
 }

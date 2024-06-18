@@ -9,15 +9,15 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class RedisAuthCodeRepository {
+public class RedisVerificationEmailCodeRepository {
 
 	@Value("${spring.data.redis-mail.expiration-minutes}")
 	private Integer expirationMinutes;
 
 	private final RedisTemplate<String, String> redisTemplate;
 
-	public RedisAuthCodeRepository(
-		@Qualifier(value = "redisAuthCodeTemplate") RedisTemplate<String, String> redisTemplate) {
+	public RedisVerificationEmailCodeRepository(
+		@Qualifier(value = "redisVerificationEmailCodeTemplate") RedisTemplate<String, String> redisTemplate) {
 		this.redisTemplate = redisTemplate;
 	}
 

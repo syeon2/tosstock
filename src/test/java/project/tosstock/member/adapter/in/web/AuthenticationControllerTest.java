@@ -26,20 +26,20 @@ import project.tosstock.member.adapter.in.web.request.LogoutAllRequest;
 import project.tosstock.member.adapter.in.web.request.LogoutRequest;
 import project.tosstock.member.adapter.in.web.request.RefreshTokenRequest;
 import project.tosstock.member.application.domain.model.JwtTokenDto;
-import project.tosstock.member.application.port.in.AuthMemberUseCase;
+import project.tosstock.member.application.port.in.AuthenticationMemberUseCase;
 
 @WebMvcTest(
-	controllers = AuthController.class,
+	controllers = AuthenticationController.class,
 	excludeFilters = {
 		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebConfig.class),
 		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtVerificationFilter.class),
 		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtExceptionFilter.class)
 	}
 )
-class AuthControllerTest extends ControllerTestSupport {
+class AuthenticationControllerTest extends ControllerTestSupport {
 
 	@MockBean
-	private AuthMemberUseCase authMemberUseCase;
+	private AuthenticationMemberUseCase authenticationMemberUseCase;
 
 	@Test
 	@DisplayName(value = "이메일과 비밀번호, 기기 주소를 받아 로그인에 성공합니다.")
@@ -50,7 +50,7 @@ class AuthControllerTest extends ControllerTestSupport {
 		String address = "1";
 		LoginRequest request = createLoginRequest(email, password, address);
 
-		given(authMemberUseCase.login(email, password, address))
+		given(authenticationMemberUseCase.login(email, password, address))
 			.willReturn(JwtTokenDto.of("accessToken", "refreshToken"));
 
 		// when  // then
@@ -207,7 +207,7 @@ class AuthControllerTest extends ControllerTestSupport {
 		String refreshToken = "1234";
 		RefreshTokenRequest request = new RefreshTokenRequest(refreshToken);
 
-		given(authMemberUseCase.updateJwtToken(refreshToken))
+		given(authenticationMemberUseCase.updateJwtToken(refreshToken))
 			.willReturn(JwtTokenDto.of("access token", "refresh token"));
 
 		// when  // then

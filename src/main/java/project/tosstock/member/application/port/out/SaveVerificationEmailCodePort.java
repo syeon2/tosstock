@@ -1,6 +1,6 @@
 package project.tosstock.member.application.port.out;
 
-public interface SaveAuthCodePort {
+public interface SaveVerificationEmailCodePort {
 
 	void save(String email, String code);
 }

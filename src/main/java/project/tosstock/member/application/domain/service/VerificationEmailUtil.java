@@ -11,13 +11,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class AuthCodeMailUtil {
+public class VerificationEmailUtil {
 
 	private final JavaMailSender javaMailSender;
 
 	@Async(value = "threadPoolTaskExecutorForMail")
 	public void sendMailByJavaMailSender(String toEmail, String title, String text) {
-		SimpleMailMessage emailForm = AuthCodeMailUtil.createEmailForm(toEmail, title, text);
+		SimpleMailMessage emailForm = VerificationEmailUtil.createEmailForm(toEmail, title, text);
 
 		try {
 			javaMailSender.send(emailForm);

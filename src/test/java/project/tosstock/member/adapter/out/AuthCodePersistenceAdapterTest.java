@@ -16,15 +16,15 @@ import project.tosstock.IntegrationTestSupport;
 class AuthCodePersistenceAdapterTest extends IntegrationTestSupport {
 
 	@Autowired
-	private AuthCodePersistenceAdapter authCodePersistenceAdapter;
+	private VerificationEmailCodePersistenceAdapter authCodePersistenceAdapter;
 
 	@Autowired
-	@Qualifier(value = "redisAuthCodeTemplate")
-	private RedisTemplate<String, String> redisAuthCodeTemplate;
+	@Qualifier(value = "redisVerificationEmailCodeTemplate")
+	private RedisTemplate<String, String> redisVerificationEmailCodeTemplate;
 
 	@BeforeEach
 	void before() {
-		redisAuthCodeTemplate.getConnectionFactory().getConnection().flushAll();
+		redisVerificationEmailCodeTemplate.getConnectionFactory().getConnection().flushAll();
 	}
 
 	@Test
@@ -38,7 +38,7 @@ class AuthCodePersistenceAdapterTest extends IntegrationTestSupport {
 		authCodePersistenceAdapter.save(email, code);
 
 		// then
-		String findCode = redisAuthCodeTemplate.opsForValue().get(email);
+		String findCode = redisVerificationEmailCodeTemplate.opsForValue().get(email);
 
 		assertThat(findCode).isEqualTo(code);
 	}
