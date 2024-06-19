@@ -17,11 +17,15 @@ import project.tosstock.activity.adapter.out.persistence.PostRepository;
 import project.tosstock.activity.application.domain.model.Comment;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
+import project.tosstock.stock.adpater.out.persistence.StockRepository;
 
 class CommentPersistenceAdapterTest extends IntegrationTestSupport {
 
 	@Autowired
 	private CommentPersistenceAdapter commentPersistenceAdapter;
+
+	@Autowired
+	private StockRepository stockRepository;
 
 	@Autowired
 	private PostRepository postRepository;
@@ -34,6 +38,7 @@ class CommentPersistenceAdapterTest extends IntegrationTestSupport {
 
 	@BeforeEach
 	void before() {
+		stockRepository.deleteAllInBatch();
 		commentRepository.deleteAllInBatch();
 		postRepository.deleteAllInBatch();
 		memberRepository.deleteAllInBatch();

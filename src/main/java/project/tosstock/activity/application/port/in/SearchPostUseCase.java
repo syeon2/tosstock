@@ -9,4 +9,6 @@ import project.tosstock.activity.application.domain.model.Post;
 public interface SearchPostUseCase {
 
 	List<Post> searchPostByArticle(String article, Pageable pageable);
+
+	List<Post> searchPostByStockId(Long stockId, Pageable pageable);
 }

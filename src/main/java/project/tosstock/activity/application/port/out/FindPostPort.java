@@ -12,4 +12,6 @@ public interface FindPostPort {
 	Optional<Post> findPostById(Long postId);
 
 	List<Post> findPostByArticleContaining(String article, Pageable pageable);
+
+	List<Post> findPostByStockId(Long stockId, Pageable pageable);
 }

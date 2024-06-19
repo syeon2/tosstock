@@ -11,4 +11,6 @@ import project.tosstock.activity.adapter.out.entity.PostEntity;
 public interface PostRepository extends JpaRepository<PostEntity, Long> {
 
 	Page<PostEntity> findByArticleContaining(String article, Pageable pageable);
+
+	Page<PostEntity> findByStockId(Long stockId, Pageable pageable);
 }

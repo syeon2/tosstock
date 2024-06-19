@@ -3,12 +3,14 @@ package project.tosstock.activity.adapter.out;
 import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import project.tosstock.IntegrationTestSupport;
@@ -35,20 +37,20 @@ class PostPersistenceAdapterTest extends IntegrationTestSupport {
 	private MemberRepository memberRepository;
 
 	@Autowired
-	private PostLikeRepository postLikeRepository;
-
-	@Autowired
 	private CommentRepository commentRepository;
 
 	@Autowired
 	private StockRepository stockRepository;
 
+	@Autowired
+	private PostLikeRepository postLikeRepository;
+
 	@BeforeEach
 	void before() {
-		postRepository.deleteAllInBatch();
+		postLikeRepository.deleteAllInBatch();
 		commentRepository.deleteAllInBatch();
-		stockRepository.deleteAllInBatch();
 		postRepository.deleteAllInBatch();
+		stockRepository.deleteAllInBatch();
 		memberRepository.deleteAllInBatch();
 	}
 
@@ -113,6 +115,58 @@ class PostPersistenceAdapterTest extends IntegrationTestSupport {
 
 		// then
 		assertThat(postRepository.findById(savePostId)).isEmpty();
+	}
+
+	@Test
+	@DisplayName(value = "게시글 내용을 통해 게시글을 조회합니다.")
+	void findPostByArticleContaining() {
+		// given
+		MemberEntity savedMember = memberRepository.save(createMember());
+		StockEntity savedStock = stockRepository.save(createStock());
+
+		String article = "article";
+
+		String article1 = article + "1";
+		Post post1 = createPost(article1, savedMember.getId(), savedStock.getId());
+		Long savePost1Id = postPersistenceAdapter.save(post1);
+
+		String article2 = article + "2";
+		Post post2 = createPost(article2, savedMember.getId(), savedStock.getId());
+		Long savePost2Id = postPersistenceAdapter.save(post2);
+
+		// when
+		PageRequest pageable = PageRequest.of(0, 10);
+		List<Post> findPosts = postPersistenceAdapter.findPostByStockId(savedStock.getId(), pageable);
+
+		// then
+		assertThat(findPosts).hasSize(2)
+			.extracting("article")
+			.containsExactlyInAnyOrder(article1, article2);
+	}
+
+	@Test
+	@DisplayName(value = "증권 종목 아이디를 통해 게시글을 조회합니다.")
+	void findPostByStockId() {
+		// given
+		MemberEntity savedMember = memberRepository.save(createMember());
+		StockEntity savedStock = stockRepository.save(createStock());
+
+		String article1 = "article1";
+		Post post1 = createPost(article1, savedMember.getId(), savedStock.getId());
+		Long savePost1Id = postPersistenceAdapter.save(post1);
+
+		String article2 = "article2";
+		Post post2 = createPost(article2, savedMember.getId(), savedStock.getId());
+		Long savePost2Id = postPersistenceAdapter.save(post2);
+
+		// when
+		PageRequest pageable = PageRequest.of(0, 10);
+		List<Post> findPosts = postPersistenceAdapter.findPostByStockId(savedStock.getId(), pageable);
+
+		// then
+		assertThat(findPosts).hasSize(2)
+			.extracting("article")
+			.containsExactlyInAnyOrder(article1, article2);
 	}
 
 	private MemberEntity createMember() {

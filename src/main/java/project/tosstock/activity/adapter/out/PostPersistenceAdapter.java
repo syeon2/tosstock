@@ -34,7 +34,7 @@ public class PostPersistenceAdapter implements SavePostPort, DeletePostPort, Fin
 	public Long save(Post post) {
 		MemberEntity proxyMember = memberRepository.getReferenceById(post.getMemberId());
 		StockEntity proxyStock = stockRepository.getReferenceById(post.getStockId());
-		
+
 		PostEntity savedPost = postRepository.save(postMapper.toEntity(proxyMember, proxyStock, post));
 
 		return savedPost.getId();
@@ -54,6 +54,15 @@ public class PostPersistenceAdapter implements SavePostPort, DeletePostPort, Fin
 	@Override
 	public List<Post> findPostByArticleContaining(String article, Pageable pageable) {
 		Page<PostEntity> findPosts = postRepository.findByArticleContaining(article, pageable);
+
+		return findPosts.getContent().stream()
+			.map(postMapper::toDomain)
+			.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<Post> findPostByStockId(Long stockId, Pageable pageable) {
+		Page<PostEntity> findPosts = postRepository.findByStockId(stockId, pageable);
 
 		return findPosts.getContent().stream()
 			.map(postMapper::toDomain)

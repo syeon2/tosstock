@@ -50,6 +50,12 @@ public class PostService implements PostingUseCase, SearchPostUseCase {
 		return findPostPort.findPostByArticleContaining(article, pageable);
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public List<Post> searchPostByStockId(Long stockId, Pageable pageable) {
+		return findPostPort.findPostByStockId(stockId, pageable);
+	}
+
 	private void publishNewsFeed(Post post, Long savedPostId) {
 		NewsFeed newsFeed = NewsFeed.builder()
 			.article(post.getArticle())

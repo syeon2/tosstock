@@ -113,6 +113,29 @@ class PostServiceTest extends IntegrationTestSupport {
 		assertThat(findPosts.size()).isEqualTo(1);
 	}
 
+	@Test
+	@DisplayName(value = "증권 종목 아이디를 통해 게시글을 검색합니다.")
+	void searchPostByStockId() {
+		// given
+		MemberEntity savedMember = memberRepository.save(createMember());
+		StockEntity savedStock = stockRepository.save(createStock());
+
+		Post post1 = createPost("testing", savedMember.getId(), savedStock.getId());
+		Post post2 = createPost("testing", savedMember.getId(), savedStock.getId());
+		Long savedPost1 = postService.createPost(post1);
+		Long savedPost2 = postService.createPost(post2);
+
+		// when
+
+		PageRequest pageable = PageRequest.of(0, 10);
+		List<Post> findPosts = postService.searchPostByStockId(savedStock.getId(), pageable);
+
+		// then
+		assertThat(findPosts).hasSize(2)
+			.extracting("id")
+			.containsExactlyInAnyOrder(savedPost1, savedPost2);
+	}
+
 	private MemberEntity createMember() {
 		return MemberEntity.builder()
 			.username("suyeon")

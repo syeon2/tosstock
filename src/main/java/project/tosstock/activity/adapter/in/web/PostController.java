@@ -43,6 +43,13 @@ public class PostController {
 		return ApiResult.ok(BasicActivityResponse.of(removedPostId));
 	}
 
+	@GetMapping("/api/v1/posts/stock/{stockId}")
+	public ApiResult<List<Post>> searchPostsByStockId(@PathVariable("stockId") Long stockId, Pageable pageable) {
+		List<Post> posts = searchPostUseCase.searchPostByStockId(stockId, pageable);
+
+		return ApiResult.ok(posts);
+	}
+
 	@GetMapping("/api/v1/posts")
 	public ApiResult<List<Post>> searchPostByArticle(@RequestParam("article") String article, Pageable pageable) {
 		List<Post> posts = searchPostUseCase.searchPostByArticle(article, pageable);

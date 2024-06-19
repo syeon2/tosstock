@@ -159,13 +159,60 @@ class PostControllerTest extends ControllerTestSupport {
 	}
 
 	@Test
+	@DisplayName(value = "증권 종목 아이디를 기반으로 게시글을 조회합니다.")
+	void searchPostByStockId() throws Exception {
+		// given
+		Long stockId = 1L;
+
+		given(searchPostUseCase.searchPostByStockId(any(), any()))
+			.willReturn(List.of(createPostDomain("testing", stockId)));
+
+		// when  // then
+		mockMvc.perform(
+				get("/api/v1/posts/stock/{stockId}", stockId)
+					.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.status").isNumber())
+			.andExpect(jsonPath("$.message").isEmpty())
+			.andExpect(jsonPath("$.data").isArray())
+			.andDo(document("post-search-stockId",
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				pathParameters(
+					parameterWithName("stockId").description("증권 종목 아이디")
+				),
+				responseFields(
+					fieldWithPath("status").type(JsonFieldType.NUMBER)
+						.description("상태 코드"),
+					fieldWithPath("message").type(JsonFieldType.NULL)
+						.description("메시지"),
+					fieldWithPath("data").type(JsonFieldType.ARRAY)
+						.description("응답 데이터 DTO"),
+					fieldWithPath("data[].id").type(JsonFieldType.NUMBER)
+						.description("게시글 아이디"),
+					fieldWithPath("data[].article").type(JsonFieldType.STRING)
+						.description("게시글 내용"),
+					fieldWithPath("data[].memberId").type(JsonFieldType.NUMBER)
+						.description("회원 아이디"),
+					fieldWithPath("data[].stockId").type(JsonFieldType.NUMBER)
+						.description("증권 종목 아이디"),
+					fieldWithPath("data[].createdAt").type(JsonFieldType.STRING)
+						.description("게시글 생성일"),
+					fieldWithPath("data[].updatedAt").type(JsonFieldType.STRING)
+						.description("게시글 수정일")
+				))
+			);
+	}
+
+	@Test
 	@DisplayName(value = "텍스트를 기반으로 게시글을 조회합니다.")
 	void searchPostByArticle() throws Exception {
 		// given
 		String article = "게시글 중 일부입니다.";
 
 		given(searchPostUseCase.searchPostByArticle(any(), any()))
-			.willReturn(List.of(createPostDomain(article)));
+			.willReturn(List.of(createPostDomain(article, 1L)));
 
 		// when  // then
 		mockMvc.perform(
@@ -214,9 +261,9 @@ class PostControllerTest extends ControllerTestSupport {
 			.build();
 	}
 
-	private Post createPostDomain(String article) {
+	private Post createPostDomain(String article, long id) {
 		return Post.builder()
-			.id(1L)
+			.id(id)
 			.article(article)
 			.stockId(1L)
 			.memberId(1L)
