@@ -2,6 +2,7 @@ package project.tosstock.activity.application.domain.service;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
 
 import project.tosstock.IntegrationTestSupport;
 import project.tosstock.activity.adapter.out.entity.CommentEntity;
@@ -93,6 +95,25 @@ class CommentServiceTest extends IntegrationTestSupport {
 
 		// then
 		assertThat(commentRepository.findById(removedCommentId)).isEmpty();
+	}
+
+	@Test
+	@DisplayName(value = "게시글에 대한 댓글을 조회합니다.")
+	void fetchPostComments() {
+		// given
+		MemberEntity savedMember = memberRepository.save(createMember("www@www"));
+		PostEntity savedPost = postRepository.save(createPost());
+
+		Comment comment = createComment(savedMember, savedPost);
+
+		Long saveCommentId = commentService.createComment(comment);
+
+		// when
+		PageRequest pageable = PageRequest.of(0, 10);
+		List<Comment> findComments = commentService.fetchPostComments(savedPost.getId(), pageable);
+
+		// then
+		assertThat(findComments).hasSize(1);
 	}
 
 	private MemberEntity createMember(String email) {

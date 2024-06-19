@@ -1,5 +1,6 @@
 package project.tosstock.activity.adapter.in.web;
 
+import static org.mockito.BDDMockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
@@ -7,6 +8,9 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,6 +23,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 
 import project.tosstock.ControllerTestSupport;
 import project.tosstock.activity.adapter.in.web.request.CreateCommentRequest;
+import project.tosstock.activity.application.domain.model.Comment;
 import project.tosstock.activity.application.port.in.CommentUseCase;
 import project.tosstock.common.config.web.WebConfig;
 import project.tosstock.common.config.web.filter.JwtExceptionFilter;
@@ -78,7 +83,7 @@ class CommentControllerTest extends ControllerTestSupport {
 	}
 
 	@Test
-	@DisplayName(value = "댓글을 생성하는 API를 호출합니다.")
+	@DisplayName(value = "댓글을 삭제하는 API를 호출합니다.")
 	void remove_comment() throws Exception {
 		// given
 		Long commentId = 1L;
@@ -111,11 +116,69 @@ class CommentControllerTest extends ControllerTestSupport {
 				)));
 	}
 
-	private static CreateCommentRequest createCommentRequest() {
+	@Test
+	@DisplayName(value = "게시판 아이디를 통해 게시판에 대한 댓글을 조회합니다.")
+	void fetchPostComments() throws Exception {
+		// given
+		Long postId = 1L;
+
+		given(commentUseCase.fetchPostComments(any(), any()))
+			.willReturn(List.of(createComment()));
+
+		// when  // then
+		mockMvc.perform(
+				get("/api/v1/comments/post/{postId}", postId)
+					.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.status").isNumber())
+			.andExpect(jsonPath("$.message").isEmpty())
+			.andExpect(jsonPath("$.data").isArray())
+			.andDo(document("comment-fetch-postId",
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				pathParameters(
+					parameterWithName("postId").description("게시글 아이디")
+				),
+				responseFields(
+					fieldWithPath("status").type(JsonFieldType.NUMBER)
+						.description("상태 코드"),
+					fieldWithPath("message").type(JsonFieldType.NULL)
+						.description("메시지"),
+					fieldWithPath("data").type(JsonFieldType.ARRAY)
+						.description("응답 데이터 DTO"),
+					fieldWithPath("data[].article").type(JsonFieldType.STRING)
+						.description("댓글"),
+					fieldWithPath("data[].id").type(JsonFieldType.NUMBER)
+						.description("댓글 아이디"),
+					fieldWithPath("data[].postId").type(JsonFieldType.NUMBER)
+						.description("게시글 아이디"),
+					fieldWithPath("data[].memberId").type(JsonFieldType.NUMBER)
+						.description("회원 아이디"),
+					fieldWithPath("data[].createdAt").type(JsonFieldType.STRING)
+						.description("댓글 생성일"),
+					fieldWithPath("data[].updatedAt").type(JsonFieldType.STRING)
+						.description("댓글 수정일")
+				))
+			);
+	}
+
+	private CreateCommentRequest createCommentRequest() {
 		return CreateCommentRequest.builder()
 			.article("댓글")
 			.postId(1L)
 			.memberId(1L)
+			.build();
+	}
+
+	private Comment createComment() {
+		return Comment.builder()
+			.id(1L)
+			.article("댓글")
+			.memberId(1L)
+			.postId(1L)
+			.createdAt(LocalDateTime.now())
+			.updatedAt(LocalDateTime.now())
 			.build();
 	}
 }

@@ -17,4 +17,15 @@ public class CommentMapper {
 			.member(member)
 			.build();
 	}
+
+	public Comment toDomain(CommentEntity entity) {
+		return Comment.builder()
+			.id(entity.getId())
+			.article(entity.getArticle())
+			.postId(entity.getPost().getId())
+			.memberId(entity.getMember().getId())
+			.createdAt(entity.getCreatedAt())
+			.updatedAt(entity.getUpdatedAt())
+			.build();
+	}
 }
