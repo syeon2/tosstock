@@ -15,7 +15,6 @@ import project.tosstock.activity.application.port.out.FindPostPort;
 import project.tosstock.activity.application.port.out.SavePostPort;
 import project.tosstock.newsfeed.application.domain.model.FeedType;
 import project.tosstock.newsfeed.application.domain.model.NewsFeed;
-import project.tosstock.newsfeed.application.port.out.DeleteNewsFeedPort;
 import project.tosstock.newsfeed.application.port.out.SaveNewsFeedPort;
 
 @Service
@@ -25,9 +24,7 @@ public class PostService implements PostingUseCase, SearchPostUseCase {
 	private final SavePostPort savePostPort;
 	private final FindPostPort findPostPort;
 	private final DeletePostPort deletePostPort;
-
 	private final SaveNewsFeedPort saveNewsFeedPort;
-	private final DeleteNewsFeedPort deleteNewsFeedPort;
 
 	@Override
 	@Transactional
@@ -43,7 +40,6 @@ public class PostService implements PostingUseCase, SearchPostUseCase {
 	@Transactional
 	public Long removePost(Long postId) {
 		deletePostPort.delete(postId);
-		deleteNewsFeedPort.delete(postId, FeedType.POST);
 
 		return postId;
 	}

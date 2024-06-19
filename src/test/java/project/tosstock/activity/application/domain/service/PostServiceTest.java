@@ -2,6 +2,8 @@ package project.tosstock.activity.application.domain.service;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -9,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
 
 import project.tosstock.IntegrationTestSupport;
 import project.tosstock.activity.adapter.out.entity.PostEntity;
@@ -19,6 +22,9 @@ import project.tosstock.member.adapter.out.persistence.MemberRepository;
 import project.tosstock.newsfeed.application.port.out.DeleteNewsFeedPort;
 import project.tosstock.newsfeed.application.port.out.FindNewsFeedPort;
 import project.tosstock.newsfeed.application.port.out.SaveNewsFeedPort;
+import project.tosstock.stock.adpater.out.entity.StockEntity;
+import project.tosstock.stock.adpater.out.persistence.StockRepository;
+import project.tosstock.stock.application.domain.model.Market;
 
 class PostServiceTest extends IntegrationTestSupport {
 
@@ -30,6 +36,9 @@ class PostServiceTest extends IntegrationTestSupport {
 
 	@Autowired
 	private MemberRepository memberRepository;
+
+	@Autowired
+	private StockRepository stockRepository;
 
 	@MockBean
 	private SaveNewsFeedPort saveNewsFeedPort;
@@ -51,9 +60,10 @@ class PostServiceTest extends IntegrationTestSupport {
 	void createPost() {
 		// given
 		MemberEntity savedMember = memberRepository.save(createMember());
+		StockEntity savedStock = stockRepository.save(createStock());
 
 		// when
-		Post post = createPost("텍스트 입니다.", savedMember.getId());
+		Post post = createPost("텍스트 입니다.", savedMember.getId(), savedStock.getId());
 		Long createPostId = postService.createPost(post);
 
 		// then
@@ -68,8 +78,9 @@ class PostServiceTest extends IntegrationTestSupport {
 	void removePost() {
 		// given
 		MemberEntity savedMember = memberRepository.save(createMember());
+		StockEntity savedStock = stockRepository.save(createStock());
 
-		Post post = createPost("텍스트 입니다.", savedMember.getId());
+		Post post = createPost("텍스트 입니다.", savedMember.getId(), savedStock.getId());
 		Long createPostId = postService.createPost(post);
 
 		// when
@@ -81,6 +92,27 @@ class PostServiceTest extends IntegrationTestSupport {
 		assertThat(findPostOptional).isEmpty();
 	}
 
+	@Test
+	@DisplayName(value = "검색 기록을 통해 게시글을 검색합니다.")
+	void searchPostByArticle() {
+		// given
+		MemberEntity savedMember = memberRepository.save(createMember());
+		StockEntity savedStock = stockRepository.save(createStock());
+
+		String article = "텍스트 입니다.";
+
+		Post post = createPost(article + "testing", savedMember.getId(), savedStock.getId());
+		Long createPostId = postService.createPost(post);
+
+		// when
+
+		PageRequest pageable = PageRequest.of(0, 10);
+		List<Post> findPosts = postService.searchPostByArticle(article, pageable);
+
+		// then
+		assertThat(findPosts.size()).isEqualTo(1);
+	}
+
 	private MemberEntity createMember() {
 		return MemberEntity.builder()
 			.username("suyeon")
@@ -90,10 +122,20 @@ class PostServiceTest extends IntegrationTestSupport {
 			.build();
 	}
 
-	private Post createPost(String article, Long memberId) {
+	private Post createPost(String article, Long memberId, Long stockId) {
 		return Post.builder()
 			.article(article)
 			.memberId(memberId)
+			.stockId(stockId)
+			.build();
+	}
+
+	private StockEntity createStock() {
+		return StockEntity.builder()
+			.name("hello")
+			.market(Market.KOSDOQ)
+			.symbol("111")
+			.originTime(LocalDateTime.now())
 			.build();
 	}
 }

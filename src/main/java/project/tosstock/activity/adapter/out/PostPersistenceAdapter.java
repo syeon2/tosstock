@@ -17,6 +17,8 @@ import project.tosstock.activity.application.port.out.SavePostPort;
 import project.tosstock.common.annotation.PersistenceAdapter;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
+import project.tosstock.stock.adpater.out.entity.StockEntity;
+import project.tosstock.stock.adpater.out.persistence.StockRepository;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
@@ -24,13 +26,16 @@ public class PostPersistenceAdapter implements SavePostPort, DeletePostPort, Fin
 
 	private final PostRepository postRepository;
 	private final MemberRepository memberRepository;
+	private final StockRepository stockRepository;
 
 	private final PostMapper postMapper;
 
 	@Override
 	public Long save(Post post) {
 		MemberEntity proxyMember = memberRepository.getReferenceById(post.getMemberId());
-		PostEntity savedPost = postRepository.save(postMapper.toEntity(proxyMember, post));
+		StockEntity proxyStock = stockRepository.getReferenceById(post.getStockId());
+		
+		PostEntity savedPost = postRepository.save(postMapper.toEntity(proxyMember, proxyStock, post));
 
 		return savedPost.getId();
 	}
