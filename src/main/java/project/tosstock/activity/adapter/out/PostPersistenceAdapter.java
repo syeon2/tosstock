@@ -6,10 +6,15 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import project.tosstock.activity.adapter.out.entity.PostEntity;
+import project.tosstock.activity.adapter.out.persistence.CommentRepository;
+import project.tosstock.activity.adapter.out.persistence.FollowRepository;
+import project.tosstock.activity.adapter.out.persistence.PostLikeRepository;
 import project.tosstock.activity.adapter.out.persistence.PostRepository;
+import project.tosstock.activity.application.domain.model.MainBoardPostDto;
 import project.tosstock.activity.application.domain.model.Post;
 import project.tosstock.activity.application.port.out.DeletePostPort;
 import project.tosstock.activity.application.port.out.FindPostPort;
@@ -27,6 +32,10 @@ public class PostPersistenceAdapter implements SavePostPort, DeletePostPort, Fin
 	private final PostRepository postRepository;
 	private final MemberRepository memberRepository;
 	private final StockRepository stockRepository;
+
+	private final PostLikeRepository postLikeRepository;
+	private final CommentRepository commentRepository;
+	private final FollowRepository followRepository;
 
 	private final PostMapper postMapper;
 
@@ -52,15 +61,22 @@ public class PostPersistenceAdapter implements SavePostPort, DeletePostPort, Fin
 	}
 
 	@Override
-	public List<Post> findPostByArticleContaining(String article, Pageable pageable) {
+	@Transactional(readOnly = true)
+	public List<MainBoardPostDto> findPostByArticleContaining(String article, Pageable pageable) {
 		Page<PostEntity> findPosts = postRepository.findByArticleContaining(article, pageable);
 
 		return findPosts.getContent().stream()
-			.map(postMapper::toDomain)
+			.map(post -> postMapper.toMainPostDto(
+				post,
+				postLikeRepository.countByPostId(post.getId()),
+				commentRepository.countByPostId(post.getId()))
+			)
 			.collect(Collectors.toList());
+
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Post> findPostByStockId(Long stockId, Pageable pageable) {
 		Page<PostEntity> findPosts = postRepository.findByStockId(stockId, pageable);
 

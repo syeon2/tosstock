@@ -24,6 +24,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 
 import project.tosstock.ControllerTestSupport;
 import project.tosstock.activity.adapter.in.web.request.CreatePostRequest;
+import project.tosstock.activity.application.domain.model.MainBoardPostDto;
 import project.tosstock.activity.application.domain.model.Post;
 import project.tosstock.activity.application.port.in.PostingUseCase;
 import project.tosstock.activity.application.port.in.SearchPostUseCase;
@@ -212,7 +213,7 @@ class PostControllerTest extends ControllerTestSupport {
 		String article = "게시글 중 일부입니다.";
 
 		given(searchPostUseCase.searchPostByArticle(any(), any()))
-			.willReturn(List.of(createPostDomain(article, 1L)));
+			.willReturn(List.of(createMainBoardPostDto(article, 1L)));
 
 		// when  // then
 		mockMvc.perform(
@@ -237,14 +238,18 @@ class PostControllerTest extends ControllerTestSupport {
 						.description("메시지"),
 					fieldWithPath("data").type(JsonFieldType.ARRAY)
 						.description("응답 데이터 DTO"),
-					fieldWithPath("data[].id").type(JsonFieldType.NUMBER)
+					fieldWithPath("data[].postId").type(JsonFieldType.NUMBER)
 						.description("게시글 아이디"),
-					fieldWithPath("data[].article").type(JsonFieldType.STRING)
+					fieldWithPath("data[].member.id").type(JsonFieldType.NUMBER)
+						.description("게시글 작성 회원 아이디"),
+					fieldWithPath("data[].member.username").type(JsonFieldType.STRING)
+						.description("게시글 작성 회원 이름"),
+					fieldWithPath("data[].postArticle").type(JsonFieldType.STRING)
 						.description("게시글 내용"),
-					fieldWithPath("data[].memberId").type(JsonFieldType.NUMBER)
-						.description("회원 아이디"),
-					fieldWithPath("data[].stockId").type(JsonFieldType.NUMBER)
-						.description("증권 종목 아이디"),
+					fieldWithPath("data[].countPostLike").type(JsonFieldType.NUMBER)
+						.description("게시글 좋아요 수"),
+					fieldWithPath("data[].countPostComment").type(JsonFieldType.NUMBER)
+						.description("게시글 댓글 수"),
 					fieldWithPath("data[].createdAt").type(JsonFieldType.STRING)
 						.description("게시글 생성일"),
 					fieldWithPath("data[].updatedAt").type(JsonFieldType.STRING)
@@ -267,6 +272,19 @@ class PostControllerTest extends ControllerTestSupport {
 			.article(article)
 			.stockId(1L)
 			.memberId(1L)
+			.createdAt(LocalDateTime.now())
+			.updatedAt(LocalDateTime.now())
+			.build();
+	}
+
+	private MainBoardPostDto createMainBoardPostDto(String article, long id) {
+		return MainBoardPostDto.builder()
+			.postId(1L)
+			.memberId(1L)
+			.username("suyeon")
+			.postArticle("hello")
+			.countPostLike(0)
+			.countPostComment(0)
 			.createdAt(LocalDateTime.now())
 			.updatedAt(LocalDateTime.now())
 			.build();

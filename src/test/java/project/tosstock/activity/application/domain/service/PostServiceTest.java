@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import project.tosstock.IntegrationTestSupport;
 import project.tosstock.activity.adapter.out.entity.PostEntity;
 import project.tosstock.activity.adapter.out.persistence.PostRepository;
+import project.tosstock.activity.application.domain.model.MainBoardPostDto;
 import project.tosstock.activity.application.domain.model.Post;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
@@ -107,7 +108,7 @@ class PostServiceTest extends IntegrationTestSupport {
 		// when
 
 		PageRequest pageable = PageRequest.of(0, 10);
-		List<Post> findPosts = postService.searchPostByArticle(article, pageable);
+		List<MainBoardPostDto> findPosts = postService.searchPostByArticle(article, pageable);
 
 		// then
 		assertThat(findPosts.size()).isEqualTo(1);

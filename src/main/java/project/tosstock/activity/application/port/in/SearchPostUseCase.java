@@ -4,11 +4,12 @@ import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 
+import project.tosstock.activity.application.domain.model.MainBoardPostDto;
 import project.tosstock.activity.application.domain.model.Post;
 
 public interface SearchPostUseCase {
 
-	List<Post> searchPostByArticle(String article, Pageable pageable);
+	List<MainBoardPostDto> searchPostByArticle(String article, Pageable pageable);
 
 	List<Post> searchPostByStockId(Long stockId, Pageable pageable);
 }

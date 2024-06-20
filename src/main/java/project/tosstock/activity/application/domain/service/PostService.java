@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import project.tosstock.activity.application.domain.model.MainBoardPostDto;
 import project.tosstock.activity.application.domain.model.Post;
 import project.tosstock.activity.application.port.in.PostingUseCase;
 import project.tosstock.activity.application.port.in.SearchPostUseCase;
@@ -46,7 +47,7 @@ public class PostService implements PostingUseCase, SearchPostUseCase {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<Post> searchPostByArticle(String article, Pageable pageable) {
+	public List<MainBoardPostDto> searchPostByArticle(String article, Pageable pageable) {
 		return findPostPort.findPostByArticleContaining(article, pageable);
 	}
 
