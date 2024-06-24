@@ -52,4 +52,36 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
 			.limit(limit)
 			.fetch();
 	}
+
+	@Override
+	public List<MainBoardPostDto> findMainBoardPostDtoByStockId(Long stockId, Long offset, Long limit, String sort) {
+		return queryFactory
+			.select(Projections.constructor(MainBoardPostDto.class,
+				QPostEntity.postEntity.id,
+				Projections.constructor(MemberDto.class,
+					QMemberEntity.memberEntity.id,
+					QMemberEntity.memberEntity.username
+				),
+				QPostEntity.postEntity.article,
+				QPostLikeEntity.postLikeEntity.count().intValue(),
+				QCommentEntity.commentEntity.count().intValue(),
+				QPostEntity.postEntity.createdAt,
+				QPostEntity.postEntity.updatedAt
+			))
+			.from(QPostEntity.postEntity)
+			.join(QPostEntity.postEntity.member, QMemberEntity.memberEntity)
+			.leftJoin(QPostLikeEntity.postLikeEntity)
+			.on(QPostLikeEntity.postLikeEntity.post.id.eq(QPostEntity.postEntity.id))
+			.leftJoin(QCommentEntity.commentEntity)
+			.on(QCommentEntity.commentEntity.post.id.eq(QPostEntity.postEntity.id))
+			.where(QPostEntity.postEntity.stock.id.eq(stockId))
+			.where((sort.equalsIgnoreCase("desc") ? QPostEntity.postEntity.id.lt(offset) :
+				QPostEntity.postEntity.id.gt(offset)))
+			.groupBy(QPostEntity.postEntity.id, QMemberEntity.memberEntity.id, QMemberEntity.memberEntity.username,
+				QPostEntity.postEntity.article, QPostEntity.postEntity.createdAt, QPostEntity.postEntity.updatedAt)
+			.orderBy((sort.equalsIgnoreCase("desc") ? QPostEntity.postEntity.createdAt.desc() :
+				QPostEntity.postEntity.createdAt.asc()))
+			.limit(limit)
+			.fetch();
+	}
 }

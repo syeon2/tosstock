@@ -2,7 +2,6 @@ package project.tosstock.activity.application.domain.service;
 
 import java.util.List;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,8 +53,8 @@ public class PostService implements PostingUseCase, SearchPostUseCase {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<Post> searchPostByStockId(Long stockId, Pageable pageable) {
-		return findPostPort.findPostByStockId(stockId, pageable);
+	public List<MainBoardPostDto> searchPostByStockId(Long stockId, CustomPage page) {
+		return findPostPort.findPostByStockId(stockId, page);
 	}
 
 	private void publishNewsFeed(Post post, Long savedPostId) {

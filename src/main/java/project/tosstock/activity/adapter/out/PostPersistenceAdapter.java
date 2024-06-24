@@ -2,10 +2,7 @@ package project.tosstock.activity.adapter.out;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
@@ -69,11 +66,7 @@ public class PostPersistenceAdapter implements SavePostPort, DeletePostPort, Fin
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<Post> findPostByStockId(Long stockId, Pageable pageable) {
-		Page<PostEntity> findPosts = postRepository.findByStockId(stockId, pageable);
-
-		return findPosts.getContent().stream()
-			.map(postMapper::toDomain)
-			.collect(Collectors.toList());
+	public List<MainBoardPostDto> findPostByStockId(Long stockId, CustomPage page) {
+		return postRepository.findMainBoardPostDtoByStockId(stockId, page.getOffset(), page.getLimit(), page.getSort());
 	}
 }
