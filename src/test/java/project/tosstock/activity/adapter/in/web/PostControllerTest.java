@@ -211,6 +211,9 @@ class PostControllerTest extends ControllerTestSupport {
 	void searchPostByArticle() throws Exception {
 		// given
 		String article = "게시글 중 일부입니다.";
+		Long offset = 20L;
+		Long limit = 10L;
+		String sort = "desc";
 
 		given(searchPostUseCase.searchPostByArticle(any(), any()))
 			.willReturn(List.of(createMainBoardPostDto(article, 1L)));
@@ -219,6 +222,9 @@ class PostControllerTest extends ControllerTestSupport {
 		mockMvc.perform(
 				get("/api/v1/posts")
 					.param("article", article)
+					.param("offset", String.valueOf(offset))
+					.param("limit", String.valueOf(limit))
+					.param("sort", sort)
 					.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
 			.andExpect(status().isOk())
@@ -229,7 +235,10 @@ class PostControllerTest extends ControllerTestSupport {
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				queryParameters(
-					parameterWithName("article").description("게시글 내용")
+					parameterWithName("article").description("게시글 내용"),
+					parameterWithName("offset").description("이전 포스트 아이디"),
+					parameterWithName("limit").description("포스트 조회 개수"),
+					parameterWithName("sort").description("정렬")
 				),
 				responseFields(
 					fieldWithPath("status").type(JsonFieldType.NUMBER)

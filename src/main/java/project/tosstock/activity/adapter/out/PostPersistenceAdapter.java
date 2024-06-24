@@ -14,6 +14,7 @@ import project.tosstock.activity.adapter.out.persistence.CommentRepository;
 import project.tosstock.activity.adapter.out.persistence.FollowRepository;
 import project.tosstock.activity.adapter.out.persistence.PostLikeRepository;
 import project.tosstock.activity.adapter.out.persistence.PostRepository;
+import project.tosstock.activity.application.domain.model.CustomPage;
 import project.tosstock.activity.application.domain.model.MainBoardPostDto;
 import project.tosstock.activity.application.domain.model.Post;
 import project.tosstock.activity.application.port.out.DeletePostPort;
@@ -62,17 +63,8 @@ public class PostPersistenceAdapter implements SavePostPort, DeletePostPort, Fin
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<MainBoardPostDto> findPostByArticleContaining(String article, Pageable pageable) {
-		Page<PostEntity> findPosts = postRepository.findByArticleContaining(article, pageable);
-
-		return findPosts.getContent().stream()
-			.map(post -> postMapper.toMainPostDto(
-				post,
-				postLikeRepository.countByPostId(post.getId()),
-				commentRepository.countByPostId(post.getId()))
-			)
-			.collect(Collectors.toList());
-
+	public List<MainBoardPostDto> findPostByArticleContaining(String article, CustomPage page) {
+		return postRepository.findMainBoardPostDtoByArticle(article, page.getOffset(), page.getLimit(), page.getSort());
 	}
 
 	@Override

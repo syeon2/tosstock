@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import project.tosstock.activity.adapter.in.web.request.CreatePostRequest;
 import project.tosstock.activity.adapter.in.web.response.BasicActivityResponse;
+import project.tosstock.activity.application.domain.model.CustomPage;
 import project.tosstock.activity.application.domain.model.MainBoardPostDto;
 import project.tosstock.activity.application.domain.model.Post;
 import project.tosstock.activity.application.port.in.PostingUseCase;
@@ -54,9 +55,12 @@ public class PostController {
 	@GetMapping("/api/v1/posts")
 	public ApiResult<List<MainBoardPostDto>> searchPostByArticle(
 		@RequestParam("article") String article,
-		Pageable pageable
+		@RequestParam("offset") Long offset,
+		@RequestParam("limit") Long limit,
+		@RequestParam("sort") String sort
 	) {
-		List<MainBoardPostDto> posts = searchPostUseCase.searchPostByArticle(article, pageable);
+		List<MainBoardPostDto> posts = searchPostUseCase.searchPostByArticle(article,
+			CustomPage.of(offset, limit, sort));
 
 		return ApiResult.ok(posts);
 	}

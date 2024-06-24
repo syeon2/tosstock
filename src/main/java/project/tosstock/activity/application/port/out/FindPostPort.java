@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 
+import project.tosstock.activity.application.domain.model.CustomPage;
 import project.tosstock.activity.application.domain.model.MainBoardPostDto;
 import project.tosstock.activity.application.domain.model.Post;
 
@@ -12,7 +13,7 @@ public interface FindPostPort {
 
 	Optional<Post> findPostById(Long postId);
 
-	List<MainBoardPostDto> findPostByArticleContaining(String article, Pageable pageable);
+	List<MainBoardPostDto> findPostByArticleContaining(String article, CustomPage page);
 
 	List<Post> findPostByStockId(Long stockId, Pageable pageable);
 }

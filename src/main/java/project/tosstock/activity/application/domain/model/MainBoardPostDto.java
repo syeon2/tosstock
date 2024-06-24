@@ -9,7 +9,7 @@ import lombok.Getter;
 public class MainBoardPostDto {
 
 	private Long postId;
-	private Member member;
+	private MemberDto member;
 	private String postArticle;
 	private Integer countPostLike;
 	private Integer countPostComment;
@@ -20,7 +20,7 @@ public class MainBoardPostDto {
 	private MainBoardPostDto(Long postId, Long memberId, String username, String postArticle, Integer countPostLike,
 		Integer countPostComment, LocalDateTime createdAt, LocalDateTime updatedAt) {
 		this.postId = postId;
-		this.member = new Member(memberId, username);
+		this.member = new MemberDto(memberId, username);
 		this.postArticle = postArticle;
 		this.countPostLike = countPostLike;
 		this.countPostComment = countPostComment;
@@ -28,16 +28,14 @@ public class MainBoardPostDto {
 		this.updatedAt = updatedAt;
 	}
 
-	@Getter
-	private static class Member {
-
-		private Long id;
-		private String username;
-
-		@Builder
-		private Member(Long id, String username) {
-			this.id = id;
-			this.username = username;
-		}
+	public MainBoardPostDto(Long postId, MemberDto member, String postArticle, Integer countPostLike,
+		Integer countPostComment, LocalDateTime createdAt, LocalDateTime updatedAt) {
+		this.postId = postId;
+		this.member = member;
+		this.postArticle = postArticle;
+		this.countPostLike = countPostLike;
+		this.countPostComment = countPostComment;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
 	}
 }

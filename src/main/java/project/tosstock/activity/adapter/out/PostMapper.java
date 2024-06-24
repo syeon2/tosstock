@@ -32,8 +32,8 @@ public class PostMapper {
 
 	public MainBoardPostDto toMainPostDto(
 		PostEntity entity,
-		int countPostLike,
-		int countComment
+		Integer countPostLike,
+		Integer countComment
 	) {
 		return MainBoardPostDto.builder()
 			.postId(entity.getId())

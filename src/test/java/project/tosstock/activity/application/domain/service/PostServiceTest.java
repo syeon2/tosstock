@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import project.tosstock.IntegrationTestSupport;
 import project.tosstock.activity.adapter.out.entity.PostEntity;
 import project.tosstock.activity.adapter.out.persistence.PostRepository;
+import project.tosstock.activity.application.domain.model.CustomPage;
 import project.tosstock.activity.application.domain.model.MainBoardPostDto;
 import project.tosstock.activity.application.domain.model.Post;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
@@ -106,12 +107,11 @@ class PostServiceTest extends IntegrationTestSupport {
 		Long createPostId = postService.createPost(post);
 
 		// when
-
-		PageRequest pageable = PageRequest.of(0, 10);
-		List<MainBoardPostDto> findPosts = postService.searchPostByArticle(article, pageable);
+		CustomPage page = CustomPage.of(10L, 10L, "desc");
+		List<MainBoardPostDto> findPosts = postService.searchPostByArticle(article, page);
 
 		// then
-		assertThat(findPosts.size()).isEqualTo(1);
+		assertThat(findPosts).hasSize(1);
 	}
 
 	@Test
