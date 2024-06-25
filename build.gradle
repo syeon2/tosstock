@@ -131,7 +131,7 @@ clean {
 }
 
 jar {
-    enabled = true
+    enabled = false
 }
 
 build {
