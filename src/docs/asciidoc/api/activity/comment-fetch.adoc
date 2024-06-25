@@ -1,0 +1,8 @@
+[[Fetch-Comment-API]]
+=== Fetch Comment API
+
+include::{snippets}/comment-fetch-postId/http-request.adoc[]
+include::{snippets}/comment-fetch-postId/path-parameters.adoc[]
+
+include::{snippets}/comment-fetch-postId/http-response.adoc[]
+include::{snippets}/comment-fetch-postId/response-fields.adoc[]

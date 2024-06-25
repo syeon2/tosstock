@@ -1,5 +1,5 @@
-[[Member-Follow-API]]
-=== Member-Follow API
+[[Follow-Member-API]]
+=== Follow Member API
 
 include::{snippets}/member-follow/http-request.adoc[]
 include::{snippets}/member-follow/path-parameters.adoc[]
@@ -7,7 +7,9 @@ include::{snippets}/member-follow/path-parameters.adoc[]
 include::{snippets}/member-follow/http-response.adoc[]
 include::{snippets}/member-follow/response-fields.adoc[]
 
-=== Member Unfollow API
+[[Unfollow-Member-API]]
+=== Unfollow Member API
+
 include::{snippets}/member-unfollow/http-request.adoc[]
 include::{snippets}/member-unfollow/path-parameters.adoc[]
 

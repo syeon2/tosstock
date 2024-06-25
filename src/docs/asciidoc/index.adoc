@@ -14,18 +14,26 @@ endif::[]
 
 include::api/member/member-join.adoc[]
 include::api/member/member-email-auth.adoc[]
+include::api/member/member-auth-refresh-token.adoc[]
 include::api/member/member-login.adoc[]
 include::api/member/member-logout.adoc[]
-include::api/member/member-auth-token.adoc[]
-include::api/member/member-change-info.adoc[]
+include::api/member/member-update.adoc[]
 
 [[Activity-API]]
 == Activity API
 
+include::api/activity/post-create.adoc[]
+include::api/activity/post-remove.adoc[]
+include::api/activity/post-search.adoc[]
+
+include::api/activity/comment-create.adoc[]
+include::api/activity/comment-fetch.adoc[]
+include::api/activity/comment-remove.adoc[]
+
+include::api/activity/like-post-like.adoc[]
+include::api/activity/like-post-unlike.adoc[]
+
 include::api/activity/member-follow.adoc[]
-include::api/activity/post-store.adoc[]
-include::api/activity/post-comment.adoc[]
-include::api/activity/like-post.adoc[]
 
 [[Newsfeed-API]]
 == Newsfeed API

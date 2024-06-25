@@ -1,0 +1,8 @@
+[[Like-Post-Unlike-API]]
+=== Like Post Unlike API
+
+include::{snippets}/like-post-unlike/http-request.adoc[]
+include::{snippets}/like-post-unlike/path-parameters.adoc[]
+
+include::{snippets}/like-post-unlike/http-response.adoc[]
+include::{snippets}/like-post-unlike/response-fields.adoc[]

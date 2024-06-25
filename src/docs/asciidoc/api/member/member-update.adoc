@@ -1,12 +1,17 @@
-[[Change-Info-Member]]
-=== Change Info Member API
+[[Update-Info-Member]]
+=== Update Info Member API
 
-==== Change Member Info
 include::{snippets}/member-update-info/http-request.adoc[]
 include::{snippets}/member-update-info/path-parameters.adoc[]
 include::{snippets}/member-update-info/request-fields.adoc[]
 
-==== Change Password API
+include::{snippets}/member-update-info/http-response.adoc[]
+include::{snippets}/member-update-info/response-fields.adoc[]
+
+
+[[Update-Password-Member]]
+=== Update Password Member API
+
 include::{snippets}/member-update-password/http-request.adoc[]
 include::{snippets}/member-update-password/request-fields.adoc[]
 

@@ -1,0 +1,8 @@
+[[Create-Comment-API]]
+=== Create Comment API
+
+include::{snippets}/comment-create/http-request.adoc[]
+include::{snippets}/comment-create/request-fields.adoc[]
+
+include::{snippets}/comment-create/http-response.adoc[]
+include::{snippets}/comment-create/response-fields.adoc[]

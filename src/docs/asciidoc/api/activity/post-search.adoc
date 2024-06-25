@@ -1,0 +1,18 @@
+[[Search-Post-By-Article-API]]
+=== Search Post By Article API
+
+include::{snippets}/post-search-article/http-request.adoc[]
+include::{snippets}/post-search-article/query-parameters.adoc[]
+
+include::{snippets}/post-search-article/http-response.adoc[]
+include::{snippets}/post-search-article/response-fields.adoc[]
+
+[[Search-Post-By-StockId-API]]
+=== Search Post By Stock Id API
+
+include::{snippets}/post-search-stockId/http-request.adoc[]
+include::{snippets}/post-search-stockId/path-parameters.adoc[]
+include::{snippets}/post-search-stockId/query-parameters.adoc[]
+
+include::{snippets}/post-search-stockId/http-response.adoc[]
+include::{snippets}/post-search-stockId/response-fields.adoc[]

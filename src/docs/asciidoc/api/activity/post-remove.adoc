@@ -1,0 +1,7 @@
+[[Remove-Post-API]]
+=== Remove Post API
+
+include::{snippets}/post-remove/path-parameters.adoc[]
+
+include::{snippets}/post-remove/http-response.adoc[]
+include::{snippets}/post-remove/response-fields.adoc[]

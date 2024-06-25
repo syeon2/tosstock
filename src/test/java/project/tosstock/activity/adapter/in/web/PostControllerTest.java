@@ -189,6 +189,11 @@ class PostControllerTest extends ControllerTestSupport {
 				pathParameters(
 					parameterWithName("stockId").description("증권 종목 아이디")
 				),
+				queryParameters(
+					parameterWithName("offset").description("이전 포스트 아이디"),
+					parameterWithName("limit").description("포스트 조회 개수"),
+					parameterWithName("sort").description("정렬")
+				),
 				responseFields(
 					fieldWithPath("status").type(JsonFieldType.NUMBER)
 						.description("상태 코드"),

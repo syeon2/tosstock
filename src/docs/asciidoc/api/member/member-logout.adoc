@@ -2,7 +2,7 @@
 === Logout Member API
 
 include::{snippets}/member-logout/http-request.adoc[]
-include::{snippets}/member-logout/response-fields.adoc[]
+include::{snippets}/member-logout/request-fields.adoc[]
 
 include::{snippets}/member-logout/http-response.adoc[]
 include::{snippets}/member-logout/response-fields.adoc[]
