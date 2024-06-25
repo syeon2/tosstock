@@ -1,5 +1,8 @@
 package project.tosstock.activity.application.domain.service;
 
+import java.util.List;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -7,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import project.tosstock.activity.application.domain.model.Comment;
 import project.tosstock.activity.application.port.in.CommentUseCase;
 import project.tosstock.activity.application.port.out.DeleteCommentPort;
+import project.tosstock.activity.application.port.out.FindCommentPort;
 import project.tosstock.activity.application.port.out.SaveCommentPort;
 import project.tosstock.newsfeed.application.domain.model.FeedType;
 import project.tosstock.newsfeed.application.domain.model.NewsFeed;
@@ -19,6 +23,7 @@ public class CommentService implements CommentUseCase {
 
 	private final SaveCommentPort saveCommentPort;
 	private final DeleteCommentPort deleteCommentPort;
+	private final FindCommentPort findCommentPort;
 
 	private final SaveNewsFeedPort saveNewsFeedPort;
 	private final DeleteNewsFeedPort deleteNewsFeedPort;
@@ -40,6 +45,12 @@ public class CommentService implements CommentUseCase {
 		deleteNewsFeedPort.delete(deletedCommentId, FeedType.COMMENT);
 
 		return deletedCommentId;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Comment> fetchPostComments(Long postId, Pageable pageable) {
+		return findCommentPort.findCommentByPostId(postId, pageable);
 	}
 
 	private void publishNewsFeed(Comment comment, Long savedCommentId) {

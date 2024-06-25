@@ -22,6 +22,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import project.tosstock.common.wrapper.BaseEntity;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
+import project.tosstock.stock.adpater.out.entity.StockEntity;
 
 @Getter
 @Entity
@@ -31,11 +32,11 @@ public class PostEntity extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "post_id", columnDefinition = "bigint")
+	@Column(name = "post_id", columnDefinition = "bigint", nullable = false)
 	private Long id;
 
 	@Lob
-	@Column(name = "article", columnDefinition = "text")
+	@Column(name = "article", columnDefinition = "text", nullable = false)
 	private String article;
 
 	@Setter
@@ -43,8 +44,10 @@ public class PostEntity extends BaseEntity {
 	@JoinColumn(name = "member_id")
 	private MemberEntity member;
 
-	@Column(name = "stock_id", columnDefinition = "bigint")
-	private Long stockId;
+	@Setter
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "stock_id")
+	private StockEntity stock;
 
 	@OneToMany(
 		mappedBy = "post",
@@ -53,18 +56,11 @@ public class PostEntity extends BaseEntity {
 		fetch = FetchType.LAZY)
 	private List<CommentEntity> comments = new ArrayList<>();
 
-	@OneToMany(
-		mappedBy = "post",
-		cascade = CascadeType.REMOVE,
-		orphanRemoval = true,
-		fetch = FetchType.LAZY)
-	private List<PostLikeEntity> postLikes = new ArrayList<>();
-
 	@Builder
-	private PostEntity(Long id, String article, MemberEntity member, Long stockId) {
+	private PostEntity(Long id, String article, MemberEntity member, StockEntity stock) {
 		this.id = id;
 		this.article = article;
 		this.member = member;
-		this.stockId = stockId;
+		this.stock = stock;
 	}
 }

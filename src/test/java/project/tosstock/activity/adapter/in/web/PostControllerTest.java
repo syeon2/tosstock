@@ -1,5 +1,6 @@
 package project.tosstock.activity.adapter.in.web;
 
+import static org.mockito.BDDMockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
@@ -7,6 +8,9 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,6 +24,8 @@ import org.springframework.restdocs.payload.JsonFieldType;
 
 import project.tosstock.ControllerTestSupport;
 import project.tosstock.activity.adapter.in.web.request.CreatePostRequest;
+import project.tosstock.activity.application.domain.model.MainBoardPostDto;
+import project.tosstock.activity.application.domain.model.Post;
 import project.tosstock.activity.application.port.in.PostingUseCase;
 import project.tosstock.activity.application.port.in.SearchPostUseCase;
 import project.tosstock.common.config.web.WebConfig;
@@ -153,11 +159,143 @@ class PostControllerTest extends ControllerTestSupport {
 			));
 	}
 
+	@Test
+	@DisplayName(value = "증권 종목 아이디를 기반으로 게시글을 조회합니다.")
+	void searchPostByStockId() throws Exception {
+		// given
+		Long stockId = 1L;
+
+		given(searchPostUseCase.searchPostByStockId(any(), any()))
+			.willReturn(List.of(createPostDomain("testing", stockId)));
+
+		// when  // then
+		mockMvc.perform(
+				get("/api/v1/posts/stock/{stockId}", stockId)
+					.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.status").isNumber())
+			.andExpect(jsonPath("$.message").isEmpty())
+			.andExpect(jsonPath("$.data").isArray())
+			.andDo(document("post-search-stockId",
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				pathParameters(
+					parameterWithName("stockId").description("증권 종목 아이디")
+				),
+				responseFields(
+					fieldWithPath("status").type(JsonFieldType.NUMBER)
+						.description("상태 코드"),
+					fieldWithPath("message").type(JsonFieldType.NULL)
+						.description("메시지"),
+					fieldWithPath("data").type(JsonFieldType.ARRAY)
+						.description("응답 데이터 DTO"),
+					fieldWithPath("data[].id").type(JsonFieldType.NUMBER)
+						.description("게시글 아이디"),
+					fieldWithPath("data[].article").type(JsonFieldType.STRING)
+						.description("게시글 내용"),
+					fieldWithPath("data[].memberId").type(JsonFieldType.NUMBER)
+						.description("회원 아이디"),
+					fieldWithPath("data[].stockId").type(JsonFieldType.NUMBER)
+						.description("증권 종목 아이디"),
+					fieldWithPath("data[].createdAt").type(JsonFieldType.STRING)
+						.description("게시글 생성일"),
+					fieldWithPath("data[].updatedAt").type(JsonFieldType.STRING)
+						.description("게시글 수정일")
+				))
+			);
+	}
+
+	@Test
+	@DisplayName(value = "텍스트를 기반으로 게시글을 조회합니다.")
+	void searchPostByArticle() throws Exception {
+		// given
+		String article = "게시글 중 일부입니다.";
+		Long offset = 20L;
+		Long limit = 10L;
+		String sort = "desc";
+
+		given(searchPostUseCase.searchPostByArticle(any(), any()))
+			.willReturn(List.of(createMainBoardPostDto(article, 1L)));
+
+		// when  // then
+		mockMvc.perform(
+				get("/api/v1/posts")
+					.param("article", article)
+					.param("offset", String.valueOf(offset))
+					.param("limit", String.valueOf(limit))
+					.param("sort", sort)
+					.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.status").isNumber())
+			.andExpect(jsonPath("$.message").isEmpty())
+			.andExpect(jsonPath("$.data").isArray())
+			.andDo(document("post-search-article",
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				queryParameters(
+					parameterWithName("article").description("게시글 내용"),
+					parameterWithName("offset").description("이전 포스트 아이디"),
+					parameterWithName("limit").description("포스트 조회 개수"),
+					parameterWithName("sort").description("정렬")
+				),
+				responseFields(
+					fieldWithPath("status").type(JsonFieldType.NUMBER)
+						.description("상태 코드"),
+					fieldWithPath("message").type(JsonFieldType.NULL)
+						.description("메시지"),
+					fieldWithPath("data").type(JsonFieldType.ARRAY)
+						.description("응답 데이터 DTO"),
+					fieldWithPath("data[].postId").type(JsonFieldType.NUMBER)
+						.description("게시글 아이디"),
+					fieldWithPath("data[].member.id").type(JsonFieldType.NUMBER)
+						.description("게시글 작성 회원 아이디"),
+					fieldWithPath("data[].member.username").type(JsonFieldType.STRING)
+						.description("게시글 작성 회원 이름"),
+					fieldWithPath("data[].postArticle").type(JsonFieldType.STRING)
+						.description("게시글 내용"),
+					fieldWithPath("data[].countPostLike").type(JsonFieldType.NUMBER)
+						.description("게시글 좋아요 수"),
+					fieldWithPath("data[].countPostComment").type(JsonFieldType.NUMBER)
+						.description("게시글 댓글 수"),
+					fieldWithPath("data[].createdAt").type(JsonFieldType.STRING)
+						.description("게시글 생성일"),
+					fieldWithPath("data[].updatedAt").type(JsonFieldType.STRING)
+						.description("게시글 수정일")
+				))
+			);
+	}
+
 	private CreatePostRequest createPostRequest(String article, Long memberId, long stockId) {
 		return CreatePostRequest.builder()
 			.article(article)
 			.memberId(memberId)
 			.stockId(stockId)
+			.build();
+	}
+
+	private Post createPostDomain(String article, long id) {
+		return Post.builder()
+			.id(id)
+			.article(article)
+			.stockId(1L)
+			.memberId(1L)
+			.createdAt(LocalDateTime.now())
+			.updatedAt(LocalDateTime.now())
+			.build();
+	}
+
+	private MainBoardPostDto createMainBoardPostDto(String article, long id) {
+		return MainBoardPostDto.builder()
+			.postId(1L)
+			.memberId(1L)
+			.username("suyeon")
+			.postArticle("hello")
+			.countPostLike(0)
+			.countPostComment(0)
+			.createdAt(LocalDateTime.now())
+			.updatedAt(LocalDateTime.now())
 			.build();
 	}
 }

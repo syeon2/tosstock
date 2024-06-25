@@ -2,7 +2,6 @@ package project.tosstock.activity.adapter.in.web;
 
 import java.util.List;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +14,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import project.tosstock.activity.adapter.in.web.request.CreatePostRequest;
 import project.tosstock.activity.adapter.in.web.response.BasicActivityResponse;
-import project.tosstock.activity.application.domain.model.Post;
+import project.tosstock.activity.application.domain.model.CustomPage;
+import project.tosstock.activity.application.domain.model.MainBoardPostDto;
 import project.tosstock.activity.application.port.in.PostingUseCase;
 import project.tosstock.activity.application.port.in.SearchPostUseCase;
 import project.tosstock.common.annotation.WebAdapter;
@@ -43,9 +43,28 @@ public class PostController {
 		return ApiResult.ok(BasicActivityResponse.of(removedPostId));
 	}
 
+	@GetMapping("/api/v1/posts/stock/{stockId}")
+	public ApiResult<List<MainBoardPostDto>> searchPostsByStockId(
+		@PathVariable("stockId") Long stockId,
+		@RequestParam("offset") Long offset,
+		@RequestParam("limit") Long limit,
+		@RequestParam("sort") String sort
+	) {
+		List<MainBoardPostDto> posts = searchPostUseCase.searchPostByStockId(stockId,
+			CustomPage.of(offset, limit, sort));
+
+		return ApiResult.ok(posts);
+	}
+
 	@GetMapping("/api/v1/posts")
-	public ApiResult<List<Post>> searchPostByArticle(@RequestParam("article") String article, Pageable pageable) {
-		List<Post> posts = searchPostUseCase.searchPostByArticle(article, pageable);
+	public ApiResult<List<MainBoardPostDto>> searchPostByArticle(
+		@RequestParam("article") String article,
+		@RequestParam("offset") Long offset,
+		@RequestParam("limit") Long limit,
+		@RequestParam("sort") String sort
+	) {
+		List<MainBoardPostDto> posts = searchPostUseCase.searchPostByArticle(article,
+			CustomPage.of(offset, limit, sort));
 
 		return ApiResult.ok(posts);
 	}

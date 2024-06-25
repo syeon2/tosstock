@@ -2,6 +2,8 @@ package project.tosstock.activity.application.domain.service;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.time.LocalDateTime;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +20,9 @@ import project.tosstock.member.adapter.out.persistence.MemberRepository;
 import project.tosstock.newsfeed.application.port.in.NewsFeedFilterUseCase;
 import project.tosstock.newsfeed.application.port.out.DeleteNewsFeedPort;
 import project.tosstock.newsfeed.application.port.out.SaveNewsFeedPort;
+import project.tosstock.stock.adpater.out.entity.StockEntity;
+import project.tosstock.stock.adpater.out.persistence.StockRepository;
+import project.tosstock.stock.application.domain.model.Market;
 
 class PostLikeServiceTest extends IntegrationTestSupport {
 
@@ -29,6 +34,9 @@ class PostLikeServiceTest extends IntegrationTestSupport {
 
 	@Autowired
 	private PostRepository postRepository;
+
+	@Autowired
+	private StockRepository stockRepository;
 
 	@Autowired
 	private PostLikeRepository postLikeRepository;
@@ -45,6 +53,7 @@ class PostLikeServiceTest extends IntegrationTestSupport {
 	@BeforeEach
 	void before() {
 		postLikeRepository.deleteAllInBatch();
+		stockRepository.deleteAllInBatch();
 		postRepository.deleteAllInBatch();
 		memberRepository.deleteAllInBatch();
 	}
@@ -55,7 +64,8 @@ class PostLikeServiceTest extends IntegrationTestSupport {
 	void likePost() {
 		// given
 		MemberEntity savedMember = memberRepository.save(createMember("wwww@wwww"));
-		PostEntity savedPost = postRepository.save(createPost(savedMember));
+		StockEntity savedStock = stockRepository.save(createStock());
+		PostEntity savedPost = postRepository.save(createPost(savedMember, savedStock));
 
 		// when
 		Long memberId = savedMember.getId();
@@ -76,7 +86,8 @@ class PostLikeServiceTest extends IntegrationTestSupport {
 	void unlike_post() {
 		// given
 		MemberEntity savedMember = memberRepository.save(createMember("wwww@wwww"));
-		PostEntity savedPost = postRepository.save(createPost(savedMember));
+		StockEntity savedStock = stockRepository.save(createStock());
+		PostEntity savedPost = postRepository.save(createPost(savedMember, savedStock));
 
 		Long memberId = savedMember.getId();
 		Long postId = savedPost.getId();
@@ -92,10 +103,11 @@ class PostLikeServiceTest extends IntegrationTestSupport {
 		assertThat(postLikeRepository.findAll()).isEmpty();
 	}
 
-	private PostEntity createPost(MemberEntity member) {
+	private PostEntity createPost(MemberEntity member, StockEntity stock) {
 		return PostEntity.builder()
 			.article("hello")
 			.member(member)
+			.stock(stock)
 			.build();
 	}
 
@@ -105,6 +117,15 @@ class PostLikeServiceTest extends IntegrationTestSupport {
 			.email(email)
 			.password("12345678")
 			.phoneNumber("01000001111")
+			.build();
+	}
+
+	private StockEntity createStock() {
+		return StockEntity.builder()
+			.name("hello")
+			.market(Market.KOSDOQ)
+			.symbol("111")
+			.originTime(LocalDateTime.now())
 			.build();
 	}
 }

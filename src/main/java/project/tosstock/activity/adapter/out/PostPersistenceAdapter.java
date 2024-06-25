@@ -2,14 +2,17 @@ package project.tosstock.activity.adapter.out;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import project.tosstock.activity.adapter.out.entity.PostEntity;
+import project.tosstock.activity.adapter.out.persistence.CommentRepository;
+import project.tosstock.activity.adapter.out.persistence.FollowRepository;
+import project.tosstock.activity.adapter.out.persistence.PostLikeRepository;
 import project.tosstock.activity.adapter.out.persistence.PostRepository;
+import project.tosstock.activity.application.domain.model.CustomPage;
+import project.tosstock.activity.application.domain.model.MainBoardPostDto;
 import project.tosstock.activity.application.domain.model.Post;
 import project.tosstock.activity.application.port.out.DeletePostPort;
 import project.tosstock.activity.application.port.out.FindPostPort;
@@ -17,6 +20,8 @@ import project.tosstock.activity.application.port.out.SavePostPort;
 import project.tosstock.common.annotation.PersistenceAdapter;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
+import project.tosstock.stock.adpater.out.entity.StockEntity;
+import project.tosstock.stock.adpater.out.persistence.StockRepository;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
@@ -24,13 +29,20 @@ public class PostPersistenceAdapter implements SavePostPort, DeletePostPort, Fin
 
 	private final PostRepository postRepository;
 	private final MemberRepository memberRepository;
+	private final StockRepository stockRepository;
+
+	private final PostLikeRepository postLikeRepository;
+	private final CommentRepository commentRepository;
+	private final FollowRepository followRepository;
 
 	private final PostMapper postMapper;
 
 	@Override
 	public Long save(Post post) {
 		MemberEntity proxyMember = memberRepository.getReferenceById(post.getMemberId());
-		PostEntity savedPost = postRepository.save(postMapper.toEntity(proxyMember, post));
+		StockEntity proxyStock = stockRepository.getReferenceById(post.getStockId());
+
+		PostEntity savedPost = postRepository.save(postMapper.toEntity(proxyMember, proxyStock, post));
 
 		return savedPost.getId();
 	}
@@ -47,11 +59,14 @@ public class PostPersistenceAdapter implements SavePostPort, DeletePostPort, Fin
 	}
 
 	@Override
-	public List<Post> findPostByArticleContaining(String article, Pageable pageable) {
-		Page<PostEntity> findPosts = postRepository.findByArticleContaining(article, pageable);
+	@Transactional(readOnly = true)
+	public List<MainBoardPostDto> findPostByArticleContaining(String article, CustomPage page) {
+		return postRepository.findMainBoardPostDtoByArticle(article, page.getOffset(), page.getLimit(), page.getSort());
+	}
 
-		return findPosts.getContent().stream()
-			.map(postMapper::toDomain)
-			.collect(Collectors.toList());
+	@Override
+	@Transactional(readOnly = true)
+	public List<MainBoardPostDto> findPostByStockId(Long stockId, CustomPage page) {
+		return postRepository.findMainBoardPostDtoByStockId(stockId, page.getOffset(), page.getLimit(), page.getSort());
 	}
 }
