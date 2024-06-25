@@ -107,6 +107,8 @@ asciidoctor {
 
     baseDirFollowsSourceDir()
     dependsOn test
+
+    delete file('src/main/resources/static/docs')
 }
 
 bootJar {
@@ -126,6 +128,10 @@ tasks.register('copyDocument', Copy) {
 // QueryDSL
 clean {
     delete files('src/main/generated', 'docker/mysql', 'docker/redis')
+}
+
+jar {
+    enabled = true
 }
 
 build {
