@@ -14,13 +14,13 @@
 
 ### 🌱 Architecture
 
-<a href="https://ibb.co/jhddSg4"><img src="https://i.ibb.co/H700jng/Tosstock-2.jpg" alt="Tosstock-2" border="0"></a>
+<a href="https://ibb.co/gjRckB9"><img src="https://i.ibb.co/Ss3ZF9y/tosstock-architecture-v1.jpg" alt="tosstock-architecture-v1" border="0"></a>
 
 ---
 
 ### 🌱 ERD
 
-<a href="https://ibb.co/qxBRQgx"><img src="https://i.ibb.co/M9nR019/tosstock-erd-v1.png" alt="tosstock-erd-v1" border="0"></a>
+<a href="https://ibb.co/MZKhkZR"><img src="https://i.ibb.co/k5zy25h/tosstock-erd-v1.png" alt="tosstock-erd-v1" border="0"></a>
 
 ---
 
@@ -37,3 +37,6 @@
 ### 🌱 문제 및 트러블슈팅
 
 - [인증/인가와 지속적인 로그인 유지를 위해 JWT 토큰 개념 활용](https://medium.com/@gsy4568/4-tosstock-project-jwt-%EC%9D%B8%EC%A6%9D-%EC%9D%B8%EA%B0%80-7f82943b16e1)
+- [JPA 변경 감지 vs QueryDSL : 회원 정보 수정 최적화 방안](https://syeon2.github.io/devlog/tosstock-improve-updatequery.html)
+- [@Async를 활용한 이메일 수신 API 개선 방안](https://syeon2.github.io/devlog/tosstock-mail-sender.html)
+- [JPA의 N + 1 Query issue 성능 개선 사례](https://syeon2.github.io/devlog/tosstock-query-n+1.html)
