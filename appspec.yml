@@ -1,11 +1,8 @@
 version: 0.0
 os: linux
-
 files:
   - source: /
-    destination: /home/ec2-user/action
-    overwrite: yes
-
+    destination: /home/ec2-user/build/
 permissions:
   - object: /
     pattern: "**"
@@ -13,7 +10,7 @@ permissions:
     group: ec2-user
 
 hooks:
-  ApplicationStart:
-    - location: scripts/deploy.sh
+  AfterInstall:
+    - location: start.sh
       timeout: 60
       runas: ec2-user
