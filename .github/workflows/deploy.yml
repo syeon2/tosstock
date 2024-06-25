@@ -27,10 +27,12 @@ jobs:
         with:
           java-version: '17'
           distribution: 'corretto'
+      - name: .env setting
+        run: echo "TOSSTOCK_APP_ENV=${{ secrets.TOSSTOCK_APP_ENV }}" >> .env
       - name: give execution role to gradlew
         run: chmod +x ./gradlew
       - name: build project
-        run: ./gradlew clean build -x test -x asciidoctor
+        run: ./gradlew clean build -i
       - name: AWS credential configuration
         uses: aws-actions/configure-aws-credentials@v1
         with:
