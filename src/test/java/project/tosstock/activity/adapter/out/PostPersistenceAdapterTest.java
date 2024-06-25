@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import project.tosstock.IntegrationTestSupport;
@@ -18,6 +17,8 @@ import project.tosstock.activity.adapter.out.entity.PostEntity;
 import project.tosstock.activity.adapter.out.persistence.CommentRepository;
 import project.tosstock.activity.adapter.out.persistence.PostLikeRepository;
 import project.tosstock.activity.adapter.out.persistence.PostRepository;
+import project.tosstock.activity.application.domain.model.CustomPage;
+import project.tosstock.activity.application.domain.model.MainBoardPostDto;
 import project.tosstock.activity.application.domain.model.Post;
 import project.tosstock.member.adapter.out.entity.MemberEntity;
 import project.tosstock.member.adapter.out.persistence.MemberRepository;
@@ -135,12 +136,12 @@ class PostPersistenceAdapterTest extends IntegrationTestSupport {
 		Long savePost2Id = postPersistenceAdapter.save(post2);
 
 		// when
-		PageRequest pageable = PageRequest.of(0, 10);
-		List<Post> findPosts = postPersistenceAdapter.findPostByStockId(savedStock.getId(), pageable);
+		CustomPage page = CustomPage.of(10L, 10L, "desc");
+		List<MainBoardPostDto> findPosts = postPersistenceAdapter.findPostByStockId(savedStock.getId(), page);
 
 		// then
 		assertThat(findPosts).hasSize(2)
-			.extracting("article")
+			.extracting("postArticle")
 			.containsExactlyInAnyOrder(article1, article2);
 	}
 
@@ -160,12 +161,12 @@ class PostPersistenceAdapterTest extends IntegrationTestSupport {
 		Long savePost2Id = postPersistenceAdapter.save(post2);
 
 		// when
-		PageRequest pageable = PageRequest.of(0, 10);
-		List<Post> findPosts = postPersistenceAdapter.findPostByStockId(savedStock.getId(), pageable);
+		CustomPage page = CustomPage.of(10L, 10L, "desc");
+		List<MainBoardPostDto> findPosts = postPersistenceAdapter.findPostByStockId(savedStock.getId(), page);
 
 		// then
 		assertThat(findPosts).hasSize(2)
-			.extracting("article")
+			.extracting("postArticle")
 			.containsExactlyInAnyOrder(article1, article2);
 	}
 

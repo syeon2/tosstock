@@ -11,7 +11,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.PageRequest;
 
 import project.tosstock.IntegrationTestSupport;
 import project.tosstock.activity.adapter.out.entity.PostEntity;
@@ -128,12 +127,12 @@ class PostServiceTest extends IntegrationTestSupport {
 
 		// when
 
-		PageRequest pageable = PageRequest.of(0, 10);
-		List<Post> findPosts = postService.searchPostByStockId(savedStock.getId(), pageable);
+		CustomPage page = CustomPage.of(10L, 10L, "desc");
+		List<MainBoardPostDto> findPosts = postService.searchPostByStockId(savedStock.getId(), page);
 
 		// then
 		assertThat(findPosts).hasSize(2)
-			.extracting("id")
+			.extracting("postId")
 			.containsExactlyInAnyOrder(savedPost1, savedPost2);
 	}
 

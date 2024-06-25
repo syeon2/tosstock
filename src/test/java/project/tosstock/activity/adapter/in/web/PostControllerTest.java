@@ -164,13 +164,19 @@ class PostControllerTest extends ControllerTestSupport {
 	void searchPostByStockId() throws Exception {
 		// given
 		Long stockId = 1L;
+		Long offset = 20L;
+		Long limit = 10L;
+		String sort = "desc";
 
 		given(searchPostUseCase.searchPostByStockId(any(), any()))
-			.willReturn(List.of(createPostDomain("testing", stockId)));
+			.willReturn(List.of(createMainBoardPostDto("testing", stockId)));
 
 		// when  // then
 		mockMvc.perform(
 				get("/api/v1/posts/stock/{stockId}", stockId)
+					.param("offset", String.valueOf(offset))
+					.param("limit", String.valueOf(limit))
+					.param("sort", sort)
 					.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
 			.andExpect(status().isOk())
@@ -190,14 +196,18 @@ class PostControllerTest extends ControllerTestSupport {
 						.description("메시지"),
 					fieldWithPath("data").type(JsonFieldType.ARRAY)
 						.description("응답 데이터 DTO"),
-					fieldWithPath("data[].id").type(JsonFieldType.NUMBER)
+					fieldWithPath("data[].postId").type(JsonFieldType.NUMBER)
 						.description("게시글 아이디"),
-					fieldWithPath("data[].article").type(JsonFieldType.STRING)
+					fieldWithPath("data[].member.id").type(JsonFieldType.NUMBER)
+						.description("게시글 작성 회원 아이디"),
+					fieldWithPath("data[].member.username").type(JsonFieldType.STRING)
+						.description("게시글 작성 회원 이름"),
+					fieldWithPath("data[].postArticle").type(JsonFieldType.STRING)
 						.description("게시글 내용"),
-					fieldWithPath("data[].memberId").type(JsonFieldType.NUMBER)
-						.description("회원 아이디"),
-					fieldWithPath("data[].stockId").type(JsonFieldType.NUMBER)
-						.description("증권 종목 아이디"),
+					fieldWithPath("data[].countPostLike").type(JsonFieldType.NUMBER)
+						.description("게시글 좋아요 수"),
+					fieldWithPath("data[].countPostComment").type(JsonFieldType.NUMBER)
+						.description("게시글 댓글 수"),
 					fieldWithPath("data[].createdAt").type(JsonFieldType.STRING)
 						.description("게시글 생성일"),
 					fieldWithPath("data[].updatedAt").type(JsonFieldType.STRING)
