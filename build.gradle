@@ -97,6 +97,10 @@ test {
     useJUnitPlatform()
 }
 
+asciidoctor.doFirst {
+    delete file('src/main/resources/static/docs')
+}
+
 asciidoctor {
     inputs.dir snippetsDir
     configurations 'asciidoctorExt'
@@ -107,8 +111,6 @@ asciidoctor {
 
     baseDirFollowsSourceDir()
     dependsOn test
-
-    delete file('src/main/resources/static/docs')
 }
 
 bootJar {
