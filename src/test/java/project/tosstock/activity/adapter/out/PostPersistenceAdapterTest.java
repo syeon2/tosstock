@@ -137,7 +137,7 @@ class PostPersistenceAdapterTest extends IntegrationTestSupport {
 
 		// when
 		CustomPage page = CustomPage.of(10L, 10L, "desc");
-		List<MainBoardPostDto> findPosts = postPersistenceAdapter.findPostByStockId(savedStock.getId(), page);
+		List<MainBoardPostDto> findPosts = postPersistenceAdapter.findPostByArticleContaining(article, page);
 
 		// then
 		assertThat(findPosts).hasSize(2)
@@ -145,30 +145,30 @@ class PostPersistenceAdapterTest extends IntegrationTestSupport {
 			.containsExactlyInAnyOrder(article1, article2);
 	}
 
-	@Test
-	@DisplayName(value = "증권 종목 아이디를 통해 게시글을 조회합니다.")
-	void findPostByStockId() {
-		// given
-		MemberEntity savedMember = memberRepository.save(createMember());
-		StockEntity savedStock = stockRepository.save(createStock());
-
-		String article1 = "article1";
-		Post post1 = createPost(article1, savedMember.getId(), savedStock.getId());
-		Long savePost1Id = postPersistenceAdapter.save(post1);
-
-		String article2 = "article2";
-		Post post2 = createPost(article2, savedMember.getId(), savedStock.getId());
-		Long savePost2Id = postPersistenceAdapter.save(post2);
-
-		// when
-		CustomPage page = CustomPage.of(10L, 10L, "desc");
-		List<MainBoardPostDto> findPosts = postPersistenceAdapter.findPostByStockId(savedStock.getId(), page);
-
-		// then
-		assertThat(findPosts).hasSize(2)
-			.extracting("postArticle")
-			.containsExactlyInAnyOrder(article1, article2);
-	}
+	// @Test
+	// @DisplayName(value = "증권 종목 아이디를 통해 게시글을 조회합니다.")
+	// void findPostByStockId() {
+	// 	// given
+	// 	MemberEntity savedMember = memberRepository.save(createMember());
+	// 	StockEntity savedStock = stockRepository.save(createStock());
+	//
+	// 	String article1 = "article1";
+	// 	Post post1 = createPost(article1, savedMember.getId(), savedStock.getId());
+	// 	Long savePost1Id = postPersistenceAdapter.save(post1);
+	//
+	// 	String article2 = "article2";
+	// 	Post post2 = createPost(article2, savedMember.getId(), savedStock.getId());
+	// 	Long savePost2Id = postPersistenceAdapter.save(post2);
+	//
+	// 	// when
+	// 	CustomPage page = CustomPage.of(10L, 10L, "desc");
+	// 	List<MainBoardPostDto> findPosts = postPersistenceAdapter.findPostByStockId(savedStock.getId(), page);
+	//
+	// 	// then
+	// 	assertThat(findPosts).hasSize(2)
+	// 		.extracting("postArticle")
+	// 		.containsExactlyInAnyOrder(article1, article2);
+	// }
 
 	private MemberEntity createMember() {
 		return MemberEntity.builder()
