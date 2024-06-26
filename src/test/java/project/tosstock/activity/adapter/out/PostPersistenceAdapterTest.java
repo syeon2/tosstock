@@ -137,7 +137,7 @@ class PostPersistenceAdapterTest extends IntegrationTestSupport {
 
 		// when
 		CustomPage page = CustomPage.of(10L, 10L, "desc");
-		List<MainBoardPostDto> findPosts = postPersistenceAdapter.findPostByArticleContaining(article, page);
+		List<MainBoardPostDto> findPosts = postPersistenceAdapter.findPostByArticleContaining(1L, article, page);
 
 		// then
 		assertThat(findPosts).hasSize(2)

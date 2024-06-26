@@ -107,7 +107,7 @@ class PostServiceTest extends IntegrationTestSupport {
 
 		// when
 		CustomPage page = CustomPage.of(10L, 10L, "desc");
-		List<MainBoardPostDto> findPosts = postService.searchPostByArticle(article, page);
+		List<MainBoardPostDto> findPosts = postService.searchPostByArticle(1L, article, page);
 
 		// then
 		assertThat(findPosts).hasSize(1);
@@ -128,7 +128,7 @@ class PostServiceTest extends IntegrationTestSupport {
 		// when
 
 		CustomPage page = CustomPage.of(10L, 10L, "desc");
-		List<MainBoardPostDto> findPosts = postService.searchPostByStockId(savedStock.getId(), page);
+		List<MainBoardPostDto> findPosts = postService.searchPostByStockId(1L, savedStock.getId(), page);
 
 		// then
 		assertThat(findPosts).hasSize(2)

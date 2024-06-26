@@ -46,11 +46,12 @@ public class PostController {
 	@GetMapping("/api/v1/posts/stock/{stockId}")
 	public ApiResult<List<MainBoardPostDto>> searchPostsByStockId(
 		@PathVariable("stockId") Long stockId,
+		@RequestParam("memberId") Long memberId,
 		@RequestParam("offset") Long offset,
 		@RequestParam("limit") Long limit,
 		@RequestParam("sort") String sort
 	) {
-		List<MainBoardPostDto> posts = searchPostUseCase.searchPostByStockId(stockId,
+		List<MainBoardPostDto> posts = searchPostUseCase.searchPostByStockId(memberId, stockId,
 			CustomPage.of(offset, limit, sort));
 
 		return ApiResult.ok(posts);
@@ -58,12 +59,13 @@ public class PostController {
 
 	@GetMapping("/api/v1/posts")
 	public ApiResult<List<MainBoardPostDto>> searchPostByArticle(
+		@RequestParam("memberId") Long memberId,
 		@RequestParam("article") String article,
 		@RequestParam("offset") Long offset,
 		@RequestParam("limit") Long limit,
 		@RequestParam("sort") String sort
 	) {
-		List<MainBoardPostDto> posts = searchPostUseCase.searchPostByArticle(article,
+		List<MainBoardPostDto> posts = searchPostUseCase.searchPostByArticle(memberId, article,
 			CustomPage.of(offset, limit, sort));
 
 		return ApiResult.ok(posts);

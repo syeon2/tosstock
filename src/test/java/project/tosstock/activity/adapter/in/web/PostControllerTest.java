@@ -25,7 +25,6 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import project.tosstock.ControllerTestSupport;
 import project.tosstock.activity.adapter.in.web.request.CreatePostRequest;
 import project.tosstock.activity.application.domain.model.MainBoardPostDto;
-import project.tosstock.activity.application.domain.model.Post;
 import project.tosstock.activity.application.port.in.PostingUseCase;
 import project.tosstock.activity.application.port.in.SearchPostUseCase;
 import project.tosstock.common.config.web.WebConfig;
@@ -163,17 +162,19 @@ class PostControllerTest extends ControllerTestSupport {
 	@DisplayName(value = "증권 종목 아이디를 기반으로 게시글을 조회합니다.")
 	void searchPostByStockId() throws Exception {
 		// given
+		Long memberId = 1L;
 		Long stockId = 1L;
 		Long offset = 20L;
 		Long limit = 10L;
 		String sort = "desc";
 
-		given(searchPostUseCase.searchPostByStockId(any(), any()))
+		given(searchPostUseCase.searchPostByStockId(any(), any(), any()))
 			.willReturn(List.of(createMainBoardPostDto("testing", stockId)));
 
 		// when  // then
 		mockMvc.perform(
 				get("/api/v1/posts/stock/{stockId}", stockId)
+					.param("memberId", String.valueOf(memberId))
 					.param("offset", String.valueOf(offset))
 					.param("limit", String.valueOf(limit))
 					.param("sort", sort)
@@ -187,9 +188,10 @@ class PostControllerTest extends ControllerTestSupport {
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				pathParameters(
-					parameterWithName("stockId").description("증권 종목 아이디")
+					parameterWithName("stockId").description("조회하고자 하는 증권 아이디")
 				),
 				queryParameters(
+					parameterWithName("memberId").description("자신의 회원 아이디"),
 					parameterWithName("offset").description("이전 포스트 아이디"),
 					parameterWithName("limit").description("포스트 조회 개수"),
 					parameterWithName("sort").description("정렬")
@@ -213,6 +215,8 @@ class PostControllerTest extends ControllerTestSupport {
 						.description("게시글 좋아요 수"),
 					fieldWithPath("data[].countPostComment").type(JsonFieldType.NUMBER)
 						.description("게시글 댓글 수"),
+					fieldWithPath("data[].isFollower").type(JsonFieldType.BOOLEAN)
+						.description("게시글 작성자와의 Follow 여부"),
 					fieldWithPath("data[].createdAt").type(JsonFieldType.STRING)
 						.description("게시글 생성일"),
 					fieldWithPath("data[].updatedAt").type(JsonFieldType.STRING)
@@ -225,17 +229,19 @@ class PostControllerTest extends ControllerTestSupport {
 	@DisplayName(value = "텍스트를 기반으로 게시글을 조회합니다.")
 	void searchPostByArticle() throws Exception {
 		// given
+		Long memberId = 1L;
 		String article = "게시글 중 일부입니다.";
 		Long offset = 20L;
 		Long limit = 10L;
 		String sort = "desc";
 
-		given(searchPostUseCase.searchPostByArticle(any(), any()))
+		given(searchPostUseCase.searchPostByArticle(any(), any(), any()))
 			.willReturn(List.of(createMainBoardPostDto(article, 1L)));
 
 		// when  // then
 		mockMvc.perform(
 				get("/api/v1/posts")
+					.param("memberId", String.valueOf(memberId))
 					.param("article", article)
 					.param("offset", String.valueOf(offset))
 					.param("limit", String.valueOf(limit))
@@ -250,6 +256,7 @@ class PostControllerTest extends ControllerTestSupport {
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				queryParameters(
+					parameterWithName("memberId").description("자신의 회원 아이디"),
 					parameterWithName("article").description("게시글 내용"),
 					parameterWithName("offset").description("이전 포스트 아이디"),
 					parameterWithName("limit").description("포스트 조회 개수"),
@@ -274,6 +281,8 @@ class PostControllerTest extends ControllerTestSupport {
 						.description("게시글 좋아요 수"),
 					fieldWithPath("data[].countPostComment").type(JsonFieldType.NUMBER)
 						.description("게시글 댓글 수"),
+					fieldWithPath("data[].isFollower").type(JsonFieldType.BOOLEAN)
+						.description("게시글 작성자와의 Follow 여부"),
 					fieldWithPath("data[].createdAt").type(JsonFieldType.STRING)
 						.description("게시글 생성일"),
 					fieldWithPath("data[].updatedAt").type(JsonFieldType.STRING)
@@ -290,17 +299,6 @@ class PostControllerTest extends ControllerTestSupport {
 			.build();
 	}
 
-	private Post createPostDomain(String article, long id) {
-		return Post.builder()
-			.id(id)
-			.article(article)
-			.stockId(1L)
-			.memberId(1L)
-			.createdAt(LocalDateTime.now())
-			.updatedAt(LocalDateTime.now())
-			.build();
-	}
-
 	private MainBoardPostDto createMainBoardPostDto(String article, long id) {
 		return MainBoardPostDto.builder()
 			.postId(1L)
@@ -309,6 +307,7 @@ class PostControllerTest extends ControllerTestSupport {
 			.postArticle("hello")
 			.countPostLike(0)
 			.countPostComment(0)
+			.isFollower(false)
 			.createdAt(LocalDateTime.now())
 			.updatedAt(LocalDateTime.now())
 			.build();

@@ -11,7 +11,7 @@ public interface FindPostPort {
 
 	Optional<Post> findPostById(Long postId);
 
-	List<MainBoardPostDto> findPostByArticleContaining(String article, CustomPage page);
+	List<MainBoardPostDto> findPostByArticleContaining(Long memberId, String article, CustomPage page);
 
-	List<MainBoardPostDto> findPostByStockId(Long stockId, CustomPage page);
+	List<MainBoardPostDto> findPostByStockId(Long memberId, Long stockId, CustomPage page);
 }

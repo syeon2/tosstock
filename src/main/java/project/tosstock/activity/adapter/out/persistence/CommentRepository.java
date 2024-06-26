@@ -12,6 +12,4 @@ import project.tosstock.activity.adapter.out.entity.CommentEntity;
 public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
 
 	List<CommentEntity> findByPostId(Long postId, Pageable pageable);
-
-	int countByPostId(Long postId);
 }
