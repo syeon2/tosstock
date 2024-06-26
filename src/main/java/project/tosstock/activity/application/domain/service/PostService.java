@@ -47,14 +47,14 @@ public class PostService implements PostingUseCase, SearchPostUseCase {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<MainBoardPostDto> searchPostByArticle(String article, CustomPage page) {
-		return findPostPort.findPostByArticleContaining(article, page);
+	public List<MainBoardPostDto> searchPostByArticle(Long memberId, String article, CustomPage page) {
+		return findPostPort.findPostByArticleContaining(memberId, article, page);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<MainBoardPostDto> searchPostByStockId(Long stockId, CustomPage page) {
-		return findPostPort.findPostByStockId(stockId, page);
+	public List<MainBoardPostDto> searchPostByStockId(Long memberId, Long stockId, CustomPage page) {
+		return findPostPort.findPostByStockId(memberId, stockId, page);
 	}
 
 	private void publishNewsFeed(Post post, Long savedPostId) {

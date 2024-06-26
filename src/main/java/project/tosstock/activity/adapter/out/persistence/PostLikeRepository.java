@@ -9,6 +9,4 @@ import project.tosstock.activity.adapter.out.entity.PostLikeEntity;
 public interface PostLikeRepository extends JpaRepository<PostLikeEntity, Long> {
 
 	void deleteByMemberIdAndPostId(Long memberId, Long postId);
-
-	int countByPostId(Long postId);
 }

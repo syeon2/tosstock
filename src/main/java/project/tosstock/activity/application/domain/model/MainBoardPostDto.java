@@ -13,28 +13,31 @@ public class MainBoardPostDto {
 	private String postArticle;
 	private Integer countPostLike;
 	private Integer countPostComment;
+	private Boolean isFollower;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 
 	@Builder
 	private MainBoardPostDto(Long postId, Long memberId, String username, String postArticle, Integer countPostLike,
-		Integer countPostComment, LocalDateTime createdAt, LocalDateTime updatedAt) {
+		Integer countPostComment, Boolean isFollower, LocalDateTime createdAt, LocalDateTime updatedAt) {
 		this.postId = postId;
 		this.member = new MemberDto(memberId, username);
 		this.postArticle = postArticle;
 		this.countPostLike = countPostLike;
 		this.countPostComment = countPostComment;
+		this.isFollower = isFollower;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 	}
 
 	public MainBoardPostDto(Long postId, MemberDto member, String postArticle, Integer countPostLike,
-		Integer countPostComment, LocalDateTime createdAt, LocalDateTime updatedAt) {
+		Integer countPostComment, Boolean isFollower, LocalDateTime createdAt, LocalDateTime updatedAt) {
 		this.postId = postId;
 		this.member = member;
 		this.postArticle = postArticle;
 		this.countPostLike = countPostLike;
 		this.countPostComment = countPostComment;
+		this.isFollower = isFollower;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 	}

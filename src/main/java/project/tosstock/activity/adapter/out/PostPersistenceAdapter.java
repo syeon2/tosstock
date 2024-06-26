@@ -60,13 +60,15 @@ public class PostPersistenceAdapter implements SavePostPort, DeletePostPort, Fin
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<MainBoardPostDto> findPostByArticleContaining(String article, CustomPage page) {
-		return postRepository.findMainBoardPostDtoByArticle(article, page.getOffset(), page.getLimit(), page.getSort());
+	public List<MainBoardPostDto> findPostByArticleContaining(Long memberId, String article, CustomPage page) {
+		return postRepository.findMainBoardPostDtoByArticle(memberId, article, page.getOffset(), page.getLimit(),
+			page.getSort());
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<MainBoardPostDto> findPostByStockId(Long stockId, CustomPage page) {
-		return postRepository.findMainBoardPostDtoByStockId(stockId, page.getOffset(), page.getLimit(), page.getSort());
+	public List<MainBoardPostDto> findPostByStockId(Long memberId, Long stockId, CustomPage page) {
+		return postRepository.findMainBoardPostDtoByStockId(memberId, stockId, page.getOffset(), page.getLimit(),
+			page.getSort());
 	}
 }
